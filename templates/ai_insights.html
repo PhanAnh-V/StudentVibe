@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}AI Insights - Teacher Dashboard{% endblock %}
+
+{% block content %}
+<div class="ai-insights-container">
+    <!-- Header -->
+    <div class="insights-header">
+        <h1 class="insights-title">
+            <i class="fas fa-brain me-3"></i>
+            AI-Powered Student Insights
+        </h1>
+        <p class="insights-description">
+            Advanced personality analysis and compatibility insights for optimal squad formation
+        </p>
+        <div class="header-actions">
+            <a href="{{ url_for('teacher') }}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-2"></i>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <!-- Student Profiles Section -->
+    <div class="profiles-section">
+        <h2 class="section-title">
+            <i class="fas fa-user-friends me-2"></i>
+            Enhanced Student Profiles
+        </h2>
+        
+        <div class="profiles-grid">
+            {% for profile_data in student_profiles %}
+            <div class="profile-insight-card">
+                <div class="profile-card-header">
+                    <div class="student-avatar">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="student-details">
+                        <h3 class="student-name">{{ profile_data.student.name }}</h3>
+                        <div class="archetype-badge">{{ profile_data.basic_archetype }}</div>
+                    </div>
+                </div>
+                
+                <div class="profile-card-content">
+                    <div class="insight-section">
+                        <h4><i class="fas fa-graduation-cap me-2"></i>Learning Style</h4>
+                        <p>{{ profile_data.profile.learning_style }}</p>
+                    </div>
+                    
+                    <div class="insight-section">
+                        <h4><i class="fas fa-star me-2"></i>Key Strengths</h4>
+                        <div class="strengths-tags">
+                            {% for strength in profile_data.profile.strengths %}
+                            <span class="strength-tag">{{ strength }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="insight-section">
+                        <h4><i class="fas fa-users me-2"></i>Ideal Group Role</h4>
+                        <p>{{ profile_data.profile.ideal_group_role }}</p>
+                    </div>
+                    
+                    <div class="insight-section">
+                        <h4><i class="fas fa-seedling me-2"></i>Growth Areas</h4>
+                        <ul class="growth-list">
+                            {% for area in profile_data.profile.growth_opportunities %}
+                            <li>{{ area }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="profile-card-footer">
+                    <a href="{{ url_for('student_recommendations', student_id=profile_data.student.id) }}" 
+                       class="btn btn-sm btn-primary">
+                        <i class="fas fa-magic me-1"></i>
+                        View AI Recommendations
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Compatibility Matrix Section -->
+    <div class="compatibility-section">
+        <h2 class="section-title">
+            <i class="fas fa-link me-2"></i>
+            Student Compatibility Analysis
+        </h2>
+        
+        <div class="compatibility-grid">
+            {% for comp in compatibility_matrix %}
+            <div class="compatibility-card">
+                <div class="compatibility-header">
+                    <div class="student-pair">
+                        <span class="student-name">{{ comp.student1.name }}</span>
+                        <i class="fas fa-heart compatibility-heart"></i>
+                        <span class="student-name">{{ comp.student2.name }}</span>
+                    </div>
+                    <div class="compatibility-score">
+                        <div class="score-circle" data-score="{{ comp.compatibility.compatibility_score }}">
+                            {{ "%.0f"|format(comp.compatibility.compatibility_score * 100) }}%
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="compatibility-details">
+                    <div class="detail-item">
+                        <h4><i class="fas fa-handshake me-2"></i>Shared Interests</h4>
+                        <div class="shared-tags">
+                            {% for interest in comp.compatibility.shared_interests %}
+                            <span class="shared-tag">{{ interest }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <h4><i class="fas fa-puzzle-piece me-2"></i>Complementary Aspects</h4>
+                        <p>{{ comp.compatibility.complementary_aspects }}</p>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <h4><i class="fas fa-project-diagram me-2"></i>Collaboration Potential</h4>
+                        <p>{{ comp.compatibility.collaboration_potential }}</p>
+                    </div>
+                    
+                    {% if comp.compatibility.potential_conflicts != "None identified" %}
+                    <div class="detail-item warning">
+                        <h4><i class="fas fa-exclamation-triangle me-2"></i>Potential Considerations</h4>
+                        <p>{{ comp.compatibility.potential_conflicts }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- AI Recommendations Summary -->
+    <div class="summary-section">
+        <h2 class="section-title">
+            <i class="fas fa-chart-line me-2"></i>
+            Squad Formation Recommendations
+        </h2>
+        
+        <div class="summary-card">
+            <div class="summary-content">
+                <h3>Optimal Squad Formation Strategy</h3>
+                <div class="recommendation-points">
+                    <div class="point">
+                        <i class="fas fa-check-circle"></i>
+                        <span>High compatibility pairs (80%+) work well together for collaborative projects</span>
+                    </div>
+                    <div class="point">
+                        <i class="fas fa-balance-scale"></i>
+                        <span>Mix complementary learning styles for diverse perspective benefits</span>
+                    </div>
+                    <div class="point">
+                        <i class="fas fa-users-cog"></i>
+                        <span>Ensure each squad has at least one natural leader or organizer</span>
+                    </div>
+                    <div class="point">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Consider growth opportunities when pairing students with different strengths</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate compatibility scores
+    const scoreCircles = document.querySelectorAll('.score-circle');
+    scoreCircles.forEach(circle => {
+        const score = parseFloat(circle.dataset.score);
+        const percentage = Math.round(score * 100);
+        
+        // Color code based on compatibility
+        if (score >= 0.8) {
+            circle.classList.add('high-compatibility');
+        } else if (score >= 0.6) {
+            circle.classList.add('medium-compatibility');
+        } else {
+            circle.classList.add('low-compatibility');
+        }
+    });
+    
+    // Add entrance animations
+    const cards = document.querySelectorAll('.profile-insight-card, .compatibility-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.5s ease-out';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+</script>
+{% endblock %}

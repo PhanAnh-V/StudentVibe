@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}AI Recommendations - {{ student.name }}{% endblock %}
+
+{% block content %}
+<div class="recommendations-container">
+    <!-- Header -->
+    <div class="recommendations-header">
+        <h1 class="recommendations-title">
+            <i class="fas fa-magic me-3"></i>
+            AI Recommendations for {{ student.name }}
+        </h1>
+        <p class="recommendations-description">
+            Personalized activity suggestions based on your interests and personality
+        </p>
+    </div>
+    
+    <!-- Student Profile Card -->
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="profile-info">
+                <h2 class="profile-name">{{ student.name }}</h2>
+                <div class="profile-archetype">
+                    <i class="fas fa-star me-2"></i>
+                    {{ archetype }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="profile-vibes">
+            <h3 class="vibes-title">
+                <i class="fas fa-quote-left me-2"></i>
+                Your Vibe
+            </h3>
+            <p class="vibes-text">{{ student.vibes }}</p>
+        </div>
+        
+        {% if enhanced_profile %}
+        <div class="enhanced-insights">
+            <h3 class="insights-title">
+                <i class="fas fa-brain me-2"></i>
+                AI Personality Insights
+            </h3>
+            <div class="insights-grid">
+                <div class="insight-item">
+                    <h4>Learning Style</h4>
+                    <p>{{ enhanced_profile.learning_style }}</p>
+                </div>
+                <div class="insight-item">
+                    <h4>Strengths</h4>
+                    <ul>
+                        {% for strength in enhanced_profile.strengths %}
+                        <li>{{ strength }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="insight-item">
+                    <h4>Group Role</h4>
+                    <p>{{ enhanced_profile.ideal_group_role }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Recommendations Section -->
+    <div class="recommendations-section">
+        <h2 class="section-title">
+            <i class="fas fa-lightbulb me-2"></i>
+            Recommended Activities for You
+        </h2>
+        
+        <div class="recommendations-grid">
+            {% for rec in recommendations.recommendations %}
+            <div class="recommendation-card">
+                <div class="rec-header">
+                    <div class="rec-category {{ rec.category.lower() }}">
+                        {{ rec.category }}
+                    </div>
+                    <h3 class="rec-title">{{ rec.activity }}</h3>
+                </div>
+                <div class="rec-content">
+                    <p class="rec-reason">{{ rec.reason }}</p>
+                </div>
+                <div class="rec-footer">
+                    <button class="btn btn-sm btn-outline-primary" onclick="showInterest('{{ rec.activity }}')">
+                        <i class="fas fa-heart me-1"></i>
+                        I'm Interested
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Growth Areas -->
+    {% if recommendations.growth_areas %}
+    <div class="growth-section">
+        <h2 class="section-title">
+            <i class="fas fa-seedling me-2"></i>
+            Growth Opportunities
+        </h2>
+        <div class="growth-cards">
+            {% for area in recommendations.growth_areas %}
+            <div class="growth-card">
+                <i class="fas fa-arrow-up"></i>
+                <p>{{ area }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Connection Opportunities -->
+    {% if recommendations.connection_opportunities %}
+    <div class="connection-section">
+        <h2 class="section-title">
+            <i class="fas fa-users me-2"></i>
+            Connect with Others
+        </h2>
+        <div class="connection-card">
+            <i class="fas fa-handshake"></i>
+            <p>{{ recommendations.connection_opportunities }}</p>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Action Footer -->
+    <div class="recommendations-footer">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <a href="{{ url_for('squads') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Back to Squads
+                </a>
+            </div>
+            <div class="col-md-4">
+                <button onclick="window.print()" class="btn btn-outline-secondary">
+                    <i class="fas fa-print me-2"></i>
+                    Print Recommendations
+                </button>
+            </div>
+            <div class="col-md-4">
+                <button onclick="shareRecommendations()" class="btn btn-outline-success">
+                    <i class="fas fa-share me-2"></i>
+                    Share
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add entrance animations
+    const cards = document.querySelectorAll('.recommendation-card, .growth-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.5s ease-out';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+
+function showInterest(activity) {
+    // Simple feedback for now
+    alert(`Great choice! "${activity}" sounds perfect for you. Talk to your teacher about getting started!`);
+}
+
+function shareRecommendations() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'My AI Recommendations',
+            text: 'Check out these personalized activity recommendations!',
+            url: window.location.href
+        });
+    } else {
+        // Fallback: copy URL to clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('Link copied to clipboard!');
+        });
+    }
+}
+</script>
+{% endblock %}

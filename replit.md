@@ -41,6 +41,8 @@ This is a Flask-based web application designed to collect and store student info
 - **Teacher Route** (`/teacher`): Password-protected teacher dashboard
 - **Teacher Login**: Authentication with hardcoded password "1234"
 - **Vibe Squads** (`/teacher/create-squads`): Automatic grouping based on shared interests
+- **AI Recommendations** (`/recommendations/<student_id>`): Personalized AI-powered activity suggestions
+- **AI Insights** (`/teacher/ai-insights`): Advanced teacher dashboard with AI analysis
 - **Error Handling**: 404 error handler and form validation error management
 
 ### Templates
@@ -96,15 +98,24 @@ This is a Flask-based web application designed to collect and store student info
 
 ## New Features
 
+### AI-Powered Interest Recommendation Engine
+- **Personalized Recommendations**: OpenAI GPT-4o analyzes student interests to suggest 5 tailored activities
+- **Smart Archetype Enhancement**: AI-driven personality analysis beyond keyword matching
+- **Growth Opportunities**: Suggests areas for personal development and skill expansion
+- **Connection Insights**: Recommends ways to connect with like-minded peers
+- **Compatibility Analysis**: AI evaluates student pairing potential for optimal squad formation
+
 ### Vibe Squads System
 - **Archetype Detection**: Automatically assigns personality archetypes based on student interests (Gaming Guru, Music Maestro, Creative Artist, etc.)
 - **Japanese Translations**: Core interests displayed as hashtags with Japanese translations (#gaming (ゲーム))
 - **Visual Identity Cards**: Beautiful vibe cards with gradient borders, avatars, and professional styling
 - **Public Display Page**: `/squads` route for students to view their teams
+- **AI Recommendation Links**: Direct access to personalized AI suggestions from each vibe card
 
 ### Teacher Management
 - **Password Protection**: Secure teacher dashboard with hardcoded password "1234"
 - **Automatic Grouping**: Smart algorithm creates squads of 3-4 based on shared interests
+- **AI Insights Dashboard**: Advanced compatibility analysis and student profiling
 - **Session Management**: Persistent login and squad data storage
 
 ### Enhanced Navigation

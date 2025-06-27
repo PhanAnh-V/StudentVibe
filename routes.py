@@ -5,6 +5,7 @@ from forms import StudentForm, TeacherLoginForm
 import logging
 import re
 from collections import Counter, defaultdict
+from ai_recommendations import generate_interest_recommendations, enhance_archetype_with_ai, analyze_compatibility_with_ai
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -348,6 +349,78 @@ def squads():
         })
     
     return render_template('squads.html', squads=enhanced_squads)
+
+@app.route('/recommendations/<int:student_id>')
+def student_recommendations(student_id):
+    """Display AI-powered recommendations for a specific student"""
+    student = Student.query.get_or_404(student_id)
+    
+    try:
+        # Generate AI recommendations
+        archetype = get_vibe_archetype(student.vibes)
+        recommendations = generate_interest_recommendations(student.vibes, archetype)
+        
+        # Enhanced archetype analysis
+        enhanced_profile = enhance_archetype_with_ai(student.vibes)
+        
+        return render_template('recommendations.html', 
+                             student=student, 
+                             archetype=archetype,
+                             recommendations=recommendations,
+                             enhanced_profile=enhanced_profile)
+    
+    except Exception as e:
+        logging.error(f"Error generating recommendations for student {student_id}: {str(e)}")
+        flash('Unable to generate recommendations at this time. Please try again later.', 'error')
+        return redirect(url_for('squads'))
+
+@app.route('/teacher/ai-insights')
+def teacher_ai_insights():
+    """Teacher page with AI-powered insights about students and squad formation"""
+    if not session.get('teacher_authenticated'):
+        flash('Access denied. Please log in first.', 'error')
+        return redirect(url_for('teacher'))
+    
+    students = Student.query.all()
+    
+    if len(students) < 2:
+        flash('Need at least 2 students to generate AI insights.', 'info')
+        return redirect(url_for('teacher'))
+    
+    try:
+        # Generate enhanced profiles for all students
+        student_profiles = []
+        for student in students:
+            enhanced_profile = enhance_archetype_with_ai(student.vibes)
+            if enhanced_profile:
+                student_profiles.append({
+                    'student': student,
+                    'profile': enhanced_profile,
+                    'basic_archetype': get_vibe_archetype(student.vibes)
+                })
+        
+        # Analyze compatibility between students for better squad formation
+        compatibility_matrix = []
+        for i, profile1 in enumerate(student_profiles):
+            for j, profile2 in enumerate(student_profiles[i+1:], i+1):
+                compatibility = analyze_compatibility_with_ai(
+                    profile1['student'].vibes, 
+                    profile2['student'].vibes
+                )
+                compatibility_matrix.append({
+                    'student1': profile1['student'],
+                    'student2': profile2['student'],
+                    'compatibility': compatibility
+                })
+        
+        return render_template('ai_insights.html', 
+                             student_profiles=student_profiles,
+                             compatibility_matrix=compatibility_matrix)
+        
+    except Exception as e:
+        logging.error(f"Error generating AI insights: {str(e)}")
+        flash('Unable to generate AI insights at this time. Please try again later.', 'error')
+        return redirect(url_for('teacher'))
 
 @app.errorhandler(404)
 def not_found_error(error):

@@ -721,6 +721,38 @@ textarea.form-control {
     box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
+.btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: var(--white);
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+    border-color: #138496;
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+}
+
+.squad-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
 .squads-empty {
     background: var(--white);
     border-radius: 8px;
@@ -1149,7 +1181,14 @@ textarea.form-control {
     padding: 1rem 1.5rem;
     background-color: var(--light-grey);
     border-top: 1px solid var(--border-grey);
-    text-align: center;
+}
+
+.card-footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .member-id {
@@ -1157,6 +1196,12 @@ textarea.form-control {
     opacity: 0.6;
     font-size: 0.8rem;
     font-weight: 500;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+    border-radius: 6px;
 }
 
 /* Empty State */
@@ -1290,6 +1335,615 @@ textarea.form-control {
     .spark-tag {
         font-size: 0.8rem;
         padding: 0.3rem 0.6rem;
+    }
+}
+
+/* AI Recommendations Page Styles */
+.recommendations-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.recommendations-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+}
+
+.recommendations-title {
+    color: var(--primary-blue);
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.recommendations-description {
+    color: var(--text-dark);
+    font-size: 1.1rem;
+    opacity: 0.8;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Profile Card */
+.profile-card {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px var(--shadow);
+    padding: 2rem;
+    margin-bottom: 3rem;
+    border: 1px solid var(--border-grey);
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--border-grey);
+}
+
+.profile-avatar i {
+    font-size: 4rem;
+    color: var(--primary-blue);
+    background: var(--light-grey);
+    padding: 1rem;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+}
+
+.profile-name {
+    color: var(--text-dark);
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+}
+
+.profile-archetype {
+    background: linear-gradient(135deg, var(--accent-orange), #FF7043);
+    color: var(--white);
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 8px rgba(255, 87, 34, 0.3);
+}
+
+.vibes-title {
+    color: var(--text-dark);
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.vibes-text {
+    color: var(--text-dark);
+    font-size: 1rem;
+    line-height: 1.6;
+    padding: 1.5rem;
+    background: var(--light-grey);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-blue);
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+/* Enhanced Insights */
+.enhanced-insights {
+    margin-top: 2rem;
+}
+
+.insights-title {
+    color: var(--secondary-green);
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.insight-item {
+    background: var(--light-grey);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--secondary-green);
+}
+
+.insight-item h4 {
+    color: var(--text-dark);
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0 0 0.75rem 0;
+}
+
+.insight-item p, .insight-item ul {
+    color: var(--text-dark);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.insight-item ul {
+    padding-left: 1.5rem;
+}
+
+/* Recommendations Grid */
+.recommendations-section {
+    margin-bottom: 3rem;
+}
+
+.recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.recommendation-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px var(--shadow);
+    border: 1px solid var(--border-grey);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px var(--shadow-hover);
+}
+
+.rec-header {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+}
+
+.rec-category {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.rec-category.creative { background: #E1F5FE; color: #0277BD; }
+.rec-category.social { background: #F3E5F5; color: #7B1FA2; }
+.rec-category.academic { background: #E8F5E8; color: #2E7D32; }
+.rec-category.physical { background: #FFF3E0; color: #EF6C00; }
+.rec-category.technical { background: #E3F2FD; color: #1565C0; }
+.rec-category.cultural { background: #FCE4EC; color: #C2185B; }
+
+.rec-title {
+    color: var(--text-dark);
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.rec-content {
+    padding: 0 1.5rem 1rem 1.5rem;
+}
+
+.rec-reason {
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+    opacity: 0.8;
+}
+
+.rec-footer {
+    padding: 1rem 1.5rem;
+    background: var(--light-grey);
+    border-top: 1px solid var(--border-grey);
+}
+
+/* Growth and Connection Sections */
+.growth-section, .connection-section {
+    margin-bottom: 3rem;
+}
+
+.growth-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.growth-card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px var(--shadow);
+    border: 1px solid var(--border-grey);
+    text-align: center;
+    border-left: 4px solid var(--secondary-green);
+}
+
+.growth-card i {
+    font-size: 2rem;
+    color: var(--secondary-green);
+    margin-bottom: 1rem;
+}
+
+.connection-card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px var(--shadow);
+    border: 1px solid var(--border-grey);
+    text-align: center;
+    border-left: 4px solid var(--primary-blue);
+    margin-top: 2rem;
+}
+
+.connection-card i {
+    font-size: 3rem;
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+}
+
+/* AI Insights Page Styles */
+.ai-insights-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.insights-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+}
+
+.insights-title {
+    color: var(--primary-blue);
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.insights-description {
+    color: var(--text-dark);
+    font-size: 1.1rem;
+    opacity: 0.8;
+    max-width: 700px;
+    margin: 0 auto 2rem auto;
+}
+
+.header-actions {
+    margin-top: 2rem;
+}
+
+/* Profile Insight Cards */
+.profiles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.profile-insight-card {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 6px 20px var(--shadow);
+    border: 1px solid var(--border-grey);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.profile-insight-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px var(--shadow-hover);
+}
+
+.profile-card-header {
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--light-grey), #F8F9FA);
+    border-bottom: 1px solid var(--border-grey);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.student-avatar i {
+    font-size: 3rem;
+    color: var(--primary-blue);
+    background: var(--white);
+    padding: 1rem;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+}
+
+.student-name {
+    color: var(--text-dark);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+}
+
+.archetype-badge {
+    background: linear-gradient(135deg, var(--accent-orange), #FF7043);
+    color: var(--white);
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.profile-card-content {
+    padding: 2rem;
+}
+
+.insight-section {
+    margin-bottom: 2rem;
+}
+
+.insight-section h4 {
+    color: var(--text-dark);
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0 0 0.75rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.strengths-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.strength-tag {
+    background: var(--secondary-green);
+    color: var(--white);
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.growth-list {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.growth-list li {
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+}
+
+.profile-card-footer {
+    padding: 1.5rem 2rem;
+    background: var(--light-grey);
+    border-top: 1px solid var(--border-grey);
+}
+
+/* Compatibility Cards */
+.compatibility-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.compatibility-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px var(--shadow);
+    border: 1px solid var(--border-grey);
+    overflow: hidden;
+}
+
+.compatibility-header {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, var(--light-grey), #F8F9FA);
+    border-bottom: 1px solid var(--border-grey);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.student-pair {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.student-pair .student-name {
+    color: var(--text-dark);
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.compatibility-heart {
+    color: var(--accent-orange);
+    font-size: 1.2rem;
+}
+
+.score-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--white);
+}
+
+.score-circle.high-compatibility {
+    background: linear-gradient(135deg, var(--secondary-green), #66BB6A);
+}
+
+.score-circle.medium-compatibility {
+    background: linear-gradient(135deg, #FF9800, #FFB74D);
+}
+
+.score-circle.low-compatibility {
+    background: linear-gradient(135deg, #F44336, #EF5350);
+}
+
+.compatibility-details {
+    padding: 1.5rem;
+}
+
+.detail-item {
+    margin-bottom: 1.5rem;
+}
+
+.detail-item h4 {
+    color: var(--text-dark);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail-item.warning h4 {
+    color: var(--accent-orange);
+}
+
+.shared-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.shared-tag {
+    background: var(--primary-blue);
+    color: var(--white);
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Summary Section */
+.summary-section {
+    margin-bottom: 3rem;
+}
+
+.summary-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px var(--shadow);
+    border: 1px solid var(--border-grey);
+    margin-top: 2rem;
+}
+
+.summary-content {
+    padding: 2rem;
+}
+
+.summary-content h3 {
+    color: var(--text-dark);
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0 0 2rem 0;
+}
+
+.recommendation-points {
+    display: grid;
+    gap: 1rem;
+}
+
+.point {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--light-grey);
+    border-radius: 8px;
+    border-left: 4px solid var(--secondary-green);
+}
+
+.point i {
+    color: var(--secondary-green);
+    font-size: 1.2rem;
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+}
+
+.point span {
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Responsive Design for AI Features */
+@media (max-width: 768px) {
+    .recommendations-container,
+    .ai-insights-container {
+        padding: 10px;
+    }
+    
+    .recommendations-title,
+    .insights-title {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .insights-grid,
+    .recommendations-grid,
+    .profiles-grid,
+    .compatibility-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .profile-card-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .compatibility-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .student-pair {
+        flex-direction: column;
+        gap: 0.5rem;
     }
 }
 
