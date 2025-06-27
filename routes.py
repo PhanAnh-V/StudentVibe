@@ -17,7 +17,9 @@ def index():
             # Create new student record
             student = Student(
                 name=form.name.data.strip(),
-                vibes=form.vibes.data.strip()
+                vibes=form.vibes.data.strip(),
+                country=form.country.data,
+                gender=form.gender.data
             )
             
             # Add to database
@@ -208,7 +210,7 @@ def create_squads():
         squads = create_vibe_squads()
         session['current_squads'] = [
             {
-                'members': [{'id': s.id, 'name': s.name, 'vibes': s.vibes} for s in squad['members']],
+                'members': [{'id': s.id, 'name': s.name, 'vibes': s.vibes, 'country': s.country, 'gender': s.gender} for s in squad['members']],
                 'shared_interests': squad['shared_interests']
             }
             for squad in squads
@@ -327,7 +329,7 @@ def squads():
         squads = create_vibe_squads()
         squads_data = [
             {
-                'members': [{'id': s.id, 'name': s.name, 'vibes': s.vibes} for s in squad['members']],
+                'members': [{'id': s.id, 'name': s.name, 'vibes': s.vibes, 'country': s.country, 'gender': s.gender} for s in squad['members']],
                 'shared_interests': squad['shared_interests']
             }
             for squad in squads

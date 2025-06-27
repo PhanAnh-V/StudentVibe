@@ -27,11 +27,12 @@ This is a Flask-based web application designed to collect and store student info
 ## Key Components
 
 ### Models (models.py)
-- **Student Model**: Core data model with fields for id, name, vibes, and created_at timestamp
-- **Database Integration**: SQLAlchemy ORM with automatic table creation
+- **Student Model**: Core data model with fields for id, name, vibes, country, gender, and created_at timestamp
+- **Database Integration**: SQLAlchemy ORM with automatic table creation and PostgreSQL support
 
 ### Forms (forms.py)
-- **StudentForm**: WTForms-based form with validation
+- **StudentForm**: WTForms-based form with validation including name, interests, country, and gender fields
+- **Dropdown Fields**: SelectField implementation for country (China, Vietnam, Japan, Other) and gender (Male, Female, Prefer not to say)
 - **Validation Rules**: Required fields, length constraints, and user-friendly error messages
 - **CSRF Protection**: Built-in security through Flask-WTF
 
@@ -128,6 +129,8 @@ This is a Flask-based web application designed to collect and store student info
 - June 27, 2025. Added teacher dashboard with password protection
 - June 27, 2025. Implemented vibe squad grouping algorithm
 - June 27, 2025. Created public vibe cards display with archetypes and Japanese translations
+- June 27, 2025. Added AI-powered recommendation engine with fallback systems
+- June 27, 2025. Enhanced database with country and gender fields, updated forms and UI
 
 ## User Preferences
 

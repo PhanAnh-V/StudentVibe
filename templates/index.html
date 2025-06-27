@@ -72,6 +72,38 @@
                     </div>
                 {% endif %}
             </div>
+
+            <!-- Country Field -->
+            <div class="form-group">
+                {{ form.country.label(class="form-label") }}
+                <span class="required-asterisk">*</span>
+                {{ form.country() }}
+                {% if form.country.errors %}
+                    <div class="form-error">
+                        {% for error in form.country.errors %}
+                            <small class="text-danger">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                            </small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Gender Field -->
+            <div class="form-group">
+                {{ form.gender.label(class="form-label") }}
+                <span class="required-asterisk">*</span>
+                {{ form.gender() }}
+                {% if form.gender.errors %}
+                    <div class="form-error">
+                        {% for error in form.gender.errors %}
+                            <small class="text-danger">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                            </small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
             
             <!-- Submit Button -->
             <div class="form-group submit-group">

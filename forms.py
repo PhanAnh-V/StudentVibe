@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, PasswordField
+from wtforms import StringField, TextAreaField, SubmitField, PasswordField, SelectField
 from wtforms.validators import DataRequired, Length
 
 class StudentForm(FlaskForm):
@@ -27,6 +27,35 @@ class StudentForm(FlaskForm):
             'class': 'form-control',
             'rows': 4
         }
+    )
+    
+    country = SelectField(
+        'Country',
+        choices=[
+            ('', 'Select your country'),
+            ('China', 'China'),
+            ('Vietnam', 'Vietnam'),
+            ('Japan', 'Japan'),
+            ('Other', 'Other')
+        ],
+        validators=[
+            DataRequired(message='Please select your country')
+        ],
+        render_kw={'class': 'form-control'}
+    )
+    
+    gender = SelectField(
+        'Gender',
+        choices=[
+            ('', 'Select your gender'),
+            ('Male', 'Male'),
+            ('Female', 'Female'),
+            ('Prefer not to say', 'Prefer not to say')
+        ],
+        validators=[
+            DataRequired(message='Please select your gender')
+        ],
+        render_kw={'class': 'form-control'}
     )
     
     submit = SubmitField(
