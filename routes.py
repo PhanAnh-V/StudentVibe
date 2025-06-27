@@ -222,6 +222,133 @@ def create_squads():
     
     return redirect(url_for('teacher'))
 
+def get_vibe_archetype(vibes_text):
+    """Determine student's vibe archetype based on their interests"""
+    vibes_lower = vibes_text.lower()
+    
+    # Define archetype patterns
+    archetypes = {
+        'Gaming Guru': ['game', 'gaming', 'games', 'video games', 'gamer', 'anime', 'manga', 'cosplay'],
+        'Music Maestro': ['music', 'musical', 'musician', 'singing', 'guitar', 'piano', 'song', 'dance', 'dancing'],
+        'Creative Artist': ['art', 'drawing', 'painting', 'creative', 'design', 'sketch', 'photography', 'photo'],
+        'Adventure Seeker': ['travel', 'traveling', 'adventure', 'explore', 'trip', 'nature', 'outdoor', 'hiking'],
+        'Sports Champion': ['sport', 'sports', 'football', 'basketball', 'soccer', 'tennis', 'athletic', 'fitness', 'gym'],
+        'Tech Wizard': ['technology', 'tech', 'programming', 'coding', 'computer', 'software'],
+        'Bookworm Scholar': ['reading', 'books', 'literature', 'novel', 'story', 'study'],
+        'Foodie Explorer': ['food', 'cooking', 'baking', 'cuisine', 'restaurant', 'eat'],
+        'Movie Buff': ['movie', 'film', 'cinema', 'netflix', 'watch']
+    }
+    
+    # Count matches for each archetype
+    archetype_scores = {}
+    for archetype, keywords in archetypes.items():
+        score = sum(1 for keyword in keywords if keyword in vibes_lower)
+        if score > 0:
+            archetype_scores[archetype] = score
+    
+    # Return archetype with highest score, or default
+    if archetype_scores:
+        return max(archetype_scores.items(), key=lambda x: x[1])[0]
+    else:
+        return 'Mystery Vibe'
+
+def get_core_sparks(vibes_text):
+    """Extract core interests as hashtags with Japanese translations"""
+    vibes_lower = vibes_text.lower()
+    
+    # Define keywords with Japanese translations
+    spark_translations = {
+        'gaming': 'ゲーム',
+        'music': '音楽',
+        'art': 'アート',
+        'travel': '旅行',
+        'sports': 'スポーツ',
+        'technology': 'テクノロジー',
+        'reading': '読書',
+        'food': '食べ物',
+        'movies': '映画',
+        'anime': 'アニメ',
+        'dance': 'ダンス',
+        'photography': '写真',
+        'fitness': 'フィットネス',
+        'nature': '自然',
+        'creative': '創造的',
+        'adventure': '冒険'
+    }
+    
+    # Enhanced keyword mapping
+    keyword_mapping = {
+        'game': 'gaming', 'games': 'gaming', 'gamer': 'gaming', 'video games': 'gaming',
+        'musical': 'music', 'musician': 'music', 'singing': 'music', 'song': 'music',
+        'drawing': 'art', 'painting': 'art', 'design': 'art', 'sketch': 'art',
+        'traveling': 'travel', 'trip': 'travel', 'explore': 'travel',
+        'sport': 'sports', 'athletic': 'sports', 'football': 'sports', 'basketball': 'sports',
+        'tech': 'technology', 'programming': 'technology', 'coding': 'technology',
+        'books': 'reading', 'novel': 'reading', 'literature': 'reading',
+        'cooking': 'food', 'baking': 'food', 'cuisine': 'food',
+        'movie': 'movies', 'film': 'movies', 'cinema': 'movies',
+        'manga': 'anime', 'cosplay': 'anime',
+        'dancing': 'dance', 'ballet': 'dance',
+        'photo': 'photography', 'camera': 'photography',
+        'gym': 'fitness', 'workout': 'fitness', 'exercise': 'fitness',
+        'outdoor': 'nature', 'hiking': 'nature', 'camping': 'nature',
+        'design': 'creative', 'artist': 'creative'
+    }
+    
+    found_sparks = set()
+    
+    # Check for direct matches
+    for spark in spark_translations.keys():
+        if spark in vibes_lower:
+            found_sparks.add(spark)
+    
+    # Check for mapped keywords
+    for keyword, spark in keyword_mapping.items():
+        if keyword in vibes_lower:
+            found_sparks.add(spark)
+    
+    # Convert to hashtag format with translations
+    sparks = []
+    for spark in sorted(found_sparks)[:4]:  # Limit to 4 main sparks
+        japanese = spark_translations.get(spark, '？')
+        sparks.append(f'#{spark} ({japanese})')
+    
+    return sparks if sparks else ['#unique (ユニーク)']
+
+@app.route('/squads')
+def squads():
+    """Public page displaying vibe squads with cards"""
+    # Get squads from session or create from current students
+    squads_data = session.get('current_squads')
+    
+    if not squads_data:
+        # Create squads from current students if none exist
+        squads = create_vibe_squads()
+        squads_data = [
+            {
+                'members': [{'id': s.id, 'name': s.name, 'vibes': s.vibes} for s in squad['members']],
+                'shared_interests': squad['shared_interests']
+            }
+            for squad in squads
+        ]
+    
+    # Enhance squad data with archetypes and sparks
+    enhanced_squads = []
+    for squad in squads_data:
+        enhanced_members = []
+        for member in squad['members']:
+            enhanced_member = member.copy()
+            enhanced_member['archetype'] = get_vibe_archetype(member['vibes'])
+            enhanced_member['sparks'] = get_core_sparks(member['vibes'])
+            enhanced_members.append(enhanced_member)
+        
+        enhanced_squads.append({
+            'members': enhanced_members,
+            'shared_interests': squad['shared_interests']
+        })
+    
+    return render_template('squads.html', squads=enhanced_squads)
+
 @app.errorhandler(404)
 def not_found_error(error):
     """Handle 404 errors"""

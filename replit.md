@@ -94,9 +94,29 @@ This is a Flask-based web application designed to collect and store student info
 - **Database Settings**: Connection pooling and health checks
 - **Security**: CSRF protection and secure session handling
 
+## New Features
+
+### Vibe Squads System
+- **Archetype Detection**: Automatically assigns personality archetypes based on student interests (Gaming Guru, Music Maestro, Creative Artist, etc.)
+- **Japanese Translations**: Core interests displayed as hashtags with Japanese translations (#gaming (ゲーム))
+- **Visual Identity Cards**: Beautiful vibe cards with gradient borders, avatars, and professional styling
+- **Public Display Page**: `/squads` route for students to view their teams
+
+### Teacher Management
+- **Password Protection**: Secure teacher dashboard with hardcoded password "1234"
+- **Automatic Grouping**: Smart algorithm creates squads of 3-4 based on shared interests
+- **Session Management**: Persistent login and squad data storage
+
+### Enhanced Navigation
+- **Unified Interface**: Single navigation bar connecting all sections
+- **Responsive Design**: Mobile-first approach with Google Forms inspiration
+
 ## Changelog
 
-- June 27, 2025. Initial setup
+- June 27, 2025. Initial setup with student form and database
+- June 27, 2025. Added teacher dashboard with password protection
+- June 27, 2025. Implemented vibe squad grouping algorithm
+- June 27, 2025. Created public vibe cards display with archetypes and Japanese translations
 
 ## User Preferences
 
