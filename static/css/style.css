@@ -1603,6 +1603,103 @@ textarea.form-control {
     margin-bottom: 1rem;
 }
 
+/* Solo Students Section */
+.solo-students-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--border-grey);
+}
+
+.solo-students-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.solo-student-card {
+    background: var(--white);
+    border: 1px solid var(--border-grey);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--shadow);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.solo-student-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #FF9800, #FF5722);
+}
+
+.solo-student-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px var(--shadow-hover);
+}
+
+.ai-advice-section {
+    padding: 1rem 1.5rem;
+    background: #FFF9C4;
+    border-top: 1px solid #F0F0F0;
+}
+
+.ai-advice-content {
+    margin-top: 1rem;
+}
+
+.advice-title {
+    color: var(--text-dark);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.advice-item {
+    margin-bottom: 1rem;
+}
+
+.advice-item strong {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.advice-list {
+    margin: 0.5rem 0 0 1rem;
+    padding: 0;
+}
+
+.advice-list li {
+    margin-bottom: 0.25rem;
+    color: var(--text-grey);
+    font-size: 0.9rem;
+}
+
+.ai-advice-form {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+.ai-advice-form .btn {
+    border-radius: 20px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.ai-advice-form .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
 /* AI Insights Page Styles */
 .ai-insights-container {
     max-width: 100%;

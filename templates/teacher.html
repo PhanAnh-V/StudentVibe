@@ -234,6 +234,110 @@
                 </a>
             </div>
         {% endif %}
+    
+    <!-- Solo Students Section -->
+    {% if solo_students %}
+    <div class="solo-students-section mt-5">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-user me-2"></i>
+                Solo Students
+                <span class="badge bg-warning ms-2">{{ solo_students|length }}</span>
+            </h2>
+            <p class="section-description">
+                Students who couldn't be grouped into vibe squads and may need special attention or integration support.
+            </p>
+        </div>
+        
+        <div class="solo-students-grid">
+            {% for student in solo_students %}
+            <div class="solo-student-card">
+                <div class="student-header">
+                    <div class="student-title">
+                        <h3 class="student-name">
+                            <i class="fas fa-user me-2"></i>
+                            {{ student.name }}
+                        </h3>
+                        <div class="student-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-globe me-1"></i>
+                                {{ student.country }}
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-user me-1"></i>
+                                {{ student.gender }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="student-content">
+                    <h4 class="vibes-label">
+                        <i class="fas fa-heart me-2"></i>
+                        Interests & Vibes
+                    </h4>
+                    <div class="vibes-text">
+                        {{ student.vibes }}
+                    </div>
+                </div>
+                
+                <div class="ai-advice-section">
+                    {% if ai_advice.get(student.id) %}
+                    <div class="ai-advice-content">
+                        <h5 class="advice-title">
+                            <i class="fas fa-robot me-2"></i>
+                            AI Integration Advice
+                        </h5>
+                        
+                        <div class="advice-item">
+                            <strong>Integration Strategies:</strong>
+                            <ul class="advice-list">
+                                {% for strategy in ai_advice[student.id].integration_strategies %}
+                                <li>{{ strategy }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <div class="advice-item">
+                            <strong>Collaboration Opportunities:</strong>
+                            <p>{{ ai_advice[student.id].collaboration_opportunities }}</p>
+                        </div>
+                        
+                        <div class="advice-item">
+                            <strong>Suggested Role:</strong>
+                            <p>{{ ai_advice[student.id].group_role_suggestion }}</p>
+                        </div>
+                        
+                        <div class="advice-item">
+                            <strong>Development Areas:</strong>
+                            <ul class="advice-list">
+                                {% for area in ai_advice[student.id].development_areas %}
+                                <li>{{ area }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% else %}
+                    <form method="POST" action="{{ url_for('get_ai_advice', student_id=student.id) }}" class="ai-advice-form">
+                        <button type="submit" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-robot me-2"></i>
+                            Generate AI Advice
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+                
+                <div class="student-footer">
+                    <small class="text-muted">
+                        <i class="fas fa-hashtag me-1"></i>
+                        ID: {{ student.id }}
+                    </small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
     </div>
     
     <!-- Footer -->

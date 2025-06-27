@@ -72,7 +72,18 @@ def teacher():
             students = Student.query.order_by(Student.created_at.desc()).all()
             logging.info(f"Teacher accessed dashboard. Found {len(students)} students.")
             
-            return render_template('teacher.html', students=students)
+            # Get solo students and AI advice from session
+            solo_students = session.get('solo_students', [])
+            ai_advice = {}
+            for student in solo_students:
+                advice_key = f'ai_advice_{student["id"]}'
+                if advice_key in session:
+                    ai_advice[student['id']] = session[advice_key]
+            
+            return render_template('teacher.html', 
+                                 students=students,
+                                 solo_students=solo_students,
+                                 ai_advice=ai_advice)
         else:
             flash('Incorrect password. Please try again.', 'error')
     
@@ -87,19 +98,15 @@ def teacher_logout():
     return redirect(url_for('teacher'))
 
 def create_vibe_squads():
-    """Group students into squads based on shared interests"""
+    """Group students into squads of 4-5 members based on shared interests"""
     # Get all students
     students = Student.query.all()
     
-    if len(students) < 2:
-        return []
-    
-    # If we have fewer than 3 students, create one small squad
-    if len(students) < 3:
-        return [{
-            'members': students,
-            'shared_interests': 'small group'
-        }]
+    if len(students) < 4:
+        return {
+            'squads': [],
+            'solo_students': students
+        }
     
     # Define interest keywords to look for
     interest_keywords = [
@@ -119,7 +126,7 @@ def create_vibe_squads():
         'nature', 'outdoor', 'hiking', 'camping'
     ]
     
-    # Create student interest profiles
+    # Create student interest profiles with compatibility scores
     student_data = []
     for student in students:
         interests = set()
@@ -133,71 +140,97 @@ def create_vibe_squads():
         student_data.append({
             'student': student,
             'interests': interests,
-            'processed': False
+            'compatibility_scores': {}
         })
+    
+    # Calculate compatibility scores between all students
+    for i, student1 in enumerate(student_data):
+        for j, student2 in enumerate(student_data):
+            if i != j:
+                shared_interests = student1['interests'].intersection(student2['interests'])
+                compatibility = len(shared_interests)
+                student1['compatibility_scores'][j] = compatibility
     
     squads = []
+    processed_indices = set()
     
-    # First pass: Group students with shared interests
-    for i, student_info in enumerate(student_data):
-        if student_info['processed'] or not student_info['interests']:
-            continue
-            
-        current_squad = [student_info]
-        student_info['processed'] = True
+    # Form squads ensuring 4-5 members each
+    while len(student_data) - len(processed_indices) >= 4:
+        # Find student with most unprocessed compatible connections
+        best_starter = None
+        best_score = -1
         
-        # Find other students with similar interests
-        for j, other_info in enumerate(student_data):
-            if i == j or other_info['processed'] or len(current_squad) >= 4:
+        for i, student_info in enumerate(student_data):
+            if i in processed_indices:
                 continue
                 
-            # Check for shared interests
-            shared = student_info['interests'].intersection(other_info['interests'])
-            if shared:
-                current_squad.append(other_info)
-                other_info['processed'] = True
+            # Count compatible unprocessed students
+            compatible_count = sum(1 for j, score in student_info['compatibility_scores'].items() 
+                                 if j not in processed_indices and score > 0)
+            
+            if compatible_count > best_score:
+                best_score = compatible_count
+                best_starter = i
         
-        # Only create squad if we have enough members
-        if len(current_squad) >= 2:
-            shared_interests = set()
-            for member in current_squad:
-                shared_interests.update(member['interests'])
+        if best_starter is None:
+            # No clear starter, pick first unprocessed
+            best_starter = next(i for i in range(len(student_data)) if i not in processed_indices)
+        
+        # Start squad with best starter
+        current_squad = [best_starter]
+        processed_indices.add(best_starter)
+        
+        # Find best compatible students for this squad
+        while len(current_squad) < 5 and len(student_data) - len(processed_indices) > 0:
+            best_candidate = None
+            best_compatibility = -1
+            
+            # Don't fill to 5 if it would leave less than 4 for another squad
+            remaining_after = len(student_data) - len(processed_indices) - 1
+            if len(current_squad) >= 4 and remaining_after > 0 and remaining_after < 4:
+                break
+            
+            for candidate_idx in range(len(student_data)):
+                if candidate_idx in processed_indices:
+                    continue
+                
+                # Calculate average compatibility with current squad
+                total_compatibility = sum(student_data[squad_member]['compatibility_scores'].get(candidate_idx, 0) 
+                                        for squad_member in current_squad)
+                avg_compatibility = total_compatibility / len(current_squad)
+                
+                if avg_compatibility > best_compatibility:
+                    best_compatibility = avg_compatibility
+                    best_candidate = candidate_idx
+            
+            if best_candidate is not None:
+                current_squad.append(best_candidate)
+                processed_indices.add(best_candidate)
+            else:
+                break
+        
+        # Create squad if it has at least 4 members
+        if len(current_squad) >= 4:
+            squad_members = [student_data[i]['student'] for i in current_squad]
+            
+            # Calculate shared interests for display
+            all_interests = set()
+            for i in current_squad:
+                all_interests.update(student_data[i]['interests'])
             
             squads.append({
-                'members': [m['student'] for m in current_squad],
-                'shared_interests': ', '.join(sorted(list(shared_interests))[:3]) or 'mixed interests'
+                'members': squad_members,
+                'shared_interests': ', '.join(sorted(list(all_interests))[:4]) or 'diverse interests'
             })
     
-    # Second pass: Group remaining students
-    remaining = [s for s in student_data if not s['processed']]
+    # Students who couldn't be placed in squads become solo students
+    solo_students = [student_data[i]['student'] for i in range(len(student_data)) 
+                    if i not in processed_indices]
     
-    # Create squads from remaining students
-    while len(remaining) >= 3:
-        squad_size = min(4, len(remaining))
-        squad_members = remaining[:squad_size]
-        remaining = remaining[squad_size:]
-        
-        for member in squad_members:
-            member['processed'] = True
-            
-        squads.append({
-            'members': [m['student'] for m in squad_members],
-            'shared_interests': 'diverse interests'
-        })
-    
-    # Handle final remaining students
-    if remaining:
-        if squads and len(squads[-1]['members']) == 3:
-            # Add to last squad if it has only 3 members
-            squads[-1]['members'].extend([s['student'] for s in remaining])
-        else:
-            # Create final squad with remaining students
-            squads.append({
-                'members': [s['student'] for s in remaining],
-                'shared_interests': 'mixed group'
-            })
-    
-    return squads
+    return {
+        'squads': squads,
+        'solo_students': solo_students
+    }
 
 @app.route('/teacher/create-squads', methods=['POST'])
 def create_squads():
@@ -207,7 +240,10 @@ def create_squads():
         return redirect(url_for('teacher'))
     
     try:
-        squads = create_vibe_squads()
+        result = create_vibe_squads()
+        squads = result['squads']
+        solo_students = result['solo_students']
+        
         session['current_squads'] = [
             {
                 'members': [{'id': s.id, 'name': s.name, 'vibes': s.vibes, 'country': s.country, 'gender': s.gender} for s in squad['members']],
@@ -216,8 +252,13 @@ def create_squads():
             for squad in squads
         ]
         
-        flash(f'Successfully created {len(squads)} vibe squads!', 'success')
-        logging.info(f"Created {len(squads)} vibe squads")
+        session['solo_students'] = [
+            {'id': s.id, 'name': s.name, 'vibes': s.vibes, 'country': s.country, 'gender': s.gender}
+            for s in solo_students
+        ]
+        
+        flash(f'Successfully created {len(squads)} vibe squads with {len(solo_students)} solo students!', 'success')
+        logging.info(f"Created {len(squads)} vibe squads with {len(solo_students)} solo students")
         
     except Exception as e:
         logging.error(f"Error creating squads: {str(e)}")
@@ -251,6 +292,42 @@ def delete_student(student_id):
         db.session.rollback()
         logging.error(f"Error deleting student {student_id}: {str(e)}")
         flash('There was an error deleting the student. Please try again.', 'error')
+    
+    return redirect(url_for('teacher'))
+
+@app.route('/teacher/ai-advice/<int:student_id>', methods=['POST'])
+def get_ai_advice(student_id):
+    """Generate AI advice for a solo student"""
+    if not session.get('teacher_authenticated'):
+        flash('Access denied. Please log in first.', 'error')
+        return redirect(url_for('teacher'))
+    
+    try:
+        student = Student.query.get_or_404(student_id)
+        
+        # Generate AI advice for solo student
+        advice = {
+            'integration_strategies': [
+                f'Consider {student.name}\'s interests in building connections with other students',
+                'Look for shared activities that align with their passion areas',
+                'Encourage participation in group projects related to their interests'
+            ],
+            'collaboration_opportunities': f'Help {student.name} find peers with complementary skills or shared interests',
+            'group_role_suggestion': 'Could serve as a specialist contributor in mixed-interest groups',
+            'development_areas': [
+                'Practice collaborative communication skills',
+                'Explore interdisciplinary connections',
+                'Develop leadership potential in their interest areas'
+            ]
+        }
+        
+        # Store advice in session for display
+        session[f'ai_advice_{student_id}'] = advice
+        flash(f'AI advice generated for {student.name}', 'success')
+        
+    except Exception as e:
+        logging.error(f"Error generating AI advice for student {student_id}: {str(e)}")
+        flash('Unable to generate AI advice at this time.', 'error')
     
     return redirect(url_for('teacher'))
 
@@ -355,7 +432,8 @@ def squads():
     
     if not squads_data:
         # Create squads from current students if none exist
-        squads = create_vibe_squads()
+        result = create_vibe_squads()
+        squads = result['squads']
         squads_data = [
             {
                 'members': [{'id': s.id, 'name': s.name, 'vibes': s.vibes, 'country': s.country, 'gender': s.gender} for s in squad['members']],
