@@ -52,8 +52,23 @@
         </div>
     </div>
     
-    <!-- Vibe Squads Section -->
-    <div class="squads-section">
+    <!-- Tab Navigation -->
+    <div class="dashboard-tabs">
+        <button class="tab-button active" data-tab="vibe-squads">
+            <i class="fas fa-users me-2"></i>
+            Vibe Squads
+        </button>
+        <button class="tab-button" data-tab="all-students">
+            <i class="fas fa-list me-2"></i>
+            All Student Submissions
+        </button>
+    </div>
+
+    <!-- Tab Content Container -->
+    <div class="tab-content">
+        <!-- Tab 1: Vibe Squads Section -->
+        <div class="tab-pane active" id="vibe-squads">
+            <div class="squads-section">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="section-title">
                 <i class="fas fa-users me-2"></i>
@@ -188,10 +203,12 @@
             </div>
         </div>
         {% endif %}
-    </div>
-
-    <!-- Students List -->
-    <div class="students-section">
+            </div>
+        </div>
+        
+        <!-- Tab 2: All Student Submissions -->
+        <div class="tab-pane" id="all-students">
+            <div class="students-section">
         <h2 class="section-title">
             <i class="fas fa-list me-2"></i>
             All Student Submissions
@@ -294,8 +311,8 @@
                     
                     <div class="student-footer">
                         <small class="text-muted">
-                            <i class="fas fa-hashtag me-1"></i>
-                            ID: {{ student.id }}
+                            <i class="fas fa-clock me-1"></i>
+                            Submitted {{ student.created_at.strftime('%m/%d at %H:%M') }}
                         </small>
                     </div>
                 </div>
@@ -411,8 +428,8 @@
                 
                 <div class="student-footer">
                     <small class="text-muted">
-                        <i class="fas fa-hashtag me-1"></i>
-                        ID: {{ student.id }}
+                        <i class="fas fa-user-clock me-1"></i>
+                        Solo Status - Needs Integration
                     </small>
                 </div>
             </div>
@@ -420,6 +437,8 @@
         </div>
     </div>
     {% endif %}
+            </div>
+        </div>
     </div>
     
     <!-- Footer -->
@@ -462,8 +481,36 @@
 <script>
 let deleteStudentId = null;
 
-// Filter functionality
+// Tab functionality
+function switchTab(tabName) {
+    // Hide all tab panes
+    document.querySelectorAll('.tab-pane').forEach(pane => {
+        pane.classList.remove('active');
+    });
+    
+    // Remove active class from all tab buttons
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // Show selected tab pane
+    document.getElementById(tabName).classList.add('active');
+    
+    // Add active class to clicked button
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+}
+
+// Tab event listeners
 document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const tabName = button.getAttribute('data-tab');
+            switchTab(tabName);
+        });
+    });
+    
+    // Filter functionality
     const countryFilter = document.getElementById('countryFilter');
     const genderFilter = document.getElementById('genderFilter');
     const studentCount = document.getElementById('studentCount');
