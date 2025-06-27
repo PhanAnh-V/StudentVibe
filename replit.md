@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a Flask-based web application designed to collect and store student information. The system provides a simple form interface where students can submit their name and personal interests/vibes, with data being stored in a database for future reference.
+This is a Flask-based web application designed to collect and store student information with teacher management capabilities. The system provides a simple form interface where students can submit their name and personal interests/vibes, with data being stored in a database. Teachers can access a protected dashboard to view submissions and automatically create student groups based on shared interests.
 
 ## System Architecture
 
@@ -38,6 +38,9 @@ This is a Flask-based web application designed to collect and store student info
 ### Routes (routes.py)
 - **Index Route** (`/`): Main form display and submission handling
 - **Success Route** (`/success`): Confirmation page after successful submission
+- **Teacher Route** (`/teacher`): Password-protected teacher dashboard
+- **Teacher Login**: Authentication with hardcoded password "1234"
+- **Vibe Squads** (`/teacher/create-squads`): Automatic grouping based on shared interests
 - **Error Handling**: 404 error handler and form validation error management
 
 ### Templates

@@ -48,11 +48,73 @@
         </div>
     </div>
     
+    <!-- Vibe Squads Section -->
+    <div class="squads-section">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="section-title">
+                <i class="fas fa-users me-2"></i>
+                Vibe Squads
+            </h2>
+            <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-magic me-2"></i>
+                    Create Vibe Squads
+                </button>
+            </form>
+        </div>
+        
+        {% if session.get('current_squads') %}
+            <div class="squads-grid">
+                {% for squad in session['current_squads'] %}
+                <div class="squad-card">
+                    <div class="squad-header">
+                        <h3 class="squad-title">
+                            <i class="fas fa-users me-2"></i>
+                            Squad {{ loop.index }}
+                        </h3>
+                        <span class="squad-interests">
+                            <i class="fas fa-heart me-1"></i>
+                            {{ squad.shared_interests }}
+                        </span>
+                    </div>
+                    
+                    <div class="squad-members">
+                        {% for member in squad.members %}
+                        <div class="squad-member">
+                            <div class="member-info">
+                                <h4 class="member-name">
+                                    <i class="fas fa-user-graduate me-2"></i>
+                                    {{ member.name }}
+                                </h4>
+                                <p class="member-vibes">{{ member.vibes }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="squad-footer">
+                        <small class="text-muted">
+                            {{ squad.members|length }} members
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="squads-empty">
+                <p class="text-muted">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Click "Create Vibe Squads" to automatically group students based on shared interests.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+
     <!-- Students List -->
     <div class="students-section">
         <h2 class="section-title">
             <i class="fas fa-list me-2"></i>
-            Student Submissions
+            All Student Submissions
         </h2>
         
         {% if students %}
