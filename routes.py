@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash, session
+from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from app import app, db
 from models import Student
 from forms import StudentForm, TeacherLoginForm
@@ -294,6 +294,95 @@ def delete_student(student_id):
         flash('There was an error deleting the student. Please try again.', 'error')
     
     return redirect(url_for('teacher'))
+
+@app.route('/teacher/move-student', methods=['POST'])
+def move_student():
+    """Handle drag-and-drop student movement between squads"""
+    if not session.get('teacher_authenticated'):
+        return jsonify({'success': False, 'error': 'Not authenticated'})
+    
+    try:
+        data = request.get_json()
+        student_id = int(data['student_id'])
+        from_squad = data['from_squad']
+        to_squad = data['to_squad']
+        new_index = int(data['new_index'])
+        
+        # Get current squads and ungrouped students from session
+        current_squads = session.get('current_squads', [])
+        ungrouped_students = session.get('ungrouped_students', [])
+        
+        # Find the student to move
+        student_to_move = None
+        
+        # Remove student from source
+        if from_squad == 'ungrouped':
+            for i, student in enumerate(ungrouped_students):
+                if student['id'] == student_id:
+                    student_to_move = ungrouped_students.pop(i)
+                    break
+        else:
+            from_squad_idx = int(from_squad)
+            if 0 <= from_squad_idx < len(current_squads):
+                squad_members = current_squads[from_squad_idx]['members']
+                for i, member in enumerate(squad_members):
+                    if member['id'] == student_id:
+                        student_to_move = squad_members.pop(i)
+                        break
+        
+        if not student_to_move:
+            return jsonify({'success': False, 'error': 'Student not found'})
+        
+        # Add student to destination
+        if to_squad == 'ungrouped':
+            ungrouped_students.insert(new_index, student_to_move)
+        else:
+            to_squad_idx = int(to_squad)
+            if 0 <= to_squad_idx < len(current_squads):
+                current_squads[to_squad_idx]['members'].insert(new_index, student_to_move)
+            else:
+                return jsonify({'success': False, 'error': 'Invalid destination squad'})
+        
+        # Update session
+        session['current_squads'] = current_squads
+        session['ungrouped_students'] = ungrouped_students
+        
+        return jsonify({'success': True})
+        
+    except Exception as e:
+        logging.error(f"Error moving student: {str(e)}")
+        return jsonify({'success': False, 'error': 'Server error'})
+
+@app.route('/teacher/delete-squad', methods=['POST'])
+def delete_squad():
+    """Delete a squad and move all members to ungrouped list"""
+    if not session.get('teacher_authenticated'):
+        return jsonify({'success': False, 'error': 'Not authenticated'})
+    
+    try:
+        data = request.get_json()
+        squad_index = int(data['squad_index'])
+        
+        # Get current squads and ungrouped students from session
+        current_squads = session.get('current_squads', [])
+        ungrouped_students = session.get('ungrouped_students', [])
+        
+        if 0 <= squad_index < len(current_squads):
+            # Move all squad members to ungrouped list
+            squad_to_delete = current_squads.pop(squad_index)
+            ungrouped_students.extend(squad_to_delete['members'])
+            
+            # Update session
+            session['current_squads'] = current_squads
+            session['ungrouped_students'] = ungrouped_students
+            
+            return jsonify({'success': True})
+        else:
+            return jsonify({'success': False, 'error': 'Invalid squad index'})
+            
+    except Exception as e:
+        logging.error(f"Error deleting squad: {str(e)}")
+        return jsonify({'success': False, 'error': 'Server error'})
 
 @app.route('/teacher/ai-advice/<int:student_id>', methods=['POST'])
 def get_ai_advice(student_id):

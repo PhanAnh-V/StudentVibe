@@ -78,19 +78,29 @@
                 {% for squad in session['current_squads'] %}
                 <div class="squad-card">
                     <div class="squad-header">
-                        <h3 class="squad-title">
-                            <i class="fas fa-users me-2"></i>
-                            Squad {{ loop.index }}
-                        </h3>
-                        <span class="squad-interests">
-                            <i class="fas fa-heart me-1"></i>
-                            {{ squad.shared_interests }}
-                        </span>
+                        <div class="squad-title-section">
+                            <h3 class="squad-title">
+                                <i class="fas fa-users me-2"></i>
+                                Squad {{ loop.index }}
+                            </h3>
+                            <span class="squad-interests">
+                                <i class="fas fa-heart me-1"></i>
+                                {{ squad.shared_interests }}
+                            </span>
+                        </div>
+                        <button class="btn btn-outline-danger btn-sm delete-squad-btn" 
+                                onclick="deleteSquad({{ loop.index0 }})" 
+                                title="Delete Squad">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
                     
-                    <div class="squad-members">
+                    <div class="squad-members sortable-list" data-squad-index="{{ loop.index0 }}">
                         {% for member in squad.members %}
-                        <div class="squad-member">
+                        <div class="squad-member draggable-student" data-student-id="{{ member.id }}">
+                            <div class="drag-handle">
+                                <i class="fas fa-grip-vertical"></i>
+                            </div>
                             <div class="member-info">
                                 <h4 class="member-name">
                                     <i class="fas fa-user-graduate me-2"></i>
@@ -125,6 +135,47 @@
                     Click "Create Vibe Squads" to automatically group students based on shared interests.
                 </p>
             </div>
+        {% endif %}
+        
+        <!-- Ungrouped Students Section -->
+        {% if session.get('ungrouped_students') %}
+        <div class="ungrouped-section mt-4">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <i class="fas fa-user-friends me-2"></i>
+                    Ungrouped Students
+                    <span class="badge bg-secondary ms-2">{{ session['ungrouped_students']|length }}</span>
+                </h3>
+                <p class="section-description">
+                    Drag these students into existing squads or create new squads by grouping them together.
+                </p>
+            </div>
+            
+            <div class="ungrouped-students sortable-list" data-squad-index="ungrouped">
+                {% for student in session['ungrouped_students'] %}
+                <div class="ungrouped-student draggable-student" data-student-id="{{ student.id }}">
+                    <div class="drag-handle">
+                        <i class="fas fa-grip-vertical"></i>
+                    </div>
+                    <div class="student-info">
+                        <h4 class="student-name">
+                            <i class="fas fa-user me-2"></i>
+                            {{ student.name }}
+                        </h4>
+                        <div class="student-details">
+                            <span class="student-tag">
+                                <i class="fas fa-globe me-1"></i>{{ student.country }}
+                            </span>
+                            <span class="student-tag">
+                                <i class="fas fa-user me-1"></i>{{ student.gender }}
+                            </span>
+                        </div>
+                        <p class="student-vibes">{{ student.vibes }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
         {% endif %}
     </div>
 
@@ -455,7 +506,88 @@ window.onclick = function(event) {
         closeDeleteModal();
     }
 }
+
+// Drag and Drop Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize SortableJS for all squad members lists
+    const sortableLists = document.querySelectorAll('.sortable-list');
+    
+    sortableLists.forEach(list => {
+        new Sortable(list, {
+            group: 'shared', // Enable moving between lists
+            animation: 150,
+            handle: '.drag-handle',
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            dragClass: 'sortable-drag',
+            onEnd: function(evt) {
+                handleStudentMove(evt);
+            }
+        });
+    });
+});
+
+function handleStudentMove(evt) {
+    const studentId = evt.item.dataset.studentId;
+    const fromSquad = evt.from.dataset.squadIndex;
+    const toSquad = evt.to.dataset.squadIndex;
+    const newIndex = evt.newIndex;
+    
+    // Send update to server
+    fetch('/teacher/move-student', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            student_id: studentId,
+            from_squad: fromSquad,
+            to_squad: toSquad,
+            new_index: newIndex
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            // Revert the move if it failed
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error moving student:', error);
+        location.reload();
+    });
+}
+
+function deleteSquad(squadIndex) {
+    if (confirm('Are you sure you want to delete this squad? All members will be moved to the ungrouped list.')) {
+        fetch('/teacher/delete-squad', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                squad_index: squadIndex
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error deleting squad. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting squad:', error);
+            alert('Error deleting squad. Please try again.');
+        });
+    }
+}
 </script>
+
+<!-- SortableJS Library -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 {% endblock %}
 
 {% block scripts %}

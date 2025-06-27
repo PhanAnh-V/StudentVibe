@@ -1603,6 +1603,157 @@ textarea.form-control {
     margin-bottom: 1rem;
 }
 
+/* Drag and Drop Styles */
+.drag-handle {
+    cursor: move;
+    color: var(--text-grey);
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F5F5F5;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.drag-handle:hover {
+    background: var(--primary-blue);
+    color: var(--white);
+}
+
+.draggable-student {
+    display: flex;
+    align-items: flex-start;
+    background: var(--white);
+    border: 1px solid var(--border-grey);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+    cursor: grab;
+}
+
+.draggable-student:active {
+    cursor: grabbing;
+}
+
+.sortable-ghost {
+    opacity: 0.5;
+    background: #E3F2FD;
+    border: 2px dashed var(--primary-blue);
+}
+
+.sortable-chosen {
+    background: #FFF3E0;
+    border-color: var(--accent-orange);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+.sortable-drag {
+    background: var(--white);
+    box-shadow: 0 8px 20px var(--shadow-hover);
+    transform: rotate(5deg);
+}
+
+/* Squad Header Updates */
+.squad-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, var(--light-grey), #F8F9FA);
+    border-bottom: 1px solid var(--border-grey);
+}
+
+.squad-title-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.delete-squad-btn {
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.delete-squad-btn:hover {
+    background: var(--danger-red);
+    border-color: var(--danger-red);
+    color: var(--white);
+    transform: scale(1.05);
+}
+
+/* Ungrouped Students Section */
+.ungrouped-section {
+    background: #FFF8E1;
+    border: 1px solid #FFE082;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.ungrouped-students {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+    min-height: 60px;
+    padding: 1rem;
+    border: 2px dashed #FFB74D;
+    border-radius: 8px;
+    background: rgba(255, 183, 77, 0.1);
+}
+
+.ungrouped-student {
+    background: var(--white);
+    border: 1px solid #FFB74D;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(255, 183, 77, 0.2);
+}
+
+.ungrouped-student:hover {
+    box-shadow: 0 4px 12px rgba(255, 183, 77, 0.3);
+    transform: translateY(-2px);
+}
+
+.student-info, .member-info {
+    flex-grow: 1;
+    padding: 0.5rem;
+}
+
+.student-name, .member-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0 0 0.5rem 0;
+}
+
+.student-details, .member-details {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.student-tag, .member-tag {
+    font-size: 0.75rem;
+    background: var(--light-grey);
+    color: var(--text-grey);
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.student-vibes, .member-vibes {
+    font-size: 0.85rem;
+    color: var(--text-grey);
+    margin: 0;
+    line-height: 1.4;
+}
+
 /* Solo Students Section */
 .solo-students-section {
     margin-top: 3rem;
