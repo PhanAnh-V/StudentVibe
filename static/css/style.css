@@ -1028,6 +1028,93 @@ textarea.form-control {
     box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
 }
 
+/* Interest Spectrum for Vibe Cards */
+.interest-spectrum {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.spectrum-label {
+    color: var(--text-dark);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+}
+
+.spectrum-bubbles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.spectrum-bubble {
+    position: relative;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.spectrum-bubble:hover {
+    transform: translateY(-4px) scale(1.08);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.bubble-intensity {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.9));
+    border-radius: 0 0 25px 25px;
+    transition: all 0.5s ease;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Enhanced Vibe Card with Dynamic Color Coding */
+.vibe-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.vibe-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, 
+        #E91E63 0%, 
+        #9C27B0 20%, 
+        #FF9800 40%, 
+        #2196F3 60%, 
+        #4CAF50 80%, 
+        #FF5722 100%);
+    opacity: 0.9;
+    animation: colorFlow 10s ease infinite;
+}
+
+@keyframes colorFlow {
+    0%, 100% { opacity: 0.9; }
+    50% { opacity: 0.7; }
+}
+
 /* Vibe Cards Grid */
 .vibe-cards-grid {
     display: grid;
@@ -1752,6 +1839,144 @@ textarea.form-control {
     color: var(--text-grey);
     margin: 0;
     line-height: 1.4;
+}
+
+/* Interest Visualization Styles */
+.interest-visualization {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-grey);
+}
+
+.interest-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+}
+
+.interest-bubbles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.interest-bubble {
+    position: relative;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.interest-bubble:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.interest-intensity {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 0 0 20px 20px;
+    transition: width 0.3s ease;
+}
+
+/* Member Interest Tags */
+.member-interests {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.5rem;
+}
+
+.interest-tag {
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.interest-tag:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Squad Header Interest Colors */
+.squad-interests {
+    position: relative;
+    background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Interest Color Palette */
+.color-gaming { background-color: #E91E63; }
+.color-music { background-color: #9C27B0; }
+.color-art { background-color: #FF9800; }
+.color-tech { background-color: #2196F3; }
+.color-sports { background-color: #4CAF50; }
+.color-anime { background-color: #FF5722; }
+.color-adventure { background-color: #795548; }
+.color-reading { background-color: #607D8B; }
+.color-food { background-color: #FFC107; }
+.color-movies { background-color: #673AB7; }
+.color-dance { background-color: #E91E63; }
+.color-social { background-color: #FFEB3B; color: #333; }
+
+/* Enhanced Student Cards */
+.student-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.student-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #E91E63, #9C27B0, #FF9800, #2196F3, #4CAF50);
+    opacity: 0.8;
+}
+
+/* Squad Member Visual Enhancement */
+.squad-member {
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.squad-member:hover {
+    border-left-color: var(--primary-blue);
+    background: rgba(33, 150, 243, 0.05);
 }
 
 /* Solo Students Section */

@@ -115,6 +115,17 @@
                                     </span>
                                 </div>
                                 <p class="member-vibes">{{ member.vibes }}</p>
+                                
+                                {% if member.interests %}
+                                <div class="member-interests">
+                                    {% for interest in member.interests[:3] %}
+                                    <span class="interest-tag" style="background-color: {{ interest.color }}">
+                                        <i class="{{ interest.icon }} me-1"></i>
+                                        {{ interest.name }}
+                                    </span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
                         {% endfor %}
@@ -259,6 +270,26 @@
                         <div class="vibes-text">
                             {{ student.vibes }}
                         </div>
+                        
+                        {% if student.interests %}
+                        <div class="interest-visualization mt-3">
+                            <h5 class="interest-label">
+                                <i class="fas fa-tags me-2"></i>
+                                Interest Categories
+                            </h5>
+                            <div class="interest-bubbles">
+                                {% for interest in student.interests %}
+                                <div class="interest-bubble" 
+                                     style="background-color: {{ interest.color }}; opacity: {{ 0.7 + (interest.intensity * 0.3) }}">
+                                    <i class="{{ interest.icon }} me-1"></i>
+                                    {{ interest.name }}
+                                    <span class="interest-intensity" 
+                                          style="width: {{ interest.intensity * 100 }}%"></span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                     
                     <div class="student-footer">

@@ -66,6 +66,26 @@
                                 <p class="story-text">{{ member.vibes }}</p>
                             </div>
                             
+                            {% if member.interests %}
+                            <div class="interest-spectrum">
+                                <h4 class="spectrum-label">
+                                    <i class="fas fa-palette me-2"></i>
+                                    Interest Spectrum
+                                </h4>
+                                <div class="spectrum-bubbles">
+                                    {% for interest in member.interests %}
+                                    <div class="spectrum-bubble" 
+                                         style="background-color: {{ interest.color }}; opacity: {{ 0.8 + (interest.intensity * 0.2) }}">
+                                        <i class="{{ interest.icon }} me-1"></i>
+                                        {{ interest.name }}
+                                        <div class="bubble-intensity" 
+                                             style="width: {{ interest.intensity * 100 }}%"></div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            
                             <div class="core-sparks">
                                 <h4 class="sparks-label">
                                     <i class="fas fa-fire me-2"></i>

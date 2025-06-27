@@ -80,8 +80,22 @@ def teacher():
                 if advice_key in session:
                     ai_advice[student['id']] = session[advice_key]
             
+            # Add interest visualization data to students
+            students_with_interests = []
+            for student in students:
+                student_dict = {
+                    'id': student.id,
+                    'name': student.name,
+                    'vibes': student.vibes,
+                    'country': student.country,
+                    'gender': student.gender,
+                    'created_at': student.created_at,
+                    'interests': get_interest_categories_with_colors(student.vibes)
+                }
+                students_with_interests.append(student_dict)
+            
             return render_template('teacher.html', 
-                                 students=students,
+                                 students=students_with_interests,
                                  solo_students=solo_students,
                                  ai_advice=ai_advice)
         else:
@@ -246,7 +260,16 @@ def create_squads():
         
         session['current_squads'] = [
             {
-                'members': [{'id': s.id, 'name': s.name, 'vibes': s.vibes, 'country': s.country, 'gender': s.gender} for s in squad['members']],
+                'members': [
+                    {
+                        'id': s.id, 
+                        'name': s.name, 
+                        'vibes': s.vibes, 
+                        'country': s.country, 
+                        'gender': s.gender,
+                        'interests': get_interest_categories_with_colors(s.vibes)
+                    } for s in squad['members']
+                ],
                 'shared_interests': squad['shared_interests']
             }
             for squad in squads
@@ -420,35 +443,118 @@ def get_ai_advice(student_id):
     
     return redirect(url_for('teacher'))
 
-def get_vibe_archetype(vibes_text):
-    """Determine student's vibe archetype based on their interests"""
+def get_interest_categories_with_colors(vibes_text):
+    """Extract interest categories and assign colors for visualization"""
     vibes_lower = vibes_text.lower()
     
-    # Define archetype patterns
-    archetypes = {
-        'Gaming Guru': ['game', 'gaming', 'games', 'video games', 'gamer', 'anime', 'manga', 'cosplay'],
-        'Music Maestro': ['music', 'musical', 'musician', 'singing', 'guitar', 'piano', 'song', 'dance', 'dancing'],
-        'Creative Artist': ['art', 'drawing', 'painting', 'creative', 'design', 'sketch', 'photography', 'photo'],
-        'Adventure Seeker': ['travel', 'traveling', 'adventure', 'explore', 'trip', 'nature', 'outdoor', 'hiking'],
-        'Sports Champion': ['sport', 'sports', 'football', 'basketball', 'soccer', 'tennis', 'athletic', 'fitness', 'gym'],
-        'Tech Wizard': ['technology', 'tech', 'programming', 'coding', 'computer', 'software'],
-        'Bookworm Scholar': ['reading', 'books', 'literature', 'novel', 'story', 'study'],
-        'Foodie Explorer': ['food', 'cooking', 'baking', 'cuisine', 'restaurant', 'eat'],
-        'Movie Buff': ['movie', 'film', 'cinema', 'netflix', 'watch']
+    # Define interest categories with colors and keywords
+    interest_categories = {
+        'Gaming': {
+            'keywords': ['game', 'gaming', 'games', 'video games', 'gamer', 'esports', 'pc', 'console', 'minecraft', 'fortnite'],
+            'color': '#E91E63',  # Pink
+            'icon': 'fas fa-gamepad'
+        },
+        'Music': {
+            'keywords': ['music', 'musical', 'musician', 'singing', 'guitar', 'piano', 'song', 'instrument', 'band'],
+            'color': '#9C27B0',  # Purple
+            'icon': 'fas fa-music'
+        },
+        'Art & Design': {
+            'keywords': ['art', 'drawing', 'painting', 'creative', 'design', 'sketch', 'photography', 'photo'],
+            'color': '#FF9800',  # Orange
+            'icon': 'fas fa-palette'
+        },
+        'Technology': {
+            'keywords': ['technology', 'tech', 'programming', 'coding', 'computer', 'software', 'app'],
+            'color': '#2196F3',  # Blue
+            'icon': 'fas fa-code'
+        },
+        'Sports': {
+            'keywords': ['sport', 'sports', 'football', 'basketball', 'soccer', 'tennis', 'athletic', 'fitness', 'gym'],
+            'color': '#4CAF50',  # Green
+            'icon': 'fas fa-running'
+        },
+        'Anime & Manga': {
+            'keywords': ['anime', 'manga', 'cosplay', 'otaku', 'japanese', 'japan'],
+            'color': '#FF5722',  # Deep Orange
+            'icon': 'fas fa-star'
+        },
+        'Adventure': {
+            'keywords': ['travel', 'traveling', 'adventure', 'explore', 'trip', 'nature', 'outdoor', 'hiking', 'camping'],
+            'color': '#795548',  # Brown
+            'icon': 'fas fa-mountain'
+        },
+        'Reading': {
+            'keywords': ['reading', 'books', 'literature', 'novel', 'story', 'study', 'academic'],
+            'color': '#607D8B',  # Blue Grey
+            'icon': 'fas fa-book'
+        },
+        'Food': {
+            'keywords': ['food', 'cooking', 'baking', 'cuisine', 'restaurant', 'eat', 'chef'],
+            'color': '#FF9800',  # Amber
+            'icon': 'fas fa-utensils'
+        },
+        'Movies & TV': {
+            'keywords': ['movie', 'film', 'cinema', 'netflix', 'watch', 'tv', 'series'],
+            'color': '#673AB7',  # Deep Purple
+            'icon': 'fas fa-film'
+        },
+        'Dance': {
+            'keywords': ['dance', 'dancing', 'ballet', 'hip hop', 'choreography'],
+            'color': '#E91E63',  # Pink
+            'icon': 'fas fa-music'
+        },
+        'Social': {
+            'keywords': ['friends', 'social', 'party', 'people', 'community', 'group'],
+            'color': '#FFEB3B',  # Yellow
+            'icon': 'fas fa-users'
+        }
     }
     
-    # Count matches for each archetype
-    archetype_scores = {}
-    for archetype, keywords in archetypes.items():
-        score = sum(1 for keyword in keywords if keyword in vibes_lower)
-        if score > 0:
-            archetype_scores[archetype] = score
+    # Find matching categories
+    found_interests = []
+    for category, data in interest_categories.items():
+        matches = sum(1 for keyword in data['keywords'] if keyword in vibes_lower)
+        if matches > 0:
+            found_interests.append({
+                'name': category,
+                'color': data['color'],
+                'icon': data['icon'],
+                'intensity': min(matches / len(data['keywords']) * 2, 1.0),  # Normalize intensity
+                'match_count': matches
+            })
     
-    # Return archetype with highest score, or default
-    if archetype_scores:
-        return max(archetype_scores.items(), key=lambda x: x[1])[0]
-    else:
+    # Sort by match count (highest first)
+    found_interests.sort(key=lambda x: x['match_count'], reverse=True)
+    
+    return found_interests[:4]  # Return top 4 interests
+
+def get_vibe_archetype(vibes_text):
+    """Determine student's vibe archetype based on their interests"""
+    interests = get_interest_categories_with_colors(vibes_text)
+    
+    if not interests:
         return 'Mystery Vibe'
+    
+    # Create archetype based on primary interest
+    primary_interest = interests[0]['name']
+    
+    archetype_mapping = {
+        'Gaming': 'Gaming Guru',
+        'Music': 'Music Maestro',
+        'Art & Design': 'Creative Artist',
+        'Technology': 'Tech Wizard',
+        'Sports': 'Sports Champion',
+        'Anime & Manga': 'Anime Enthusiast',
+        'Adventure': 'Adventure Seeker',
+        'Reading': 'Bookworm Scholar',
+        'Food': 'Foodie Explorer',
+        'Movies & TV': 'Movie Buff',
+        'Dance': 'Dance Star',
+        'Social': 'Social Butterfly'
+    }
+    
+    return archetype_mapping.get(primary_interest, 'Multi-Interest Explorer')
 
 def get_core_sparks(vibes_text):
     """Extract core interests as hashtags with Japanese translations"""
@@ -525,7 +631,16 @@ def squads():
         squads = result['squads']
         squads_data = [
             {
-                'members': [{'id': s.id, 'name': s.name, 'vibes': s.vibes, 'country': s.country, 'gender': s.gender} for s in squad['members']],
+                'members': [
+                    {
+                        'id': s.id, 
+                        'name': s.name, 
+                        'vibes': s.vibes, 
+                        'country': s.country, 
+                        'gender': s.gender,
+                        'interests': get_interest_categories_with_colors(s.vibes)
+                    } for s in squad['members']
+                ],
                 'shared_interests': squad['shared_interests']
             }
             for squad in squads
