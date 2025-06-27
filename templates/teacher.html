@@ -136,18 +136,68 @@
         </h2>
         
         {% if students %}
+            <!-- Filter Controls -->
+            <div class="filter-section">
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label for="countryFilter" class="filter-label">
+                            <i class="fas fa-globe me-1"></i>
+                            Filter by Country
+                        </label>
+                        <select id="countryFilter" class="filter-select">
+                            <option value="">All Countries</option>
+                            <option value="China">China</option>
+                            <option value="Vietnam">Vietnam</option>
+                            <option value="Japan">Japan</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="genderFilter" class="filter-label">
+                            <i class="fas fa-user me-1"></i>
+                            Filter by Gender
+                        </label>
+                        <select id="genderFilter" class="filter-select">
+                            <option value="">All Genders</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-stats">
+                        <span id="studentCount">{{ students|length }}</span> students shown
+                    </div>
+                </div>
+            </div>
             <div class="students-grid">
                 {% for student in students %}
-                <div class="student-card">
+                <div class="student-card" data-country="{{ student.country }}" data-gender="{{ student.gender }}">
                     <div class="student-header">
-                        <h3 class="student-name">
-                            <i class="fas fa-user-graduate me-2"></i>
-                            {{ student.name }}
-                        </h3>
-                        <small class="student-date">
-                            <i class="fas fa-calendar me-1"></i>
-                            {{ student.created_at.strftime('%B %d, %Y at %I:%M %p') }}
-                        </small>
+                        <div class="student-title">
+                            <h3 class="student-name">
+                                <i class="fas fa-user-graduate me-2"></i>
+                                {{ student.name }}
+                            </h3>
+                            <button class="btn-delete" onclick="confirmDelete({{ student.id }}, '{{ student.name }}')">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                        <div class="student-meta">
+                            <div class="student-details">
+                                <span class="student-tag">
+                                    <i class="fas fa-globe me-1"></i>{{ student.country }}
+                                </span>
+                                <span class="student-tag">
+                                    <i class="fas fa-user me-1"></i>{{ student.gender }}
+                                </span>
+                            </div>
+                            <small class="student-date">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ student.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                            </small>
+                        </div>
                     </div>
                     
                     <div class="student-content">
@@ -204,6 +254,104 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4>Confirm Delete</h4>
+            <span class="modal-close" onclick="closeDeleteModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete <strong id="deleteStudentName"></strong>?</p>
+            <p class="text-danger">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn btn-danger" onclick="deleteStudent()">Delete Student</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let deleteStudentId = null;
+
+// Filter functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const countryFilter = document.getElementById('countryFilter');
+    const genderFilter = document.getElementById('genderFilter');
+    const studentCount = document.getElementById('studentCount');
+    
+    function filterStudents() {
+        const selectedCountry = countryFilter.value;
+        const selectedGender = genderFilter.value;
+        const studentCards = document.querySelectorAll('.student-card');
+        let visibleCount = 0;
+        
+        studentCards.forEach(card => {
+            const cardCountry = card.dataset.country;
+            const cardGender = card.dataset.gender;
+            
+            const countryMatch = !selectedCountry || cardCountry === selectedCountry;
+            const genderMatch = !selectedGender || cardGender === selectedGender;
+            
+            if (countryMatch && genderMatch) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        studentCount.textContent = visibleCount;
+    }
+    
+    countryFilter.addEventListener('change', filterStudents);
+    genderFilter.addEventListener('change', filterStudents);
+});
+
+// Delete functionality
+function confirmDelete(studentId, studentName) {
+    deleteStudentId = studentId;
+    document.getElementById('deleteStudentName').textContent = studentName;
+    document.getElementById('deleteModal').style.display = 'block';
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+    deleteStudentId = null;
+}
+
+function deleteStudent() {
+    if (deleteStudentId) {
+        // Create form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/teacher/delete-student/' + deleteStudentId;
+        
+        // Add CSRF token
+        const csrfToken = document.querySelector('meta[name=csrf-token]');
+        if (csrfToken) {
+            const tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = 'csrf_token';
+            tokenInput.value = csrfToken.getAttribute('content');
+            form.appendChild(tokenInput);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('deleteModal');
+    if (event.target === modal) {
+        closeDeleteModal();
+    }
+}
+</script>
 {% endblock %}
 
 {% block scripts %}

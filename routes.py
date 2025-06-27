@@ -225,6 +225,35 @@ def create_squads():
     
     return redirect(url_for('teacher'))
 
+@app.route('/teacher/delete-student/<int:student_id>', methods=['POST'])
+def delete_student(student_id):
+    """Delete a student record from the database"""
+    if not session.get('teacher_authenticated'):
+        flash('Access denied. Please log in first.', 'error')
+        return redirect(url_for('teacher'))
+    
+    try:
+        student = Student.query.get_or_404(student_id)
+        student_name = student.name
+        
+        # Delete the student record
+        db.session.delete(student)
+        db.session.commit()
+        
+        flash(f'Successfully deleted student: {student_name}', 'success')
+        logging.info(f"Deleted student: {student_name} (ID: {student_id})")
+        
+        # Clear current squads since student composition has changed
+        if 'current_squads' in session:
+            del session['current_squads']
+        
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error deleting student {student_id}: {str(e)}")
+        flash('There was an error deleting the student. Please try again.', 'error')
+    
+    return redirect(url_for('teacher'))
+
 def get_vibe_archetype(vibes_text):
     """Determine student's vibe archetype based on their interests"""
     vibes_lower = vibes_text.lower()

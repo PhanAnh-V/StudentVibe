@@ -39,9 +39,10 @@ This is a Flask-based web application designed to collect and store student info
 ### Routes (routes.py)
 - **Index Route** (`/`): Main form display and submission handling
 - **Success Route** (`/success`): Confirmation page after successful submission
-- **Teacher Route** (`/teacher`): Password-protected teacher dashboard
+- **Teacher Route** (`/teacher`): Password-protected teacher dashboard with filtering and management features
 - **Teacher Login**: Authentication with hardcoded password "1234"
 - **Vibe Squads** (`/teacher/create-squads`): Automatic grouping based on shared interests
+- **Student Deletion** (`/teacher/delete-student/<id>`): Secure student record removal with confirmation
 - **AI Recommendations** (`/recommendations/<student_id>`): Personalized AI-powered activity suggestions
 - **AI Insights** (`/teacher/ai-insights`): Advanced teacher dashboard with AI analysis
 - **Error Handling**: 404 error handler and form validation error management
@@ -117,6 +118,8 @@ This is a Flask-based web application designed to collect and store student info
 - **Password Protection**: Secure teacher dashboard with hardcoded password "1234"
 - **Automatic Grouping**: Smart algorithm creates squads of 3-4 based on shared interests
 - **AI Insights Dashboard**: Advanced compatibility analysis and student profiling
+- **Student Filtering**: Real-time dropdown filters for country and gender with instant results
+- **Student Management**: Delete functionality with confirmation modal for record removal
 - **Session Management**: Persistent login and squad data storage
 
 ### Enhanced Navigation
@@ -131,6 +134,7 @@ This is a Flask-based web application designed to collect and store student info
 - June 27, 2025. Created public vibe cards display with archetypes and Japanese translations
 - June 27, 2025. Added AI-powered recommendation engine with fallback systems
 - June 27, 2025. Enhanced database with country and gender fields, updated forms and UI
+- June 27, 2025. Implemented teacher dashboard filtering and student deletion functionality
 
 ## User Preferences
 
