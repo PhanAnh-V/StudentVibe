@@ -2,11 +2,15 @@ import json
 import os
 from openai import OpenAI
 import logging
+import httpx
 
-# Initialize OpenAI client
+# Initialize OpenAI client with timeout settings
 # the newest OpenAI model is "gpt-4o" which was released May 13, 2024.
 # do not change this unless explicitly requested by the user
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+client = OpenAI(
+    api_key=os.environ.get("OPENAI_API_KEY"),
+    timeout=httpx.Timeout(30.0, read=30.0, write=30.0, connect=30.0)
+)
 
 def generate_interest_recommendations(vibes_text, archetype=None):
     """
@@ -59,10 +63,14 @@ def generate_interest_recommendations(vibes_text, archetype=None):
             ],
             response_format={"type": "json_object"},
             temperature=0.7,
-            max_tokens=800
+            max_tokens=800,
+            timeout=20
         )
         
-        result = json.loads(response.choices[0].message.content)
+        content = response.choices[0].message.content
+        if not content:
+            raise Exception("Empty response from OpenAI")
+        result = json.loads(content)
         logging.info(f"Generated AI recommendations for vibes: {vibes_text[:50]}...")
         return result
         

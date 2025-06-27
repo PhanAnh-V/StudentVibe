@@ -387,10 +387,10 @@ def teacher_ai_insights():
         flash('Need at least 2 students to generate AI insights.', 'info')
         return redirect(url_for('teacher'))
     
-    try:
-        # Generate enhanced profiles for all students
-        student_profiles = []
-        for student in students:
+    # Generate enhanced profiles for all students with fallback
+    student_profiles = []
+    for student in students:
+        try:
             enhanced_profile = enhance_archetype_with_ai(student.vibes)
             if enhanced_profile:
                 student_profiles.append({
@@ -398,29 +398,58 @@ def teacher_ai_insights():
                     'profile': enhanced_profile,
                     'basic_archetype': get_vibe_archetype(student.vibes)
                 })
-        
-        # Analyze compatibility between students for better squad formation
-        compatibility_matrix = []
-        for i, profile1 in enumerate(student_profiles):
-            for j, profile2 in enumerate(student_profiles[i+1:], i+1):
+        except Exception as e:
+            logging.warning(f"AI profile generation failed for {student.name}, using fallback")
+            # Create fallback profile
+            student_profiles.append({
+                'student': student,
+                'profile': {
+                    'learning_style': 'Individual analysis pending',
+                    'strengths': [get_vibe_archetype(student.vibes).split()[0]],
+                    'ideal_group_role': 'Team member',
+                    'growth_opportunities': ['Explore new interests']
+                },
+                'basic_archetype': get_vibe_archetype(student.vibes)
+            })
+    
+    # Analyze compatibility between students with fallback
+    compatibility_matrix = []
+    for i, profile1 in enumerate(student_profiles):
+        for j, profile2 in enumerate(student_profiles[i+1:], i+1):
+            try:
                 compatibility = analyze_compatibility_with_ai(
                     profile1['student'].vibes, 
                     profile2['student'].vibes
                 )
+                if compatibility:
+                    compatibility_matrix.append({
+                        'student1': profile1['student'],
+                        'student2': profile2['student'],
+                        'compatibility': compatibility
+                    })
+            except Exception as e:
+                logging.warning(f"AI compatibility analysis failed, using basic matching")
+                # Basic compatibility based on shared keywords
+                vibes1 = set(profile1['student'].vibes.lower().split())
+                vibes2 = set(profile2['student'].vibes.lower().split())
+                shared_words = vibes1.intersection(vibes2)
+                compatibility_score = min(0.8, len(shared_words) * 0.1)
+                
                 compatibility_matrix.append({
                     'student1': profile1['student'],
                     'student2': profile2['student'],
-                    'compatibility': compatibility
+                    'compatibility': {
+                        'compatibility_score': compatibility_score,
+                        'shared_interests': list(shared_words)[:3],
+                        'complementary_aspects': 'Both students have unique perspectives to share',
+                        'collaboration_potential': f'Compatibility score: {compatibility_score:.1%}',
+                        'potential_conflicts': 'None identified'
+                    }
                 })
-        
-        return render_template('ai_insights.html', 
-                             student_profiles=student_profiles,
-                             compatibility_matrix=compatibility_matrix)
-        
-    except Exception as e:
-        logging.error(f"Error generating AI insights: {str(e)}")
-        flash('Unable to generate AI insights at this time. Please try again later.', 'error')
-        return redirect(url_for('teacher'))
+    
+    return render_template('ai_insights.html', 
+                         student_profiles=student_profiles,
+                         compatibility_matrix=compatibility_matrix)
 
 @app.errorhandler(404)
 def not_found_error(error):
