@@ -16,16 +16,88 @@ class StudentForm(FlaskForm):
         }
     )
     
-    vibes = TextAreaField(
-        'Tell us about your interests and vibes',
+    # Mystery Generator Questions - 7 Core Vibe Questions
+    question1 = StringField(
+        'What\'s your go-to activity when you have absolutely nothing planned?',
         validators=[
-            DataRequired(message='Please share your interests'),
-            Length(min=10, max=500, message='Please write between 10 and 500 characters')
+            DataRequired(message='This question is required'),
+            Length(min=3, max=200, message='Please write between 3 and 200 characters')
         ],
         render_kw={
-            'placeholder': 'Share your hobbies, interests, what makes you unique, or anything you\'d like us to know about you...',
-            'class': 'form-control',
-            'rows': 4
+            'placeholder': 'Sleeping, gaming, exploring random YouTube videos...',
+            'class': 'form-control'
+        }
+    )
+    
+    question2 = StringField(
+        'If you could master any skill instantly, what would it be?',
+        validators=[
+            DataRequired(message='This question is required'),
+            Length(min=3, max=200, message='Please write between 3 and 200 characters')
+        ],
+        render_kw={
+            'placeholder': 'Drawing, coding, speaking 10 languages...',
+            'class': 'form-control'
+        }
+    )
+    
+    question3 = StringField(
+        'What\'s something you could talk about for hours without getting bored?',
+        validators=[
+            DataRequired(message='This question is required'),
+            Length(min=3, max=200, message='Please write between 3 and 200 characters')
+        ],
+        render_kw={
+            'placeholder': 'Anime theories, space facts, music production...',
+            'class': 'form-control'
+        }
+    )
+    
+    question4 = StringField(
+        'Describe your ideal Friday night in 5 words or less.',
+        validators=[
+            DataRequired(message='This question is required'),
+            Length(min=3, max=100, message='Please write between 3 and 100 characters')
+        ],
+        render_kw={
+            'placeholder': 'Netflix, snacks, friends, chaos',
+            'class': 'form-control'
+        }
+    )
+    
+    question5 = StringField(
+        'What\'s the weirdest thing you\'ve ever been obsessed with?',
+        validators=[
+            DataRequired(message='This question is required'),
+            Length(min=3, max=200, message='Please write between 3 and 200 characters')
+        ],
+        render_kw={
+            'placeholder': 'Collecting bottle caps, memorizing movie quotes...',
+            'class': 'form-control'
+        }
+    )
+    
+    question6 = StringField(
+        'If your energy had a soundtrack, what genre would it be?',
+        validators=[
+            DataRequired(message='This question is required'),
+            Length(min=3, max=100, message='Please write between 3 and 100 characters')
+        ],
+        render_kw={
+            'placeholder': 'Lo-fi hip hop, death metal, classical...',
+            'class': 'form-control'
+        }
+    )
+    
+    question7 = StringField(
+        'What\'s your secret superpower that nobody knows about?',
+        validators=[
+            DataRequired(message='This question is required'),
+            Length(min=3, max=200, message='Please write between 3 and 200 characters')
+        ],
+        render_kw={
+            'placeholder': 'Always finding the best memes, perfect timing...',
+            'class': 'form-control'
         }
     )
     

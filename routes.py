@@ -14,10 +14,19 @@ def index():
     
     if form.validate_on_submit():
         try:
-            # Create new student record
+            # Create new student record with mystery generator answers
+            combined_vibes = f"{form.question1.data} {form.question2.data} {form.question3.data} {form.question4.data} {form.question5.data} {form.question6.data} {form.question7.data}"
+            
             student = Student(
                 name=form.name.data.strip(),
-                vibes=form.vibes.data.strip(),
+                vibes=combined_vibes,  # Combined for backward compatibility
+                question1=form.question1.data.strip(),
+                question2=form.question2.data.strip(), 
+                question3=form.question3.data.strip(),
+                question4=form.question4.data.strip(),
+                question5=form.question5.data.strip(),
+                question6=form.question6.data.strip(),
+                question7=form.question7.data.strip(),
                 country=form.country.data,
                 gender=form.gender.data
             )
@@ -529,32 +538,129 @@ def get_interest_categories_with_colors(vibes_text):
     
     return found_interests[:4]  # Return top 4 interests
 
-def get_vibe_archetype(vibes_text):
-    """Determine student's vibe archetype based on their interests"""
-    interests = get_interest_categories_with_colors(vibes_text)
+def get_creative_vibe_archetype(student):
+    """Determine student's creative vibe archetype based on mystery generator answers"""
+    # Handle both new format and legacy format
+    if hasattr(student, 'question1') and student.question1:
+        combined_text = ' '.join([
+            student.question1 or '',
+            student.question2 or '',
+            student.question3 or '',
+            student.question4 or '',
+            student.question5 or '',
+            student.question6 or '',
+            student.question7 or ''
+        ]).lower()
+    else:
+        # Fallback to legacy vibes field
+        combined_text = (student.vibes or '').lower()
     
-    if not interests:
-        return 'Mystery Vibe'
-    
-    # Create archetype based on primary interest
-    primary_interest = interests[0]['name']
-    
-    archetype_mapping = {
-        'Gaming': 'Gaming Guru',
-        'Music': 'Music Maestro',
-        'Art & Design': 'Creative Artist',
-        'Technology': 'Tech Wizard',
-        'Sports': 'Sports Champion',
-        'Anime & Manga': 'Anime Enthusiast',
-        'Adventure': 'Adventure Seeker',
-        'Reading': 'Bookworm Scholar',
-        'Food': 'Foodie Explorer',
-        'Movies & TV': 'Movie Buff',
-        'Dance': 'Dance Star',
-        'Social': 'Social Butterfly'
+    # Creative archetype detection with meme-worthy titles
+    creative_archetypes = {
+        'Midnight Philosopher': {
+            'keywords': ['thinking', 'deep', 'philosophy', 'existential', 'meaning', 'life', 'questions', 'universe', 'wondering', 'pondering', 'reflect'],
+            'icon': 'fas fa-moon',
+            'description': 'Deep thinker who ponders life\'s mysteries'
+        },
+        'Certified Meme Historian': {
+            'keywords': ['memes', 'funny', 'internet', 'viral', 'tiktok', 'instagram', 'social media', 'trends', 'jokes', 'humor', 'laugh'],
+            'icon': 'fas fa-laugh-squint',
+            'description': 'Master of internet culture and digital humor'
+        },
+        'Low-Key Genius': {
+            'keywords': ['smart', 'coding', 'programming', 'math', 'science', 'learning', 'studying', 'tech', 'computer', 'solving', 'intelligent'],
+            'icon': 'fas fa-brain',
+            'description': 'Brilliant mind hiding behind casual vibes'
+        },
+        'Chaos Coordinator': {
+            'keywords': ['random', 'chaos', 'unpredictable', 'spontaneous', 'weird', 'crazy', 'wild', 'energy', 'hyperactive', 'chaotic'],
+            'icon': 'fas fa-bolt',
+            'description': 'Thrives in beautiful chaos and spontaneity'
+        },
+        'Vibe Curator': {
+            'keywords': ['music', 'playlist', 'aesthetic', 'vibes', 'mood', 'atmosphere', 'chill', 'lofi', 'beats', 'spotify', 'sound'],
+            'icon': 'fas fa-headphones',
+            'description': 'Creates the perfect atmosphere for any moment'
+        },
+        'Digital Nomad': {
+            'keywords': ['gaming', 'online', 'virtual', 'digital', 'streaming', 'twitch', 'discord', 'pc', 'console', 'esports', 'game'],
+            'icon': 'fas fa-gamepad',
+            'description': 'Lives and breathes in digital realms'
+        },
+        'Snack Connoisseur': {
+            'keywords': ['food', 'eating', 'snacks', 'cooking', 'restaurant', 'hungry', 'delicious', 'taste', 'cuisine', 'baking', 'cook'],
+            'icon': 'fas fa-cookie-bite',
+            'description': 'Finds joy in culinary adventures and treats'
+        },
+        'Plot Twist Enthusiast': {
+            'keywords': ['movies', 'series', 'shows', 'netflix', 'anime', 'drama', 'story', 'plot', 'character', 'binge', 'watch'],
+            'icon': 'fas fa-film',
+            'description': 'Lives for compelling stories and epic narratives'
+        },
+        'Energy Drink Personified': {
+            'keywords': ['energy', 'hyper', 'active', 'sports', 'running', 'gym', 'fitness', 'workout', 'adrenaline', 'intense', 'fast'],
+            'icon': 'fas fa-fire',
+            'description': 'Pure kinetic energy in human form'
+        },
+        'Professional Procrastinator': {
+            'keywords': ['sleep', 'lazy', 'procrastinate', 'later', 'tomorrow', 'bed', 'nap', 'chill', 'relaxing', 'nothing', 'rest'],
+            'icon': 'fas fa-bed',
+            'description': 'Masters the art of strategic delay'
+        },
+        'Social Algorithm': {
+            'keywords': ['friends', 'social', 'people', 'party', 'talking', 'hanging out', 'group', 'together', 'communication', 'connect'],
+            'icon': 'fas fa-users',
+            'description': 'Naturally connects people and builds communities'
+        },
+        'Creative Hurricane': {
+            'keywords': ['art', 'drawing', 'creative', 'design', 'painting', 'craft', 'making', 'building', 'creating', 'imagination', 'artistic'],
+            'icon': 'fas fa-palette',
+            'description': 'Creates beauty from pure imagination'
+        },
+        'Adventure Architect': {
+            'keywords': ['adventure', 'explore', 'travel', 'discovery', 'journey', 'new', 'experience', 'outdoor', 'hiking', 'nature'],
+            'icon': 'fas fa-compass',
+            'description': 'Builds epic quests from everyday moments'
+        },
+        'Zen Master': {
+            'keywords': ['calm', 'peaceful', 'meditation', 'nature', 'quiet', 'serene', 'balance', 'mindful', 'tranquil', 'peace'],
+            'icon': 'fas fa-leaf',
+            'description': 'Brings inner peace to chaotic worlds'
+        }
     }
     
-    return archetype_mapping.get(primary_interest, 'Multi-Interest Explorer')
+    # Calculate scores for each archetype
+    archetype_scores = {}
+    for archetype_name, archetype_data in creative_archetypes.items():
+        score = sum(1 for keyword in archetype_data['keywords'] if keyword in combined_text)
+        if score > 0:
+            archetype_scores[archetype_name] = score
+    
+    # Return the highest scoring archetype or default
+    if archetype_scores:
+        best_archetype = max(archetype_scores, key=archetype_scores.get)
+        return {
+            'name': best_archetype,
+            'icon': creative_archetypes[best_archetype]['icon'],
+            'description': creative_archetypes[best_archetype]['description']
+        }
+    else:
+        return {
+            'name': 'Mysterious Entity',
+            'icon': 'fas fa-star',
+            'description': 'A unique presence that defies categorization'
+        }
+
+# Legacy function for backward compatibility
+def get_vibe_archetype(vibes_text):
+    """Legacy function - returns archetype name only"""
+    class FakeStudent:
+        def __init__(self, vibes):
+            self.vibes = vibes
+            self.question1 = None
+    
+    result = get_creative_vibe_archetype(FakeStudent(vibes_text))
+    return result['name']
 
 def get_core_sparks(vibes_text):
     """Extract core interests as hashtags with Japanese translations"""

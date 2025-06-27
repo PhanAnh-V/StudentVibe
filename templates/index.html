@@ -51,26 +51,127 @@
                 {% endif %}
             </div>
             
-            <!-- Vibes Field -->
-            <div class="form-group">
-                {{ form.vibes.label(class="form-label") }}
-                <span class="required-asterisk">*</span>
-                <div class="form-help-text">
-                    <small class="text-muted">
-                        <i class="fas fa-lightbulb me-1"></i>
-                        Share your hobbies, favorite subjects, what motivates you, or anything you'd like us to know!
-                    </small>
+            <!-- Mystery Generator Questions -->
+            <div class="vibe-check-section">
+                <h3 class="vibe-check-title">
+                    <i class="fas fa-magic me-2"></i>
+                    Vibe Check: Mystery Generator
+                </h3>
+                <p class="vibe-check-description">
+                    Answer these questions to unlock your unique vibe archetype and find your perfect squad!
+                </p>
+                
+                <!-- Question 1 -->
+                <div class="form-group">
+                    {{ form.question1.label(class="form-label question-label") }}
+                    <span class="required-asterisk">*</span>
+                    {{ form.question1() }}
+                    {% if form.question1.errors %}
+                        <div class="form-error">
+                            {% for error in form.question1.errors %}
+                                <small class="text-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                </small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                {{ form.vibes() }}
-                {% if form.vibes.errors %}
-                    <div class="form-error">
-                        {% for error in form.vibes.errors %}
-                            <small class="text-danger">
-                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
-                            </small>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                
+                <!-- Question 2 -->
+                <div class="form-group">
+                    {{ form.question2.label(class="form-label question-label") }}
+                    <span class="required-asterisk">*</span>
+                    {{ form.question2() }}
+                    {% if form.question2.errors %}
+                        <div class="form-error">
+                            {% for error in form.question2.errors %}
+                                <small class="text-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                </small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Question 3 -->
+                <div class="form-group">
+                    {{ form.question3.label(class="form-label question-label") }}
+                    <span class="required-asterisk">*</span>
+                    {{ form.question3() }}
+                    {% if form.question3.errors %}
+                        <div class="form-error">
+                            {% for error in form.question3.errors %}
+                                <small class="text-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                </small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Question 4 -->
+                <div class="form-group">
+                    {{ form.question4.label(class="form-label question-label") }}
+                    <span class="required-asterisk">*</span>
+                    {{ form.question4() }}
+                    {% if form.question4.errors %}
+                        <div class="form-error">
+                            {% for error in form.question4.errors %}
+                                <small class="text-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                </small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Question 5 -->
+                <div class="form-group">
+                    {{ form.question5.label(class="form-label question-label") }}
+                    <span class="required-asterisk">*</span>
+                    {{ form.question5() }}
+                    {% if form.question5.errors %}
+                        <div class="form-error">
+                            {% for error in form.question5.errors %}
+                                <small class="text-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                </small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Question 6 -->
+                <div class="form-group">
+                    {{ form.question6.label(class="form-label question-label") }}
+                    <span class="required-asterisk">*</span>
+                    {{ form.question6() }}
+                    {% if form.question6.errors %}
+                        <div class="form-error">
+                            {% for error in form.question6.errors %}
+                                <small class="text-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                </small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Question 7 -->
+                <div class="form-group">
+                    {{ form.question7.label(class="form-label question-label") }}
+                    <span class="required-asterisk">*</span>
+                    {{ form.question7() }}
+                    {% if form.question7.errors %}
+                        <div class="form-error">
+                            {% for error in form.question7.errors %}
+                                <small class="text-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                </small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
             </div>
 
             <!-- Country Field -->
