@@ -1,7 +1,7 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, session
 from app import app, db
 from models import Student
-from forms import StudentForm
+from forms import StudentForm, TeacherLoginForm
 import logging
 
 @app.route('/', methods=['GET', 'POST'])
@@ -44,6 +44,42 @@ def index():
 def success():
     """Success confirmation page"""
     return render_template('success.html')
+
+@app.route('/teacher', methods=['GET', 'POST'])
+def teacher():
+    """Teacher dashboard with password protection"""
+    form = TeacherLoginForm()
+    
+    # Check if user is already authenticated
+    if session.get('teacher_authenticated'):
+        # Fetch all students from database
+        students = Student.query.order_by(Student.created_at.desc()).all()
+        return render_template('teacher.html', students=students)
+    
+    # Handle password submission
+    if form.validate_on_submit():
+        if form.password.data == "1234":
+            # Set session flag for authentication
+            session['teacher_authenticated'] = True
+            session.permanent = True
+            
+            # Fetch all students from database
+            students = Student.query.order_by(Student.created_at.desc()).all()
+            logging.info(f"Teacher accessed dashboard. Found {len(students)} students.")
+            
+            return render_template('teacher.html', students=students)
+        else:
+            flash('Incorrect password. Please try again.', 'error')
+    
+    # Show login form
+    return render_template('teacher_login.html', form=form)
+
+@app.route('/teacher/logout')
+def teacher_logout():
+    """Log out teacher and clear session"""
+    session.pop('teacher_authenticated', None)
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('teacher'))
 
 @app.errorhandler(404)
 def not_found_error(error):

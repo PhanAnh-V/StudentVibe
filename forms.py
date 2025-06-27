@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField
+from wtforms import StringField, TextAreaField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, Length
 
 class StudentForm(FlaskForm):
@@ -31,5 +31,23 @@ class StudentForm(FlaskForm):
     
     submit = SubmitField(
         'Submit',
+        render_kw={'class': 'btn btn-primary btn-lg'}
+    )
+
+class TeacherLoginForm(FlaskForm):
+    """Form for teacher authentication"""
+    password = PasswordField(
+        'Teacher Password',
+        validators=[
+            DataRequired(message='Password is required')
+        ],
+        render_kw={
+            'placeholder': 'Enter teacher password',
+            'class': 'form-control'
+        }
+    )
+    
+    submit = SubmitField(
+        'Access Teacher Dashboard',
         render_kw={'class': 'btn btn-primary btn-lg'}
     )

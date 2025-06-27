@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Teacher Dashboard - Student Submissions{% endblock %}
+
+{% block content %}
+<div class="teacher-container">
+    <!-- Header -->
+    <div class="teacher-header">
+        <h1 class="teacher-title">
+            <i class="fas fa-chalkboard-teacher me-3"></i>
+            Teacher Dashboard
+        </h1>
+        <p class="teacher-description">
+            View and manage all student submissions
+        </p>
+        <div class="teacher-actions">
+            <a href="{{ url_for('teacher_logout') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Statistics Card -->
+    <div class="stats-card">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <i class="fas fa-users"></i>
+                    <h3>{{ students|length }}</h3>
+                    <p>Total Students</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <i class="fas fa-calendar-day"></i>
+                    <h3>{{ students|selectattr('created_at')|selectattr('created_at', 'equalto', students|map(attribute='created_at')|max)|list|length if students else 0 }}</h3>
+                    <p>Today's Submissions</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <i class="fas fa-clock"></i>
+                    <h3>{% if students %}{{ students[0].created_at.strftime('%H:%M') }}{% else %}--{% endif %}</h3>
+                    <p>Latest Submission</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Students List -->
+    <div class="students-section">
+        <h2 class="section-title">
+            <i class="fas fa-list me-2"></i>
+            Student Submissions
+        </h2>
+        
+        {% if students %}
+            <div class="students-grid">
+                {% for student in students %}
+                <div class="student-card">
+                    <div class="student-header">
+                        <h3 class="student-name">
+                            <i class="fas fa-user-graduate me-2"></i>
+                            {{ student.name }}
+                        </h3>
+                        <small class="student-date">
+                            <i class="fas fa-calendar me-1"></i>
+                            {{ student.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                        </small>
+                    </div>
+                    
+                    <div class="student-content">
+                        <h4 class="vibes-label">
+                            <i class="fas fa-heart me-2"></i>
+                            Interests & Vibes
+                        </h4>
+                        <div class="vibes-text">
+                            {{ student.vibes }}
+                        </div>
+                    </div>
+                    
+                    <div class="student-footer">
+                        <small class="text-muted">
+                            <i class="fas fa-hashtag me-1"></i>
+                            ID: {{ student.id }}
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <h3 class="empty-title">No Submissions Yet</h3>
+                <p class="empty-message">
+                    Student submissions will appear here once they start filling out the form.
+                </p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>
+                    View Student Form
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Footer -->
+    <div class="teacher-footer">
+        <div class="row text-center">
+            <div class="col-md-6">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Back to Student Form
+                </a>
+            </div>
+            <div class="col-md-6">
+                <button onclick="window.print()" class="btn btn-outline-secondary">
+                    <i class="fas fa-print me-2"></i>
+                    Print Submissions
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-refresh every 30 seconds to show new submissions
+    setInterval(function() {
+        window.location.reload();
+    }, 30000);
+    
+    // Print styles
+    const style = document.createElement('style');
+    style.textContent = `
+        @media print {
+            .teacher-actions, .teacher-footer, .btn { display: none !important; }
+            .student-card { break-inside: avoid; margin-bottom: 1rem; }
+            body { font-size: 12px; }
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Teacher Login{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <!-- Header -->
+    <div class="form-header">
+        <h1 class="form-title">
+            <i class="fas fa-chalkboard-teacher me-3"></i>
+            Teacher Dashboard
+        </h1>
+        <p class="form-description">
+            Please enter the teacher password to access the student submissions dashboard.
+        </p>
+    </div>
+    
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'info' }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'info-circle' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Login Form Card -->
+    <div class="form-card">
+        <form method="POST" novalidate>
+            {{ form.hidden_tag() }}
+            
+            <!-- Password Field -->
+            <div class="form-group">
+                {{ form.password.label(class="form-label") }}
+                <span class="required-asterisk">*</span>
+                {{ form.password() }}
+                {% if form.password.errors %}
+                    <div class="form-error">
+                        {% for error in form.password.errors %}
+                            <small class="text-danger">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                            </small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="form-group submit-group">
+                {{ form.submit() }}
+            </div>
+        </form>
+    </div>
+    
+    <!-- Footer -->
+    <div class="form-footer">
+        <small class="text-muted">
+            <i class="fas fa-lock me-1"></i>
+            Secure teacher access required to view student submissions.
+        </small>
+        <br><br>
+        <a href="{{ url_for('index') }}" class="text-muted">
+            <i class="fas fa-arrow-left me-1"></i>
+            Back to Student Form
+        </a>
+    </div>
+</div>
+{% endblock %}
