@@ -25,8 +25,42 @@ body {
     color: var(--text-dark);
     line-height: 1.6;
     margin: 0;
-    padding: 20px 0;
+    padding: 0;
     min-height: 100vh;
+}
+
+/* Navigation Styles */
+.navbar {
+    background-color: var(--white) !important;
+    border-bottom: 1px solid var(--border-grey);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.navbar-brand {
+    font-weight: 500;
+    color: var(--primary-blue) !important;
+    font-size: 1.25rem;
+}
+
+.navbar-brand:hover {
+    color: #1976D2 !important;
+}
+
+.nav-link {
+    color: var(--text-dark) !important;
+    font-weight: 400;
+    padding: 0.5rem 1rem !important;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--primary-blue) !important;
+    background-color: rgba(33, 150, 243, 0.1);
+    border-radius: 6px;
+}
+
+.main-content {
+    padding-top: 20px;
 }
 
 /* Container Styles */

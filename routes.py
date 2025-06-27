@@ -91,24 +91,33 @@ def create_vibe_squads():
     if len(students) < 2:
         return []
     
+    # If we have fewer than 3 students, create one small squad
+    if len(students) < 3:
+        return [{
+            'members': students,
+            'shared_interests': 'small group'
+        }]
+    
     # Define interest keywords to look for
     interest_keywords = [
-        'game', 'gaming', 'games', 'video games',
-        'music', 'musical', 'musician', 'singing', 'guitar', 'piano',
-        'anime', 'manga', 'japanese', 'cosplay',
-        'travel', 'traveling', 'adventure', 'explore',
-        'food', 'cooking', 'baking', 'cuisine', 'restaurant',
-        'sport', 'sports', 'football', 'basketball', 'soccer', 'tennis',
-        'art', 'drawing', 'painting', 'creative', 'design',
-        'reading', 'books', 'literature', 'novel',
-        'technology', 'tech', 'programming', 'coding', 'computer',
-        'fitness', 'gym', 'workout', 'exercise', 'running',
-        'photography', 'photo', 'camera',
-        'dance', 'dancing', 'ballet', 'hip hop'
+        'game', 'gaming', 'games', 'video games', 'gamer',
+        'music', 'musical', 'musician', 'singing', 'guitar', 'piano', 'song',
+        'anime', 'manga', 'japanese', 'cosplay', 'otaku',
+        'travel', 'traveling', 'adventure', 'explore', 'trip',
+        'food', 'cooking', 'baking', 'cuisine', 'restaurant', 'eat',
+        'sport', 'sports', 'football', 'basketball', 'soccer', 'tennis', 'athletic',
+        'art', 'drawing', 'painting', 'creative', 'design', 'sketch',
+        'reading', 'books', 'literature', 'novel', 'story',
+        'technology', 'tech', 'programming', 'coding', 'computer', 'software',
+        'fitness', 'gym', 'workout', 'exercise', 'running', 'health',
+        'photography', 'photo', 'camera', 'picture',
+        'dance', 'dancing', 'ballet', 'hip hop',
+        'movie', 'film', 'cinema', 'netflix',
+        'nature', 'outdoor', 'hiking', 'camping'
     ]
     
     # Create student interest profiles
-    student_interests = {}
+    student_data = []
     for student in students:
         interests = set()
         vibes_lower = student.vibes.lower()
@@ -118,95 +127,71 @@ def create_vibe_squads():
             if keyword in vibes_lower:
                 interests.add(keyword)
         
-        student_interests[student.id] = {
+        student_data.append({
             'student': student,
-            'interests': interests
-        }
+            'interests': interests,
+            'processed': False
+        })
     
-    # Group students by shared interests
-    interest_groups = defaultdict(list)
-    processed_students = set()
+    squads = []
     
-    for student_id, data in student_interests.items():
-        if student_id in processed_students:
+    # First pass: Group students with shared interests
+    for i, student_info in enumerate(student_data):
+        if student_info['processed'] or not student_info['interests']:
             continue
             
-        current_group = [data]
-        processed_students.add(student_id)
+        current_squad = [student_info]
+        student_info['processed'] = True
         
         # Find other students with similar interests
-        for other_id, other_data in student_interests.items():
-            if other_id in processed_students or len(current_group) >= 4:
+        for j, other_info in enumerate(student_data):
+            if i == j or other_info['processed'] or len(current_squad) >= 4:
                 continue
                 
             # Check for shared interests
-            shared_interests = data['interests'].intersection(other_data['interests'])
-            if shared_interests:
-                current_group.append(other_data)
-                processed_students.add(other_id)
+            shared = student_info['interests'].intersection(other_info['interests'])
+            if shared:
+                current_squad.append(other_info)
+                other_info['processed'] = True
         
-        if len(current_group) >= 2:
-            # Create a group key based on shared interests
-            all_interests = set()
-            for member in current_group:
-                all_interests.update(member['interests'])
-            group_key = ', '.join(sorted(list(all_interests))[:3]) or 'general'
-            interest_groups[group_key].extend(current_group)
-    
-    # Handle remaining students (those without shared interests)
-    remaining_students = []
-    for student_id, data in student_interests.items():
-        if student_id not in processed_students:
-            remaining_students.append(data)
-    
-    # Create squads with optimal sizes (3-4 members)
-    squads = []
-    
-    # Process interest groups
-    for interest, members in interest_groups.items():
-        while len(members) >= 3:
-            if len(members) >= 4:
-                # Create squad of 4
-                squad = members[:4]
-                members = members[4:]
-            else:
-                # Create squad of 3
-                squad = members[:3]
-                members = members[3:]
+        # Only create squad if we have enough members
+        if len(current_squad) >= 2:
+            shared_interests = set()
+            for member in current_squad:
+                shared_interests.update(member['interests'])
             
             squads.append({
-                'members': [m['student'] for m in squad],
-                'shared_interests': interest
+                'members': [m['student'] for m in current_squad],
+                'shared_interests': ', '.join(sorted(list(shared_interests))[:3]) or 'mixed interests'
             })
-        
-        # Add remaining members to the pool
-        remaining_students.extend(members)
     
-    # Group remaining students into squads
-    while len(remaining_students) >= 3:
-        if len(remaining_students) >= 4:
-            squad_size = 4
-        else:
-            squad_size = 3
-            
-        squad_members = remaining_students[:squad_size]
-        remaining_students = remaining_students[squad_size:]
+    # Second pass: Group remaining students
+    remaining = [s for s in student_data if not s['processed']]
+    
+    # Create squads from remaining students
+    while len(remaining) >= 3:
+        squad_size = min(4, len(remaining))
+        squad_members = remaining[:squad_size]
+        remaining = remaining[squad_size:]
         
+        for member in squad_members:
+            member['processed'] = True
+            
         squads.append({
             'members': [m['student'] for m in squad_members],
-            'shared_interests': 'mixed interests'
+            'shared_interests': 'diverse interests'
         })
     
-    # Handle final remaining students (less than 3)
-    if remaining_students:
+    # Handle final remaining students
+    if remaining:
         if squads and len(squads[-1]['members']) == 3:
             # Add to last squad if it has only 3 members
-            squads[-1]['members'].extend([m['student'] for m in remaining_students])
-        elif len(remaining_students) >= 2:
-            # Create a small squad if there are at least 2 students
+            squads[-1]['members'].extend([s['student'] for s in remaining])
+        else:
+            # Create final squad with remaining students
             squads.append({
-                'members': [m['student'] for m in remaining_students],
-                'shared_interests': 'mixed interests'
+                'members': [s['student'] for s in remaining],
+                'shared_interests': 'mixed group'
             })
     
     return squads
