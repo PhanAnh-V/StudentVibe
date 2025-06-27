@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Success - Information Submitted{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-card">
+        <!-- Success Icon -->
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        
+        <!-- Success Message -->
+        <div class="success-content">
+            <h1 class="success-title">Thank You!</h1>
+            <p class="success-message">
+                Your information has been successfully submitted. We appreciate you taking the time to share your details with us.
+            </p>
+            
+            <div class="success-details">
+                <div class="success-detail-item">
+                    <i class="fas fa-database me-2"></i>
+                    <span>Information securely stored</span>
+                </div>
+                <div class="success-detail-item">
+                    <i class="fas fa-clock me-2"></i>
+                    <span>Submitted just now</span>
+                </div>
+                <div class="success-detail-item">
+                    <i class="fas fa-user-graduate me-2"></i>
+                    <span>Ready for processing</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="success-actions">
+            <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i>
+                Submit Another Response
+            </a>
+        </div>
+    </div>
+    
+    <!-- Additional Information -->
+    <div class="success-footer">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="success-info-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <h6>Secure</h6>
+                    <small class="text-muted">Your data is protected</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="success-info-item">
+                    <i class="fas fa-users"></i>
+                    <h6>Community</h6>
+                    <small class="text-muted">Join our student network</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="success-info-item">
+                    <i class="fas fa-rocket"></i>
+                    <h6>Growth</h6>
+                    <small class="text-muted">Enhance your journey</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add entrance animation
+    const successCard = document.querySelector('.success-card');
+    if (successCard) {
+        successCard.style.opacity = '0';
+        successCard.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            successCard.style.transition = 'all 0.5s ease-out';
+            successCard.style.opacity = '1';
+            successCard.style.transform = 'translateY(0)';
+        }, 100);
+    }
+    
+    // Update timestamp
+    const timeElement = document.querySelector('.success-detail-item:nth-child(2) span');
+    if (timeElement) {
+        const now = new Date();
+        timeElement.textContent = `Submitted at ${now.toLocaleTimeString()}`;
+    }
+});
+</script>
+{% endblock %}

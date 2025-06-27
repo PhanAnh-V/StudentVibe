@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Student Information Form{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <!-- Header -->
+    <div class="form-header">
+        <h1 class="form-title">
+            <i class="fas fa-graduation-cap me-3"></i>
+            Student Information
+        </h1>
+        <p class="form-description">
+            Help us get to know you better! Share your name and tell us about your interests, hobbies, or anything that makes you unique.
+        </p>
+    </div>
+    
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'info' }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'info-circle' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Form Card -->
+    <div class="form-card">
+        <form method="POST" novalidate>
+            {{ form.hidden_tag() }}
+            
+            <!-- Name Field -->
+            <div class="form-group">
+                {{ form.name.label(class="form-label") }}
+                <span class="required-asterisk">*</span>
+                {{ form.name() }}
+                {% if form.name.errors %}
+                    <div class="form-error">
+                        {% for error in form.name.errors %}
+                            <small class="text-danger">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                            </small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Vibes Field -->
+            <div class="form-group">
+                {{ form.vibes.label(class="form-label") }}
+                <span class="required-asterisk">*</span>
+                <div class="form-help-text">
+                    <small class="text-muted">
+                        <i class="fas fa-lightbulb me-1"></i>
+                        Share your hobbies, favorite subjects, what motivates you, or anything you'd like us to know!
+                    </small>
+                </div>
+                {{ form.vibes() }}
+                {% if form.vibes.errors %}
+                    <div class="form-error">
+                        {% for error in form.vibes.errors %}
+                            <small class="text-danger">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                            </small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="form-group submit-group">
+                {{ form.submit() }}
+            </div>
+        </form>
+    </div>
+    
+    <!-- Footer -->
+    <div class="form-footer">
+        <small class="text-muted">
+            <i class="fas fa-shield-alt me-1"></i>
+            Your information is securely stored and will be used to enhance your learning experience.
+        </small>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Form enhancements
+document.addEventListener('DOMContentLoaded', function() {
+    // Character counter for textarea
+    const vibesField = document.getElementById('vibes');
+    if (vibesField) {
+        const maxLength = 500;
+        const counter = document.createElement('small');
+        counter.className = 'character-counter text-muted';
+        vibesField.parentNode.appendChild(counter);
+        
+        function updateCounter() {
+            const remaining = maxLength - vibesField.value.length;
+            counter.textContent = `${vibesField.value.length}/${maxLength} characters`;
+            counter.className = remaining < 50 ? 'character-counter text-warning' : 'character-counter text-muted';
+        }
+        
+        vibesField.addEventListener('input', updateCounter);
+        updateCounter();
+    }
+    
+    // Auto-dismiss alerts after 5 seconds
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        }, 5000);
+    });
+    
+    // Form validation feedback
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('input[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

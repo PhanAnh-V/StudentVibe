@@ -1,0 +1,441 @@
+/* Google Forms-inspired Student Information Form Styles */
+
+/* Root Variables */
+:root {
+    --primary-blue: #2196F3;
+    --secondary-green: #4CAF50;
+    --background-grey: #FAFAFA;
+    --text-dark: #212121;
+    --accent-orange: #FF5722;
+    --white: #FFFFFF;
+    --light-grey: #F5F5F5;
+    --border-grey: #E0E0E0;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --shadow-hover: rgba(0, 0, 0, 0.15);
+}
+
+/* Base Styles */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: var(--background-grey);
+    color: var(--text-dark);
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px 0;
+    min-height: 100vh;
+}
+
+/* Container Styles */
+.container-fluid {
+    max-width: 100%;
+    padding: 0 15px;
+}
+
+/* Form Container */
+.form-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Form Header */
+.form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 2rem 0;
+}
+
+.form-title {
+    color: var(--primary-blue);
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.form-description {
+    color: var(--text-dark);
+    font-size: 1.1rem;
+    margin: 0 auto;
+    max-width: 600px;
+    opacity: 0.8;
+}
+
+/* Form Card */
+.form-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px var(--shadow);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-grey);
+    transition: box-shadow 0.3s ease;
+}
+
+.form-card:hover {
+    box-shadow: 0 4px 20px var(--shadow-hover);
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 2rem;
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    display: inline-block;
+}
+
+.required-asterisk {
+    color: var(--accent-orange);
+    margin-left: 2px;
+    font-weight: bold;
+}
+
+/* Form Controls */
+.form-control {
+    border: 2px solid var(--border-grey);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background-color: var(--white);
+}
+
+.form-control:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+    outline: none;
+    background-color: var(--white);
+}
+
+.form-control:hover {
+    border-color: var(--primary-blue);
+}
+
+/* Textarea Specific */
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Form Help Text */
+.form-help-text {
+    margin-bottom: 0.5rem;
+}
+
+.form-help-text small {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Character Counter */
+.character-counter {
+    display: block;
+    margin-top: 0.25rem;
+    text-align: right;
+    font-size: 0.875rem;
+}
+
+/* Form Errors */
+.form-error {
+    margin-top: 0.5rem;
+}
+
+.form-error small {
+    display: block;
+    color: var(--accent-orange);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Submit Button */
+.submit-group {
+    text-align: center;
+    margin-top: 2.5rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    color: var(--white);
+    font-weight: 500;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 150px;
+    justify-content: center;
+}
+
+.btn-primary:hover {
+    background-color: #1976D2;
+    border-color: #1976D2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-primary:disabled {
+    background-color: #ccc;
+    border-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Form Footer */
+.form-footer {
+    text-align: center;
+    padding: 1rem;
+    color: var(--text-dark);
+    opacity: 0.7;
+}
+
+/* Flash Messages */
+.flash-messages {
+    margin-bottom: 1.5rem;
+}
+
+.alert {
+    border-radius: 8px;
+    border: none;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.alert-danger {
+    background-color: rgba(255, 87, 34, 0.1);
+    color: var(--accent-orange);
+    border-left: 4px solid var(--accent-orange);
+}
+
+.alert-info {
+    background-color: rgba(33, 150, 243, 0.1);
+    color: var(--primary-blue);
+    border-left: 4px solid var(--primary-blue);
+}
+
+/* Success Page Styles */
+.success-container {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.success-card {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px var(--shadow);
+    padding: 3rem 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-grey);
+}
+
+.success-icon {
+    margin-bottom: 1.5rem;
+}
+
+.success-icon i {
+    font-size: 4rem;
+    color: var(--secondary-green);
+    animation: successPulse 2s ease-in-out infinite;
+}
+
+@keyframes successPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.success-title {
+    color: var(--text-dark);
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+}
+
+.success-message {
+    color: var(--text-dark);
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.8;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.success-details {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: var(--light-grey);
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.success-detail-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.5rem 0;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+.success-detail-item i {
+    color: var(--secondary-green);
+    width: 20px;
+}
+
+.success-actions {
+    margin-top: 2rem;
+}
+
+.success-footer {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px var(--shadow);
+}
+
+.success-info-item {
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.success-info-item i {
+    font-size: 2rem;
+    color: var(--primary-blue);
+    margin-bottom: 0.5rem;
+}
+
+.success-info-item h6 {
+    color: var(--text-dark);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 10px;
+    }
+    
+    .form-card {
+        padding: 1.5rem;
+        margin: 0 0 1rem 0;
+    }
+    
+    .form-title {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .form-description {
+        font-size: 1rem;
+        padding: 0 1rem;
+    }
+    
+    .btn-primary {
+        width: 100%;
+        padding: 14px;
+    }
+    
+    .success-card {
+        padding: 2rem 1rem;
+    }
+    
+    .success-title {
+        font-size: 2rem;
+    }
+    
+    .success-details {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px 0;
+    }
+    
+    .form-container {
+        padding: 5px;
+    }
+    
+    .form-card {
+        padding: 1rem;
+        border-radius: 8px;
+    }
+    
+    .form-title {
+        font-size: 1.75rem;
+    }
+    
+    .success-icon i {
+        font-size: 3rem;
+    }
+    
+    .success-title {
+        font-size: 1.75rem;
+    }
+}
+
+/* Loading States */
+.btn-primary:disabled .fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Focus Styles for Accessibility */
+.form-control:focus,
+.btn:focus {
+    outline: 2px solid var(--primary-blue);
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .form-card {
+        border: 2px solid var(--text-dark);
+    }
+    
+    .form-control {
+        border-width: 2px;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
