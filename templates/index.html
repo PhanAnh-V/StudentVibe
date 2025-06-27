@@ -6,13 +6,24 @@
 <div class="form-container">
     <!-- Header -->
     <div class="form-header">
-        <h1 class="form-title">
-            <i class="fas fa-graduation-cap me-3"></i>
-            Student Information
-        </h1>
-        <p class="form-description">
-            Help us get to know you better! Share your name and tell us about your interests, hobbies, or anything that makes you unique.
-        </p>
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+                <h1 class="form-title">
+                    <i class="fas fa-graduation-cap me-3"></i>
+                    Student Information
+                </h1>
+                <p class="form-description">
+                    Help us get to know you better! Share your name and tell us about your interests, hobbies, or anything that makes you unique.
+                </p>
+            </div>
+            <div class="text-end">
+                <a href="{{ url_for('student_login') }}" class="btn btn-success btn-lg">
+                    <i class="fas fa-user-circle me-2"></i>
+                    Student Login
+                </a>
+                <p class="small text-muted mt-2 mb-0">Already registered? Access your profile</p>
+            </div>
+        </div>
     </div>
     
     <!-- Flash Messages -->

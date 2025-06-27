@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from app import app, db
 from models import Student
-from forms import StudentForm, TeacherLoginForm
+from forms import StudentForm, TeacherLoginForm, StudentLoginForm
 import logging
 import re
 from collections import Counter, defaultdict
@@ -58,6 +58,56 @@ def index():
 def success():
     """Success confirmation page"""
     return render_template('success.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def student_login():
+    """Student login using unique ID"""
+    form = StudentLoginForm()
+    
+    if form.validate_on_submit():
+        student_id = form.student_id.data
+        student = Student.query.get(student_id)
+        
+        if student:
+            # Store student ID in session for authentication
+            session['student_id'] = student_id
+            flash(f'Welcome back, {student.name}!', 'success')
+            return redirect(url_for('student_profile', id=student_id))
+        else:
+            flash('Student ID not found. Please check your ID and try again.', 'error')
+    
+    return render_template('student_login.html', form=form)
+
+@app.route('/profile/<int:id>')
+def student_profile(id):
+    """Student private profile page"""
+    # Check if student is logged in and accessing their own profile
+    if 'student_id' not in session or session['student_id'] != id:
+        flash('Please login to access your profile.', 'error')
+        return redirect(url_for('student_login'))
+    
+    student = Student.query.get_or_404(id)
+    
+    # Get archetype information
+    archetype_info = get_creative_vibe_archetype(student)
+    
+    # Get core interests
+    core_sparks = get_core_sparks(student.get_combined_answers())
+    
+    # Get interest categories
+    interests = get_interest_categories_with_colors(student.get_combined_answers())
+    
+    return render_template('profile.html', 
+                         student=student, 
+                         archetype=archetype_info,
+                         core_sparks=core_sparks,
+                         interests=interests)
+
+@app.route('/logout_student', methods=['POST'])
+def logout_student():
+    """Logout student and clear session"""
+    session.pop('student_id', None)
+    return '', 200
 
 @app.route('/teacher', methods=['GET', 'POST'])
 def teacher():

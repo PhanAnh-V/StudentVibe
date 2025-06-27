@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, PasswordField, SelectField
-from wtforms.validators import DataRequired, Length
+from wtforms import StringField, SelectField, PasswordField, SubmitField, IntegerField
+from wtforms.validators import DataRequired, Length, NumberRange
 
 class StudentForm(FlaskForm):
     """Form for collecting student information"""
@@ -16,7 +16,7 @@ class StudentForm(FlaskForm):
         }
     )
     
-    # Mystery Generator Questions - 7 Core Vibe Questions
+    # Mystery Generator Questions
     question1 = StringField(
         'What\'s your go-to activity when you have absolutely nothing planned?',
         validators=[
@@ -151,4 +151,23 @@ class TeacherLoginForm(FlaskForm):
     submit = SubmitField(
         'Access Teacher Dashboard',
         render_kw={'class': 'btn btn-primary btn-lg'}
+    )
+
+class StudentLoginForm(FlaskForm):
+    """Form for student login using their unique ID"""
+    student_id = IntegerField(
+        'Your Student ID',
+        validators=[
+            DataRequired(message='Student ID is required'),
+            NumberRange(min=1, message='Please enter a valid Student ID')
+        ],
+        render_kw={
+            'placeholder': 'Enter your unique Student ID',
+            'class': 'form-control'
+        }
+    )
+    
+    submit = SubmitField(
+        'Access My Profile',
+        render_kw={'class': 'btn btn-success btn-lg'}
     )

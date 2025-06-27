@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ student.name }} - My Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <i class="fas fa-users me-2"></i>Vibe Squad
+                </a>
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="{{ url_for('index') }}">
+                        <i class="fas fa-home me-1"></i>Home
+                    </a>
+                    <a class="nav-link" href="{{ url_for('squads') }}">
+                        <i class="fas fa-users me-1"></i>View Squads
+                    </a>
+                    <a class="nav-link" href="{{ url_for('student_recommendations', student_id=student.id) }}">
+                        <i class="fas fa-lightbulb me-1"></i>My Recommendations
+                    </a>
+                    <a class="nav-link text-danger" href="#" onclick="logout()">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Welcome Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 bg-gradient-primary text-white">
+                    <div class="card-body text-center py-4">
+                        <h1 class="display-5 fw-bold mb-2">Welcome, {{ student.name }}!</h1>
+                        <p class="lead mb-0">Your Personal Vibe Profile</p>
+                        <small class="opacity-75">Student ID: {{ student.id }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Vibe Card -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-id-card me-2"></i>My Vibe Card
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Archetype Display -->
+                        <div class="text-center mb-4">
+                            <div class="archetype-icon-large mb-3">
+                                <i class="{{ archetype.icon }} fa-4x text-primary"></i>
+                            </div>
+                            <h3 class="archetype-name text-primary">{{ archetype.name }}</h3>
+                            <p class="archetype-description fst-italic">{{ archetype.description }}</p>
+                        </div>
+
+                        <!-- Core Sparks -->
+                        {% if core_sparks %}
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3">
+                                <i class="fas fa-hashtag me-2"></i>Core Sparks
+                            </h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for spark in core_sparks %}
+                                <span class="badge bg-secondary fs-6 px-3 py-2">
+                                    {{ spark.english }} ({{ spark.japanese }})
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Interest Categories -->
+                        {% if interests %}
+                        <div class="mb-3">
+                            <h5 class="fw-bold mb-3">
+                                <i class="fas fa-heart me-2"></i>Interest Categories
+                            </h5>
+                            <div class="row g-2">
+                                {% for interest in interests %}
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center">
+                                        <div class="interest-color-dot me-2" style="background-color: {{ interest.color }}; width: 12px; height: 12px; border-radius: 50%;"></div>
+                                        <small class="fw-semibold">{{ interest.name }}</small>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Personal Info -->
+                        <div class="border-top pt-3">
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Country</small>
+                                    <span class="fw-semibold">{{ student.country }}</span>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Gender</small>
+                                    <span class="fw-semibold">{{ student.gender }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questionnaire Answers -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-clipboard-question me-2"></i>My Mystery Generator Answers
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="mystery-answers">
+                            {% if student.question1 %}
+                            <div class="answer-item mb-3">
+                                <h6 class="question-text fw-bold text-primary">
+                                    What's your go-to activity when you have absolutely nothing planned?
+                                </h6>
+                                <p class="answer-text">{{ student.question1 }}</p>
+                            </div>
+                            {% endif %}
+
+                            {% if student.question2 %}
+                            <div class="answer-item mb-3">
+                                <h6 class="question-text fw-bold text-primary">
+                                    If you could master any skill instantly, what would it be?
+                                </h6>
+                                <p class="answer-text">{{ student.question2 }}</p>
+                            </div>
+                            {% endif %}
+
+                            {% if student.question3 %}
+                            <div class="answer-item mb-3">
+                                <h6 class="question-text fw-bold text-primary">
+                                    What's something you could talk about for hours without getting bored?
+                                </h6>
+                                <p class="answer-text">{{ student.question3 }}</p>
+                            </div>
+                            {% endif %}
+
+                            {% if student.question4 %}
+                            <div class="answer-item mb-3">
+                                <h6 class="question-text fw-bold text-primary">
+                                    Describe your ideal Friday night in 5 words or less.
+                                </h6>
+                                <p class="answer-text">{{ student.question4 }}</p>
+                            </div>
+                            {% endif %}
+
+                            {% if student.question5 %}
+                            <div class="answer-item mb-3">
+                                <h6 class="question-text fw-bold text-primary">
+                                    What's the weirdest thing you've ever been obsessed with?
+                                </h6>
+                                <p class="answer-text">{{ student.question5 }}</p>
+                            </div>
+                            {% endif %}
+
+                            {% if student.question6 %}
+                            <div class="answer-item mb-3">
+                                <h6 class="question-text fw-bold text-primary">
+                                    If your energy had a soundtrack, what genre would it be?
+                                </h6>
+                                <p class="answer-text">{{ student.question6 }}</p>
+                            </div>
+                            {% endif %}
+
+                            {% if student.question7 %}
+                            <div class="answer-item mb-3">
+                                <h6 class="question-text fw-bold text-primary">
+                                    What's your secret superpower that nobody knows about?
+                                </h6>
+                                <p class="answer-text">{{ student.question7 }}</p>
+                            </div>
+                            {% endif %}
+
+                            <!-- Fallback for legacy vibes field -->
+                            {% if not student.question1 and student.vibes %}
+                            <div class="answer-item mb-3">
+                                <h6 class="question-text fw-bold text-primary">
+                                    Original Vibes Response
+                                </h6>
+                                <p class="answer-text">{{ student.vibes }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 bg-light">
+                    <div class="card-body text-center py-3">
+                        <h5 class="mb-3">Explore More</h5>
+                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+                            <a href="{{ url_for('squads') }}" class="btn btn-primary">
+                                <i class="fas fa-users me-2"></i>View All Squads
+                            </a>
+                            <a href="{{ url_for('student_recommendations', student_id=student.id) }}" class="btn btn-success">
+                                <i class="fas fa-lightbulb me-2"></i>Get AI Recommendations
+                            </a>
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-home me-2"></i>Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Clear session and redirect to home
+                fetch('/logout_student', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                }).then(() => {
+                    window.location.href = "{{ url_for('index') }}";
+                });
+            }
+        }
+    </script>
+</body>
+</html>
