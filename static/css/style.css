@@ -326,9 +326,14 @@ body {
 /* Dashboard Grid Layout */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 60% 40%;
+    grid-template-columns: 1fr 0.67fr; /* 60% / 40% ratio using fr units */
     gap: 2rem;
     margin-top: 2rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    clear: both;
 }
 
 .dashboard-column {
@@ -337,14 +342,20 @@ body {
     padding: 1.5rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     border: 1px solid #e9ecef;
+    min-width: 0; /* Prevent overflow */
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: static; /* Ensure no absolute positioning conflicts */
+    box-sizing: border-box;
+    height: fit-content;
 }
 
 .vibe-squads-column {
-    order: 1;
+    grid-area: 1 / 1 / 2 / 2; /* Explicit grid positioning */
 }
 
 .student-submissions-column {
-    order: 2;
+    grid-area: 1 / 2 / 2 / 3; /* Explicit grid positioning */
 }
 
 /* Remove old tab navigation styles */
@@ -352,6 +363,51 @@ body {
 .tab-content,
 .tab-pane {
     display: none !important;
+}
+
+/* Ensure content within columns doesn't overflow */
+.dashboard-column * {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Specific fixes for content sections */
+.squads-section,
+.students-section {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.students-grid,
+.squads-grid {
+    display: grid;
+    gap: 1rem;
+    width: 100%;
+    grid-template-columns: 1fr;
+}
+
+.student-card,
+.squad-card {
+    max-width: 100%;
+    word-wrap: break-word;
+    position: relative;
+    z-index: 2;
+}
+
+/* Additional isolation for column content */
+.dashboard-column > * {
+    width: 100%;
+    max-width: 100%;
+    contain: layout style;
+}
+
+/* Prevent any floating or absolute positioning conflicts */
+.dashboard-grid::after {
+    content: "";
+    display: table;
+    clear: both;
 }
 
 /* Mobile responsive behavior */
@@ -841,6 +897,9 @@ textarea.form-control {
     max-width: 100%;
     margin: 0 auto;
     padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .teacher-header {
