@@ -58,8 +58,22 @@
     
     <!-- Main Dashboard Content -->
     <div class="dashboard-content">
+        <!-- View Toggle Buttons -->
+        <div class="view-toggle-section">
+            <div class="toggle-buttons">
+                <button id="viewSquadsBtn" class="toggle-btn active" onclick="showView('squads')">
+                    <i class="fas fa-users me-2"></i>
+                    View Vibe Squads
+                </button>
+                <button id="viewSubmissionsBtn" class="toggle-btn" onclick="showView('submissions')">
+                    <i class="fas fa-list me-2"></i>
+                    View All Submissions
+                </button>
+            </div>
+        </div>
+        
         <!-- Vibe Squads Section -->
-        <div class="dashboard-section">
+        <div id="squadsView" class="dashboard-section view-content">
             <div class="squads-section">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="section-title">
@@ -200,7 +214,7 @@
         </div>
         
         <!-- All Student Submissions Section -->
-        <div class="dashboard-section">
+        <div id="submissionsView" class="dashboard-section view-content" style="display: none;">
             <div class="students-section">
         <h2 class="section-title">
             <i class="fas fa-list me-2"></i>
@@ -477,8 +491,37 @@
 <script>
 let deleteStudentId = null;
 
+// View Toggle Functionality
+function showView(viewType) {
+    const squadsView = document.getElementById('squadsView');
+    const submissionsView = document.getElementById('submissionsView');
+    const squadsBtn = document.getElementById('viewSquadsBtn');
+    const submissionsBtn = document.getElementById('viewSubmissionsBtn');
+    
+    if (viewType === 'squads') {
+        // Show squads, hide submissions
+        squadsView.style.display = 'block';
+        submissionsView.style.display = 'none';
+        
+        // Update button states
+        squadsBtn.classList.add('active');
+        submissionsBtn.classList.remove('active');
+    } else if (viewType === 'submissions') {
+        // Show submissions, hide squads
+        squadsView.style.display = 'none';
+        submissionsView.style.display = 'block';
+        
+        // Update button states
+        squadsBtn.classList.remove('active');
+        submissionsBtn.classList.add('active');
+    }
+}
+
 // Dashboard functionality
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize with squads view visible
+    showView('squads');
+    
     // Filter functionality
     const countryFilter = document.getElementById('countryFilter');
     const genderFilter = document.getElementById('genderFilter');
