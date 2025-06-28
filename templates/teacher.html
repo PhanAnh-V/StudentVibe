@@ -14,9 +14,13 @@
             View and manage all student submissions
         </p>
         <div class="teacher-actions">
+            <a href="{{ url_for('add_student') }}" class="btn btn-primary me-2">
+                <i class="fas fa-user-plus me-2"></i>
+                Add New Student
+            </a>
             <a href="{{ url_for('index') }}" class="btn btn-outline-primary me-2">
-                <i class="fas fa-arrow-left me-2"></i>
-                Back to Student Form
+                <i class="fas fa-home me-2"></i>
+                Home
             </a>
             <a href="{{ url_for('teacher_logout') }}" class="btn btn-outline-secondary">
                 <i class="fas fa-sign-out-alt me-2"></i>
@@ -258,6 +262,7 @@
                             <h3 class="student-name">
                                 <i class="fas fa-user-graduate me-2"></i>
                                 {{ student.name }}
+                                <span class="student-id-badge">ID: {{ student.id }}</span>
                             </h3>
                             <button class="btn-delete" onclick="confirmDelete({{ student.id }}, '{{ student.name }}')">
                                 <i class="fas fa-trash-alt"></i>

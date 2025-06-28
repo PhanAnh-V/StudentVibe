@@ -17,7 +17,7 @@ def success():
     """Success confirmation page"""
     return render_template('success.html')
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login/student', methods=['GET', 'POST'])
 def student_login():
     """Student login using unique ID"""
     form = StudentLoginForm()
@@ -35,6 +35,22 @@ def student_login():
             flash('Student ID not found. Please check your ID and try again.', 'error')
     
     return render_template('student_login.html', form=form)
+
+@app.route('/login/teacher', methods=['GET', 'POST'])
+def teacher_login():
+    """Teacher login with password authentication"""
+    form = TeacherLoginForm()
+    
+    if form.validate_on_submit():
+        password = form.password.data
+        if password == "1234":  # Teacher password
+            session['teacher_authenticated'] = True
+            flash('Welcome to the teacher dashboard!', 'success')
+            return redirect(url_for('teacher'))
+        else:
+            flash('Invalid password. Please try again.', 'error')
+    
+    return render_template('teacher_login.html', form=form)
 
 @app.route('/profile/<int:id>')
 def student_profile(id):
@@ -67,59 +83,95 @@ def logout_student():
     session.pop('student_id', None)
     return '', 200
 
-@app.route('/teacher', methods=['GET', 'POST'])
-def teacher():
-    """Teacher dashboard with password protection"""
-    form = TeacherLoginForm()
+@app.route('/teacher/add-student', methods=['GET', 'POST'])
+def add_student():
+    """Teacher adds new student with auto-generated ID"""
+    # Check authentication
+    if not session.get('teacher_authenticated'):
+        flash('Please login to access this feature.', 'error')
+        return redirect(url_for('teacher_login'))
     
-    # Check if user is already authenticated
-    if session.get('teacher_authenticated'):
-        # Fetch all students from database
-        students = Student.query.order_by(Student.created_at.desc()).all()
-        return render_template('teacher.html', students=students)
+    form = StudentForm()
     
-    # Handle password submission
     if form.validate_on_submit():
-        if form.password.data == "1234":
-            # Set session flag for authentication
-            session['teacher_authenticated'] = True
-            session.permanent = True
+        try:
+            # Create new student record with mystery generator answers
+            combined_vibes = f"{form.question1.data} {form.question2.data} {form.question3.data} {form.question4.data} {form.question5.data} {form.question6.data} {form.question7.data}"
             
-            # Fetch all students from database
-            students = Student.query.order_by(Student.created_at.desc()).all()
-            logging.info(f"Teacher accessed dashboard. Found {len(students)} students.")
+            student = Student(
+                name=form.name.data.strip(),
+                vibes=combined_vibes,  # Combined for backward compatibility
+                question1=form.question1.data.strip(),
+                question2=form.question2.data.strip(), 
+                question3=form.question3.data.strip(),
+                question4=form.question4.data.strip(),
+                question5=form.question5.data.strip(),
+                question6=form.question6.data.strip(),
+                question7=form.question7.data.strip(),
+                country=form.country.data,
+                gender=form.gender.data
+            )
             
-            # Get solo students and AI advice from session
-            solo_students = session.get('solo_students', [])
-            ai_advice = {}
-            for student in solo_students:
-                advice_key = f'ai_advice_{student["id"]}'
-                if advice_key in session:
-                    ai_advice[student['id']] = session[advice_key]
+            # Add to database and get auto-generated ID
+            db.session.add(student)
+            db.session.commit()
             
-            # Add interest visualization data to students
-            students_with_interests = []
-            for student in students:
-                student_dict = {
-                    'id': student.id,
-                    'name': student.name,
-                    'vibes': student.vibes,
-                    'country': student.country,
-                    'gender': student.gender,
-                    'created_at': student.created_at,
-                    'interests': get_interest_categories_with_colors(student.vibes)
-                }
-                students_with_interests.append(student_dict)
+            logging.info(f"Teacher added new student: {student.name} (ID: {student.id})")
+            flash(f'Student {student.name} added successfully! Student ID: {student.id}', 'success')
+            return redirect(url_for('teacher'))
             
-            return render_template('teacher.html', 
-                                 students=students_with_interests,
-                                 solo_students=solo_students,
-                                 ai_advice=ai_advice)
-        else:
-            flash('Incorrect password. Please try again.', 'error')
+        except Exception as e:
+            # Handle database errors
+            db.session.rollback()
+            logging.error(f"Database error: {str(e)}")
+            flash('There was an error adding the student. Please try again.', 'error')
     
-    # Show login form
-    return render_template('teacher_login.html', form=form)
+    elif request.method == 'POST':
+        # Handle form validation errors
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f'{getattr(form, field).label.text}: {error}', 'error')
+    
+    return render_template('add_student.html', form=form)
+
+@app.route('/teacher')
+def teacher():
+    """Teacher dashboard with authentication required"""
+    # Check if teacher is authenticated
+    if not session.get('teacher_authenticated'):
+        flash('Please login to access the teacher dashboard.', 'error')
+        return redirect(url_for('teacher_login'))
+    
+    # Fetch all students from database
+    students = Student.query.order_by(Student.created_at.desc()).all()
+    logging.info(f"Teacher accessed dashboard. Found {len(students)} students.")
+    
+    # Get solo students and AI advice from session
+    solo_students = session.get('solo_students', [])
+    ai_advice = {}
+    for student in solo_students:
+        advice_key = f'ai_advice_{student["id"]}'
+        if advice_key in session:
+            ai_advice[student['id']] = session[advice_key]
+    
+    # Add interest visualization data to students
+    students_with_interests = []
+    for student in students:
+        student_dict = {
+            'id': student.id,
+            'name': student.name,
+            'vibes': student.vibes or student.get_combined_answers(),
+            'country': student.country,
+            'gender': student.gender,
+            'created_at': student.created_at,
+            'interests': get_interest_categories_with_colors(student.vibes or student.get_combined_answers())
+        }
+        students_with_interests.append(student_dict)
+    
+    return render_template('teacher.html', 
+                         students=students_with_interests,
+                         solo_students=solo_students,
+                         ai_advice=ai_advice)
 
 @app.route('/teacher/logout')
 def teacher_logout():

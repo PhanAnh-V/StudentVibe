@@ -302,6 +302,27 @@ body {
     }
 }
 
+/* Student ID Badge Styling */
+.student-id-badge {
+    background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    margin-left: 0.5rem;
+    display: inline-block;
+    text-shadow: none;
+}
+
+.student-name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
 /* Form Container */
 .form-container {
     max-width: 100%;
