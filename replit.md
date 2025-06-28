@@ -138,6 +138,8 @@ This is a Flask-based web application designed to collect and store student info
 - June 28, 2025. Implemented secure login system with teacher-controlled student registration
 - June 28, 2025. Added auto-generated Student IDs and display badges in teacher dashboard
 - June 28, 2025. Changed teacher dashboard from two-column grid to single vertical column layout
+- June 28, 2025. Added view toggle buttons with JavaScript tabs for switching between Vibe Squads and All Submissions
+- June 28, 2025. Removed "View Squads" navigation link from login pages (student and teacher)
 
 ## User Preferences
 
