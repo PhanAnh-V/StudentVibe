@@ -7,52 +7,10 @@ import re
 from collections import Counter, defaultdict
 from ai_recommendations import generate_interest_recommendations, enhance_archetype_with_ai, analyze_compatibility_with_ai
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    """Homepage with student information form"""
-    form = StudentForm()
-    
-    if form.validate_on_submit():
-        try:
-            # Create new student record with mystery generator answers
-            combined_vibes = f"{form.question1.data} {form.question2.data} {form.question3.data} {form.question4.data} {form.question5.data} {form.question6.data} {form.question7.data}"
-            
-            student = Student(
-                name=form.name.data.strip(),
-                vibes=combined_vibes,  # Combined for backward compatibility
-                question1=form.question1.data.strip(),
-                question2=form.question2.data.strip(), 
-                question3=form.question3.data.strip(),
-                question4=form.question4.data.strip(),
-                question5=form.question5.data.strip(),
-                question6=form.question6.data.strip(),
-                question7=form.question7.data.strip(),
-                country=form.country.data,
-                gender=form.gender.data
-            )
-            
-            # Add to database
-            db.session.add(student)
-            db.session.commit()
-            
-            logging.info(f"New student added: {student.name}")
-            
-            # Redirect to success page
-            return redirect(url_for('success'))
-            
-        except Exception as e:
-            # Handle database errors
-            db.session.rollback()
-            logging.error(f"Database error: {str(e)}")
-            flash('There was an error saving your information. Please try again.', 'error')
-    
-    elif request.method == 'POST':
-        # Handle form validation errors
-        for field, errors in form.errors.items():
-            for error in errors:
-                flash(f'{getattr(form, field).label.text}: {error}', 'error')
-    
-    return render_template('index.html', form=form)
+    """Clean landing page with login options"""
+    return render_template('index.html')
 
 @app.route('/success')
 def success():

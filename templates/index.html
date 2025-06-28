@@ -1,281 +1,108 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Check - Student Squad Formation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="text-center py-5">
+            <h1 class="display-3 fw-bold text-primary mb-2">
+                <i class="fas fa-bolt me-3"></i>Vibe Check
+            </h1>
+            <p class="lead text-muted">Discover your creative archetype and find your squad</p>
+        </header>
 
-{% block title %}Student Information Form{% endblock %}
+        <!-- Main Content -->
+        <main class="row justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+                <div class="landing-card text-center">
+                    <!-- Welcome Message -->
+                    <div class="welcome-section mb-5">
+                        <h2 class="display-6 fw-bold mb-4">Welcome to the Ultimate Student Experience</h2>
+                        <p class="fs-5 text-muted mb-4">
+                            Take our Mystery Generator questionnaire to discover your unique creative archetype 
+                            and get matched with like-minded students in your perfect Vibe Squad.
+                        </p>
+                        <div class="row text-center mb-4">
+                            <div class="col-md-4 mb-3">
+                                <div class="feature-icon">
+                                    <i class="fas fa-magic fa-2x text-primary mb-2"></i>
+                                    <h6 class="fw-bold">Mystery Generator</h6>
+                                    <small class="text-muted">7 fun questions reveal your vibe</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="feature-icon">
+                                    <i class="fas fa-user-astronaut fa-2x text-success mb-2"></i>
+                                    <h6 class="fw-bold">Creative Archetypes</h6>
+                                    <small class="text-muted">14 unique personality types</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="feature-icon">
+                                    <i class="fas fa-users fa-2x text-warning mb-2"></i>
+                                    <h6 class="fw-bold">Vibe Squads</h6>
+                                    <small class="text-muted">Find your perfect team</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-{% block content %}
-<div class="form-container">
-    <!-- Header -->
-    <div class="form-header">
-        <div class="d-flex justify-content-between align-items-start mb-3">
-            <div>
-                <h1 class="form-title">
-                    <i class="fas fa-graduation-cap me-3"></i>
-                    Student Information
-                </h1>
-                <p class="form-description">
-                    Help us get to know you better! Share your name and tell us about your interests, hobbies, or anything that makes you unique.
-                </p>
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <!-- Login Buttons -->
+                    <div class="login-buttons">
+                        <h4 class="mb-4 text-dark">Choose Your Path</h4>
+                        <div class="d-grid gap-3">
+                            <a href="{{ url_for('student_login') }}" class="btn btn-primary btn-lg py-3">
+                                <i class="fas fa-user-circle me-3"></i>
+                                <span class="fw-bold">Student Login</span>
+                                <div class="small opacity-75 mt-1">Access your profile and vibe card</div>
+                            </a>
+                            <a href="{{ url_for('teacher') }}" class="btn btn-success btn-lg py-3">
+                                <i class="fas fa-chalkboard-teacher me-3"></i>
+                                <span class="fw-bold">Teacher Login</span>
+                                <div class="small opacity-75 mt-1">Manage students and create squads</div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Additional Links -->
+                    <div class="additional-links mt-5 pt-4 border-top">
+                        <p class="text-muted mb-3">Explore the community</p>
+                        <a href="{{ url_for('squads') }}" class="btn btn-outline-primary me-3">
+                            <i class="fas fa-eye me-2"></i>View All Squads
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="text-end">
-                <a href="{{ url_for('student_login') }}" class="btn btn-success btn-lg">
-                    <i class="fas fa-user-circle me-2"></i>
-                    Student Login
-                </a>
-                <p class="small text-muted mt-2 mb-0">Already registered? Access your profile</p>
-            </div>
-        </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center py-4 mt-5">
+            <p class="text-muted small mb-0">
+                <i class="fas fa-heart text-danger me-1"></i>
+                Connecting students through shared vibes and interests
+            </p>
+        </footer>
     </div>
-    
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="flash-messages">
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else 'info' }} alert-dismissible fade show" role="alert">
-                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'info-circle' }} me-2"></i>
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-    
-    <!-- Form Card -->
-    <div class="form-card">
-        <form method="POST" novalidate>
-            {{ form.hidden_tag() }}
-            
-            <!-- Name Field -->
-            <div class="form-group">
-                {{ form.name.label(class="form-label") }}
-                <span class="required-asterisk">*</span>
-                {{ form.name() }}
-                {% if form.name.errors %}
-                    <div class="form-error">
-                        {% for error in form.name.errors %}
-                            <small class="text-danger">
-                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
-                            </small>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <!-- Mystery Generator Questions -->
-            <div class="vibe-check-section">
-                <h3 class="vibe-check-title">
-                    <i class="fas fa-magic me-2"></i>
-                    Vibe Check: Mystery Generator
-                </h3>
-                <p class="vibe-check-description">
-                    Answer these questions to unlock your unique vibe archetype and find your perfect squad!
-                </p>
-                
-                <!-- Question 1 -->
-                <div class="form-group">
-                    {{ form.question1.label(class="form-label question-label") }}
-                    <span class="required-asterisk">*</span>
-                    {{ form.question1() }}
-                    {% if form.question1.errors %}
-                        <div class="form-error">
-                            {% for error in form.question1.errors %}
-                                <small class="text-danger">
-                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
-                                </small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <!-- Question 2 -->
-                <div class="form-group">
-                    {{ form.question2.label(class="form-label question-label") }}
-                    <span class="required-asterisk">*</span>
-                    {{ form.question2() }}
-                    {% if form.question2.errors %}
-                        <div class="form-error">
-                            {% for error in form.question2.errors %}
-                                <small class="text-danger">
-                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
-                                </small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <!-- Question 3 -->
-                <div class="form-group">
-                    {{ form.question3.label(class="form-label question-label") }}
-                    <span class="required-asterisk">*</span>
-                    {{ form.question3() }}
-                    {% if form.question3.errors %}
-                        <div class="form-error">
-                            {% for error in form.question3.errors %}
-                                <small class="text-danger">
-                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
-                                </small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <!-- Question 4 -->
-                <div class="form-group">
-                    {{ form.question4.label(class="form-label question-label") }}
-                    <span class="required-asterisk">*</span>
-                    {{ form.question4() }}
-                    {% if form.question4.errors %}
-                        <div class="form-error">
-                            {% for error in form.question4.errors %}
-                                <small class="text-danger">
-                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
-                                </small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <!-- Question 5 -->
-                <div class="form-group">
-                    {{ form.question5.label(class="form-label question-label") }}
-                    <span class="required-asterisk">*</span>
-                    {{ form.question5() }}
-                    {% if form.question5.errors %}
-                        <div class="form-error">
-                            {% for error in form.question5.errors %}
-                                <small class="text-danger">
-                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
-                                </small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <!-- Question 6 -->
-                <div class="form-group">
-                    {{ form.question6.label(class="form-label question-label") }}
-                    <span class="required-asterisk">*</span>
-                    {{ form.question6() }}
-                    {% if form.question6.errors %}
-                        <div class="form-error">
-                            {% for error in form.question6.errors %}
-                                <small class="text-danger">
-                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
-                                </small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <!-- Question 7 -->
-                <div class="form-group">
-                    {{ form.question7.label(class="form-label question-label") }}
-                    <span class="required-asterisk">*</span>
-                    {{ form.question7() }}
-                    {% if form.question7.errors %}
-                        <div class="form-error">
-                            {% for error in form.question7.errors %}
-                                <small class="text-danger">
-                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
-                                </small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
 
-            <!-- Country Field -->
-            <div class="form-group">
-                {{ form.country.label(class="form-label") }}
-                <span class="required-asterisk">*</span>
-                {{ form.country() }}
-                {% if form.country.errors %}
-                    <div class="form-error">
-                        {% for error in form.country.errors %}
-                            <small class="text-danger">
-                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
-                            </small>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-
-            <!-- Gender Field -->
-            <div class="form-group">
-                {{ form.gender.label(class="form-label") }}
-                <span class="required-asterisk">*</span>
-                {{ form.gender() }}
-                {% if form.gender.errors %}
-                    <div class="form-error">
-                        {% for error in form.gender.errors %}
-                            <small class="text-danger">
-                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
-                            </small>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <!-- Submit Button -->
-            <div class="form-group submit-group">
-                {{ form.submit() }}
-            </div>
-        </form>
-    </div>
-    
-    <!-- Footer -->
-    <div class="form-footer">
-        <small class="text-muted">
-            <i class="fas fa-shield-alt me-1"></i>
-            Your information is securely stored and will be used to enhance your learning experience.
-        </small>
-    </div>
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-// Form enhancements
-document.addEventListener('DOMContentLoaded', function() {
-    // Character counter for textarea
-    const vibesField = document.getElementById('vibes');
-    if (vibesField) {
-        const maxLength = 500;
-        const counter = document.createElement('small');
-        counter.className = 'character-counter text-muted';
-        vibesField.parentNode.appendChild(counter);
-        
-        function updateCounter() {
-            const remaining = maxLength - vibesField.value.length;
-            counter.textContent = `${vibesField.value.length}/${maxLength} characters`;
-            counter.className = remaining < 50 ? 'character-counter text-warning' : 'character-counter text-muted';
-        }
-        
-        vibesField.addEventListener('input', updateCounter);
-        updateCounter();
-    }
-    
-    // Auto-dismiss alerts after 5 seconds
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(alert => {
-        setTimeout(() => {
-            const bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
-        }, 5000);
-    });
-    
-    // Form validation feedback
-    const form = document.querySelector('form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            const submitBtn = form.querySelector('input[type="submit"]');
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
-            }
-        });
-    }
-});
-</script>
-{% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
