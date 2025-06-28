@@ -323,6 +323,67 @@ body {
     gap: 0.5rem;
 }
 
+/* Dashboard Grid Layout */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.dashboard-column {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+}
+
+.vibe-squads-column {
+    order: 1;
+}
+
+.student-submissions-column {
+    order: 2;
+}
+
+/* Remove old tab navigation styles */
+.dashboard-tabs,
+.tab-content,
+.tab-pane {
+    display: none !important;
+}
+
+/* Mobile responsive behavior */
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .vibe-squads-column {
+        order: 1;
+    }
+    
+    .student-submissions-column {
+        order: 2;
+    }
+    
+    .dashboard-column {
+        padding: 1rem;
+    }
+}
+
+/* Section title styling for new layout */
+.dashboard-column .section-title {
+    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
 /* Form Container */
 .form-container {
     max-width: 100%;
