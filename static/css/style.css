@@ -421,6 +421,32 @@ body {
     }
 }
 
+/* Session Control Styling */
+.session-password-display {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.password-container {
+    display: flex;
+    align-items: center;
+    margin: 0.5rem 0;
+}
+
+.session-password-code {
+    background: #2196F3;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    border: 2px solid #1976D2;
+}
+
 /* Section title styling for new layout */
 .dashboard-column .section-title {
     color: #2c3e50;

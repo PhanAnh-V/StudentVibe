@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from app import app, db
-from models import Student
+from models import Student, SessionSettings
 from forms import StudentForm, TeacherLoginForm, StudentLoginForm
 import logging
 import re
@@ -9,8 +9,74 @@ from ai_recommendations import generate_interest_recommendations, enhance_archet
 
 @app.route('/')
 def index():
-    """Clean landing page with login options"""
-    return render_template('index.html')
+    """Landing page with session password protection"""
+    # Check if user is authenticated with session password
+    if not session.get('session_authenticated'):
+        return render_template('session_password.html')
+    
+    # If authenticated, show the questionnaire form
+    form = StudentForm()
+    return render_template('questionnaire.html', form=form)
+
+@app.route('/session-auth', methods=['POST'])
+def session_auth():
+    """Handle session password authentication"""
+    entered_password = request.form.get('session_password', '').strip().upper()
+    current_password = SessionSettings.get_current_password()
+    
+    if entered_password == current_password:
+        session['session_authenticated'] = True
+        flash('Welcome! You can now fill out the questionnaire.', 'success')
+        return redirect(url_for('index'))
+    else:
+        flash('Incorrect session password. Please try again.', 'error')
+        return redirect(url_for('index'))
+
+@app.route('/submit-form', methods=['POST'])
+def submit_form():
+    """Handle questionnaire form submission"""
+    if not session.get('session_authenticated'):
+        flash('Please enter the session password first.', 'error')
+        return redirect(url_for('index'))
+    
+    form = StudentForm()
+    if form.validate_on_submit():
+        try:
+            # Create new student record
+            student = Student(
+                name=form.name.data,
+                question1=form.question1.data,
+                question2=form.question2.data,
+                question3=form.question3.data,
+                question4=form.question4.data,
+                question5=form.question5.data,
+                question6=form.question6.data,
+                question7=form.question7.data,
+                country=form.country.data,
+                gender=form.gender.data
+            )
+            
+            db.session.add(student)
+            db.session.commit()
+            
+            logging.info(f"New student registered: {student.name} (ID: {student.id})")
+            flash(f'Thank you {student.name}! Your responses have been saved. Your Student ID is: {student.id}', 'success')
+            
+            # Clear session authentication so form can't be submitted again
+            session.pop('session_authenticated', None)
+            
+            return redirect(url_for('success'))
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Error saving student: {e}")
+            flash('An error occurred while saving your responses. Please try again.', 'error')
+    
+    # If form validation fails, show errors
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(f'{field}: {error}', 'error')
+    
+    return render_template('questionnaire.html', form=form)
 
 @app.route('/success')
 def success():
@@ -168,10 +234,27 @@ def teacher():
         }
         students_with_interests.append(student_dict)
     
+    # Get current session password
+    current_session_password = SessionSettings.get_current_password()
+    
     return render_template('teacher.html', 
                          students=students_with_interests,
                          solo_students=solo_students,
-                         ai_advice=ai_advice)
+                         ai_advice=ai_advice,
+                         session_password=current_session_password)
+
+@app.route('/teacher/new-session-password', methods=['POST'])
+def new_session_password():
+    """Generate new session password for teacher"""
+    if not session.get('teacher_authenticated'):
+        flash('Please login to access this feature.', 'error')
+        return redirect(url_for('teacher_login'))
+    
+    new_password = SessionSettings.update_password()
+    flash(f'New session password generated: {new_password}', 'success')
+    logging.info(f"Teacher generated new session password: {new_password}")
+    
+    return redirect(url_for('teacher'))
 
 @app.route('/teacher/logout')
 def teacher_logout():

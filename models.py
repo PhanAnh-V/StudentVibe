@@ -1,4 +1,48 @@
 from app import db
+import random
+import string
+
+class SessionSettings(db.Model):
+    """Model for storing session-wide settings like password"""
+    __tablename__ = 'session_settings'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    session_password = db.Column(db.String(20), nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+    
+    @staticmethod
+    def generate_password():
+        """Generate a random session password like VIBE123"""
+        prefixes = ['VIBE', 'COOL', 'QUIZ', 'FORM', 'TEAM', 'STAR', 'WORK', 'LEARN']
+        numbers = ''.join(random.choices(string.digits, k=3))
+        return f"{random.choice(prefixes)}{numbers}"
+    
+    @staticmethod
+    def get_current_password():
+        """Get the current session password"""
+        settings = SessionSettings.query.first()
+        if not settings:
+            # Create default password if none exists
+            password = SessionSettings.generate_password()
+            settings = SessionSettings(session_password=password)
+            db.session.add(settings)
+            db.session.commit()
+        return settings.session_password
+    
+    @staticmethod
+    def update_password():
+        """Generate and update to a new session password"""
+        new_password = SessionSettings.generate_password()
+        settings = SessionSettings.query.first()
+        if settings:
+            settings.session_password = new_password
+            settings.updated_at = db.func.current_timestamp()
+        else:
+            settings = SessionSettings(session_password=new_password)
+            db.session.add(settings)
+        db.session.commit()
+        return new_password
 
 class Student(db.Model):
     """Student model for storing student information"""
