@@ -18,6 +18,13 @@ def index():
     form = StudentForm()
     return render_template('questionnaire.html', form=form)
 
+@app.route('/session-password')
+def session_password():
+    """Direct access to session password page"""
+    # Clear any existing session authentication to force re-entry
+    session.pop('session_authenticated', None)
+    return render_template('session_password.html')
+
 @app.route('/session-auth', methods=['POST'])
 def session_auth():
     """Handle session password authentication"""
