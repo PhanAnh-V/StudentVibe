@@ -149,56 +149,7 @@ def logout_student():
     session.pop('student_id', None)
     return '', 200
 
-@app.route('/teacher/add-student', methods=['GET', 'POST'])
-def add_student():
-    """Teacher adds new student with auto-generated ID"""
-    # Check authentication
-    if not session.get('teacher_authenticated'):
-        flash('Please login to access this feature.', 'error')
-        return redirect(url_for('teacher_login'))
-    
-    form = StudentForm()
-    
-    if form.validate_on_submit():
-        try:
-            # Create new student record with mystery generator answers
-            combined_vibes = f"{form.question1.data} {form.question2.data} {form.question3.data} {form.question4.data} {form.question5.data} {form.question6.data} {form.question7.data}"
-            
-            student = Student(
-                name=form.name.data.strip(),
-                vibes=combined_vibes,  # Combined for backward compatibility
-                question1=form.question1.data.strip(),
-                question2=form.question2.data.strip(), 
-                question3=form.question3.data.strip(),
-                question4=form.question4.data.strip(),
-                question5=form.question5.data.strip(),
-                question6=form.question6.data.strip(),
-                question7=form.question7.data.strip(),
-                country=form.country.data,
-                gender=form.gender.data
-            )
-            
-            # Add to database and get auto-generated ID
-            db.session.add(student)
-            db.session.commit()
-            
-            logging.info(f"Teacher added new student: {student.name} (ID: {student.id})")
-            flash(f'Student {student.name} added successfully! Student ID: {student.id}', 'success')
-            return redirect(url_for('teacher'))
-            
-        except Exception as e:
-            # Handle database errors
-            db.session.rollback()
-            logging.error(f"Database error: {str(e)}")
-            flash('There was an error adding the student. Please try again.', 'error')
-    
-    elif request.method == 'POST':
-        # Handle form validation errors
-        for field, errors in form.errors.items():
-            for error in errors:
-                flash(f'{getattr(form, field).label.text}: {error}', 'error')
-    
-    return render_template('add_student.html', form=form)
+
 
 @app.route('/teacher')
 def teacher():
