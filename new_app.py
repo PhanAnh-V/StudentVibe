@@ -29,29 +29,8 @@ class ClassSession(db.Model):
     __tablename__ = 'class_sessions'
     id = db.Column(db.Integer, primary_key=True)
     class_code = db.Column(db.String(20), unique=True, nullable=False)
-    
-    # Relationship with students
-    students = db.relationship('Student', backref='class_session', lazy=True)
 
-class Student(db.Model):
-    __tablename__ = 'students'
-    id = db.Column(db.Integer, primary_key=True)
-    student_number = db.Column(db.String(50), unique=True, nullable=False)
-    name = db.Column(db.String(100))
-    country = db.Column(db.String(50))
-    gender = db.Column(db.String(20))
-    session_id = db.Column(db.Integer, db.ForeignKey('class_sessions.id'), nullable=False)
-    has_submitted_form = db.Column(db.Boolean, default=False)
-    
-    # Relationship with answers
-    answers = db.relationship('Answer', backref='student', lazy=True, cascade='all, delete-orphan')
 
-class Answer(db.Model):
-    __tablename__ = 'answers'
-    id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
-    question_text = db.Column(db.Text, nullable=False)
-    answer_text = db.Column(db.Text, nullable=False)
 
 # Create tables
 with app.app_context():
@@ -91,40 +70,7 @@ def teacher_login():
     
     return render_template('teacher_login.html')
 
-@app.route('/login/student', methods=['GET', 'POST'])
-def student_login():
-    """Student login page with student number and class code"""
-    if request.method == 'POST':
-        student_number = request.form.get('student_number')
-        class_code = request.form.get('class_code')
-        
-        if not student_number or not class_code:
-            flash('Both Student Number and Class Code are required', 'error')
-            return render_template('student_login.html')
-        
-        # Find the class session
-        class_session = ClassSession.query.filter_by(class_code=class_code.upper()).first()
-        if not class_session:
-            flash('Invalid Class Code', 'error')
-            return render_template('student_login.html')
-        
-        # Find the student
-        student = Student.query.filter_by(
-            student_number=student_number,
-            session_id=class_session.id
-        ).first()
-        
-        if not student:
-            flash('Student Number not found for this class', 'error')
-            return render_template('student_login.html')
-        
-        # Log in the student
-        session['student_id'] = student.id
-        session['student_number'] = student.student_number
-        flash(f'Welcome {student.name or student.student_number}!', 'success')
-        return redirect(url_for('student_dashboard'))
-    
-    return render_template('student_login.html')
+
 
 @app.route('/teacher')
 def teacher_dashboard():
@@ -136,16 +82,12 @@ def teacher_dashboard():
     # Get current class session if any
     current_session = session.get('current_class_session')
     class_session = None
-    students = []
     
     if current_session:
         class_session = ClassSession.query.filter_by(class_code=current_session).first()
-        if class_session:
-            students = Student.query.filter_by(session_id=class_session.id).all()
     
     return render_template('teacher_dashboard.html', 
-                         class_session=class_session, 
-                         students=students)
+                         class_session=class_session)
 
 @app.route('/teacher/new-session', methods=['POST'])
 def new_class_session():
@@ -156,7 +98,8 @@ def new_class_session():
     
     # Generate new class code
     class_code = generate_class_code()
-    new_session = ClassSession(class_code=class_code)
+    new_session = ClassSession()
+    new_session.class_code = class_code
     
     db.session.add(new_session)
     db.session.commit()
@@ -169,68 +112,9 @@ def new_class_session():
     
     return redirect(url_for('teacher_dashboard'))
 
-@app.route('/teacher/activate-students', methods=['POST'])
-def activate_students():
-    """Add students to current class session"""
-    if not session.get('teacher_authenticated'):
-        flash('Please log in as teacher first', 'error')
-        return redirect(url_for('teacher_login'))
-    
-    current_session_code = session.get('current_class_session')
-    if not current_session_code:
-        flash('Please start a new class session first', 'error')
-        return redirect(url_for('teacher_dashboard'))
-    
-    class_session = ClassSession.query.filter_by(class_code=current_session_code).first()
-    if not class_session:
-        flash('Class session not found', 'error')
-        return redirect(url_for('teacher_dashboard'))
-    
-    student_numbers_text = request.form.get('student_numbers', '')
-    if not student_numbers_text.strip():
-        flash('Please enter student numbers', 'error')
-        return redirect(url_for('teacher_dashboard'))
-    
-    # Parse student numbers (one per line)
-    student_numbers = [num.strip() for num in student_numbers_text.split('\n') if num.strip()]
-    
-    added_count = 0
-    for student_number in student_numbers:
-        # Check if student already exists for this session
-        existing = Student.query.filter_by(
-            student_number=student_number,
-            session_id=class_session.id
-        ).first()
-        
-        if not existing:
-            new_student = Student(
-                student_number=student_number,
-                session_id=class_session.id
-            )
-            db.session.add(new_student)
-            added_count += 1
-    
-    db.session.commit()
-    
-    flash(f'Added {added_count} students to class {current_session_code}', 'success')
-    logging.info(f"Added {added_count} students to class {current_session_code}")
-    
-    return redirect(url_for('teacher_dashboard'))
 
-@app.route('/student')
-def student_dashboard():
-    """Student dashboard"""
-    student_id = session.get('student_id')
-    if not student_id:
-        flash('Please log in as student first', 'error')
-        return redirect(url_for('student_login'))
-    
-    student = Student.query.get(student_id)
-    if not student:
-        flash('Student not found', 'error')
-        return redirect(url_for('student_login'))
-    
-    return render_template('student_dashboard.html', student=student)
+
+
 
 @app.route('/logout')
 def logout():
