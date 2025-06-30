@@ -7,74 +7,16 @@ import re
 from collections import Counter, defaultdict
 from ai_recommendations import generate_interest_recommendations, enhance_archetype_with_ai, analyze_compatibility_with_ai
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    """Main route with session password protection"""
-    if request.method == 'POST':
-        session_password = request.form.get('session_password', '').strip().upper()
-        current_password = SessionSettings.get_current_password()
-        if session_password == current_password:
-            session['session_authenticated'] = True
-            return redirect(url_for('questionnaire'))
-        else:
-            flash('Incorrect password. Please try again.', 'error')
-    
-    return render_template('student_entry.html')
-
-@app.route('/questionnaire', methods=['GET', 'POST'])
-def questionnaire():
-    """Student questionnaire form"""
+    """Landing page with session password protection"""
+    # Check if user is authenticated with session password
     if not session.get('session_authenticated'):
-        flash('Please enter the session password first.', 'error')
-        return redirect(url_for('index'))
+        return render_template('session_password.html')
     
-    if request.method == 'POST':
-        form = StudentForm()
-        if form.validate_on_submit():
-            try:
-                # Create new student record
-                student = Student()
-                student.name = form.name.data
-                student.question1 = form.question1.data
-                student.question2 = form.question2.data
-                student.question3 = form.question3.data
-                student.question4 = form.question4.data
-                student.question5 = form.question5.data
-                student.question6 = form.question6.data
-                student.question7 = form.question7.data
-                student.country = form.country.data
-                student.gender = form.gender.data
-                
-                # Combine answers for vibes field
-                combined_vibes = f"{form.question1.data} {form.question2.data} {form.question3.data} {form.question4.data} {form.question5.data} {form.question6.data} {form.question7.data}"
-                student.vibes = combined_vibes
-                
-                # Add to database
-                db.session.add(student)
-                db.session.commit()
-                
-                # Clear session authentication after successful submission
-                session.pop('session_authenticated', None)
-                
-                flash(f'Thank you {student.name}! Your information has been submitted successfully.', 'success')
-                return redirect(url_for('waiting_page'))
-                
-            except Exception as e:
-                db.session.rollback()
-                flash('There was an error submitting your information. Please try again.', 'error')
-        else:
-            # Handle form validation errors
-            for field, errors in form.errors.items():
-                for error in errors:
-                    flash(f'{getattr(form, field).label.text}: {error}', 'error')
-    
+    # If authenticated, show the questionnaire form
     form = StudentForm()
     return render_template('questionnaire.html', form=form)
-
-@app.route('/waiting')
-def waiting_page():
-    """Student waiting page after form submission"""
-    return render_template('waiting.html')
 
 @app.route('/session-password')
 def session_password():
@@ -165,7 +107,7 @@ def student_login():
         else:
             flash('Student ID not found. Please check your ID and try again.', 'error')
     
-    return render_template('profile.html', form=form)
+    return render_template('student_login.html', form=form)
 
 @app.route('/login/teacher', methods=['GET', 'POST'])
 def teacher_login():

@@ -145,8 +145,6 @@ This is a Flask-based web application designed to collect and store student info
 - June 29, 2025. Modified homepage to require session password before accessing questionnaire form
 - June 29, 2025. Added Session Control section to teacher dashboard with copy functionality
 - June 29, 2025. Removed teacher "Add New Student" functionality - students now only submit through main form
-- June 29, 2025. Added navigation back to session password page from all application areas
-- June 29, 2025. Completely removed individual student account system from new_app.py including login, dashboard, and Student/Answer models
 
 ## User Preferences
 
