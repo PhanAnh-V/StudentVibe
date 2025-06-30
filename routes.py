@@ -49,9 +49,13 @@ def submit_form():
     form = StudentForm()
     if form.validate_on_submit():
         try:
+            # Combine all answers for the vibes field (for backward compatibility)
+            combined_vibes = f"{form.question1.data} {form.question2.data} {form.question3.data} {form.question4.data} {form.question5.data} {form.question6.data} {form.question7.data}"
+            
             # Create new student record
             student = Student(
                 name=form.name.data,
+                vibes=combined_vibes,
                 question1=form.question1.data,
                 question2=form.question2.data,
                 question3=form.question3.data,
