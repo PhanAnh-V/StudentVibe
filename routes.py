@@ -13,16 +13,67 @@ def index():
     if request.method == 'POST':
         session_password = request.form.get('session_password', '').strip()
         if session_password == 'VIBE123':
+            session['session_authenticated'] = True
             return redirect(url_for('questionnaire'))
         else:
             flash('Incorrect password. Please try again.', 'error')
     
     return render_template('student_entry.html')
 
-@app.route('/questionnaire')
+@app.route('/questionnaire', methods=['GET', 'POST'])
 def questionnaire():
-    """Questionnaire access page"""
-    return "Access Granted"
+    """Student questionnaire form"""
+    if not session.get('session_authenticated'):
+        flash('Please enter the session password first.', 'error')
+        return redirect(url_for('index'))
+    
+    if request.method == 'POST':
+        form = StudentForm()
+        if form.validate_on_submit():
+            try:
+                # Create new student record
+                student = Student()
+                student.name = form.name.data
+                student.question1 = form.question1.data
+                student.question2 = form.question2.data
+                student.question3 = form.question3.data
+                student.question4 = form.question4.data
+                student.question5 = form.question5.data
+                student.question6 = form.question6.data
+                student.question7 = form.question7.data
+                student.country = form.country.data
+                student.gender = form.gender.data
+                
+                # Combine answers for vibes field
+                combined_vibes = f"{form.question1.data} {form.question2.data} {form.question3.data} {form.question4.data} {form.question5.data} {form.question6.data} {form.question7.data}"
+                student.vibes = combined_vibes
+                
+                # Add to database
+                db.session.add(student)
+                db.session.commit()
+                
+                # Clear session authentication after successful submission
+                session.pop('session_authenticated', None)
+                
+                flash(f'Thank you {student.name}! Your information has been submitted successfully.', 'success')
+                return redirect(url_for('waiting_page'))
+                
+            except Exception as e:
+                db.session.rollback()
+                flash('There was an error submitting your information. Please try again.', 'error')
+        else:
+            # Handle form validation errors
+            for field, errors in form.errors.items():
+                for error in errors:
+                    flash(f'{getattr(form, field).label.text}: {error}', 'error')
+    
+    form = StudentForm()
+    return render_template('questionnaire.html', form=form)
+
+@app.route('/waiting')
+def waiting_page():
+    """Student waiting page after form submission"""
+    return render_template('waiting.html')
 
 @app.route('/session-password')
 def session_password():

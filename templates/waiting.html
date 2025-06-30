@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waiting for Teacher - Vibe Squad</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <i class="fas fa-users me-2"></i>Vibe Squad
+                </a>
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="{{ url_for('index') }}">
+                        <i class="fas fa-home me-1"></i>Back to Home
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="text-center mt-5">
+                    <div class="mb-4">
+                        <i class="fas fa-clock fa-4x text-primary mb-3"></i>
+                        <h1 class="display-5 fw-bold">Wait for Teacher Command</h1>
+                        <p class="lead text-muted">
+                            Thank you for submitting your information! 
+                            Please wait while your teacher organizes the vibe squads.
+                        </p>
+                    </div>
+
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <h5 class="card-title">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Form Submitted Successfully
+                            </h5>
+                            <p class="card-text text-muted">
+                                Your teacher will organize everyone into squads based on your shared interests and vibes.
+                            </p>
+                            
+                            <!-- Future button for viewing squads -->
+                            <div class="mt-4">
+                                <button class="btn btn-outline-primary btn-lg" disabled>
+                                    <i class="fas fa-users me-2"></i>
+                                    View My Squad
+                                    <small class="d-block text-muted">(Available after teacher command)</small>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Waiting...</span>
+                        </div>
+                        <p class="text-muted mt-2">Waiting for teacher to organize squads...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
