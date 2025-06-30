@@ -992,11 +992,11 @@ def teacher_ai_insights():
 @app.errorhandler(404)
 def not_found_error(error):
     """Handle 404 errors"""
-    return render_template('index.html', form=StudentForm()), 404
+    return render_template('session_password.html'), 404
 
 @app.errorhandler(500)
 def internal_error(error):
     """Handle 500 errors"""
     db.session.rollback()
     flash('An internal error occurred. Please try again.', 'error')
-    return render_template('index.html', form=StudentForm()), 500
+    return render_template('session_password.html'), 500

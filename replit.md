@@ -148,6 +148,8 @@ This is a Flask-based web application designed to collect and store student info
 - June 30, 2025. Fixed form submission database error by adding missing vibes field populated from combined question answers
 - June 30, 2025. Removed student login functionality - deleted route, template, and link from session password page
 - June 30, 2025. Added navigation links throughout app to return to session password page for new sessions
+- June 30, 2025. Removed old welcome page template (index.html) with "Ultimate Student Experience" content
+- June 30, 2025. Updated error handlers to reference session password page instead of deleted welcome template
 
 ## User Preferences
 
