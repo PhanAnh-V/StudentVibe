@@ -94,24 +94,7 @@ def success():
     """Success confirmation page"""
     return render_template('success.html')
 
-@app.route('/login/student', methods=['GET', 'POST'])
-def student_login():
-    """Student login using unique ID"""
-    form = StudentLoginForm()
-    
-    if form.validate_on_submit():
-        student_id = form.student_id.data
-        student = Student.query.get(student_id)
-        
-        if student:
-            # Store student ID in session for authentication
-            session['student_id'] = student_id
-            flash(f'Welcome back, {student.name}!', 'success')
-            return redirect(url_for('student_profile', id=student_id))
-        else:
-            flash('Student ID not found. Please check your ID and try again.', 'error')
-    
-    return render_template('student_login.html', form=form)
+
 
 @app.route('/login/teacher', methods=['GET', 'POST'])
 def teacher_login():
