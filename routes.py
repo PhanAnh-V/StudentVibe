@@ -11,8 +11,9 @@ from ai_recommendations import generate_interest_recommendations, enhance_archet
 def index():
     """Main route with session password protection"""
     if request.method == 'POST':
-        session_password = request.form.get('session_password', '').strip()
-        if session_password == 'VIBE123':
+        session_password = request.form.get('session_password', '').strip().upper()
+        current_password = SessionSettings.get_current_password()
+        if session_password == current_password:
             session['session_authenticated'] = True
             return redirect(url_for('questionnaire'))
         else:
