@@ -160,6 +160,9 @@ This is a Flask-based web application designed to collect and store student info
 - June 30, 2025. Implemented language selection system storing user preference in browser sessions
 - June 30, 2025. Restructured routing: / = language selection, /session-password = questionnaire access
 - June 30, 2025. Updated all navigation links throughout app to work with new language selection flow
+- June 30, 2025. Added discreet teacher login link (先生ログイン) to language selection homepage
+- June 30, 2025. Removed teacher login link from session password page and converted all text to Japanese
+- June 30, 2025. Added Japanese font support (Noto Sans JP) to session password page for proper text rendering
 
 ## User Preferences
 
