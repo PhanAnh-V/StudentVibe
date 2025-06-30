@@ -9,20 +9,33 @@ from ai_recommendations import generate_interest_recommendations, enhance_archet
 
 @app.route('/')
 def index():
-    """Landing page with session password protection"""
-    # Check if user is authenticated with session password
-    if not session.get('session_authenticated'):
-        return render_template('session_password.html')
+    """Language selection homepage"""
+    return render_template('language_select.html')
+
+@app.route('/select-language/<lang>')
+def select_language(lang):
+    """Handle language selection and redirect to session password"""
+    # Validate language choice
+    valid_languages = ['en', 'vi', 'zh', 'ja']
+    if lang not in valid_languages:
+        lang = 'en'  # Default to English for invalid choices
     
-    # If authenticated, show the questionnaire form
-    form = StudentForm()
-    return render_template('questionnaire.html', form=form)
+    # Store language choice in session
+    session['selected_language'] = lang
+    session.permanent = True
+    
+    # Redirect to session password page
+    return redirect(url_for('session_password'))
 
 @app.route('/session-password')
 def session_password():
-    """Direct access to session password page"""
-    # Clear any existing session authentication to force re-entry
-    session.pop('session_authenticated', None)
+    """Session password page that shows questionnaire when authenticated"""
+    # If already authenticated, show the questionnaire form
+    if session.get('session_authenticated'):
+        form = StudentForm()
+        return render_template('questionnaire.html', form=form)
+    
+    # Otherwise show session password entry
     return render_template('session_password.html')
 
 @app.route('/session-auth', methods=['POST'])
@@ -34,10 +47,10 @@ def session_auth():
     if entered_password == current_password:
         session['session_authenticated'] = True
         flash('Welcome! You can now fill out the questionnaire.', 'success')
-        return redirect(url_for('index'))
+        return redirect(url_for('session_password'))
     else:
         flash('Incorrect session password. Please try again.', 'error')
-        return redirect(url_for('index'))
+        return redirect(url_for('session_password'))
 
 @app.route('/submit-form', methods=['POST'])
 def submit_form():

@@ -156,6 +156,10 @@ This is a Flask-based web application designed to collect and store student info
 - June 30, 2025. Created /find-squad route and template for students to locate their squads using submission IDs
 - June 30, 2025. Added "Find My Squad" navigation links throughout student portal areas
 - June 30, 2025. Implemented form validation and error handling for submission ID lookup functionality
+- June 30, 2025. Created multi-language homepage with Japanese welcome message and 4 language options (English, Vietnamese, Chinese, Japanese)
+- June 30, 2025. Implemented language selection system storing user preference in browser sessions
+- June 30, 2025. Restructured routing: / = language selection, /session-password = questionnaire access
+- June 30, 2025. Updated all navigation links throughout app to work with new language selection flow
 
 ## User Preferences
 
