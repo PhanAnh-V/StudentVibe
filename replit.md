@@ -153,6 +153,9 @@ This is a Flask-based web application designed to collect and store student info
 - June 30, 2025. Added submission_id column to Student model with unique constraint for tracking submissions
 - June 30, 2025. Implemented unique submission ID generation system (format: ABC-123) for student identification
 - June 30, 2025. Updated success page to display personal submission ID with clear instruction to save for future use
+- June 30, 2025. Created /find-squad route and template for students to locate their squads using submission IDs
+- June 30, 2025. Added "Find My Squad" navigation links throughout student portal areas
+- June 30, 2025. Implemented form validation and error handling for submission ID lookup functionality
 
 ## User Preferences
 

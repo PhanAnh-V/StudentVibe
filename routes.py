@@ -110,6 +110,49 @@ def success():
                          submission_id=submission_id,
                          student_name=student_name)
 
+@app.route('/find-squad', methods=['GET', 'POST'])
+def find_squad():
+    """Find squad by submission ID"""
+    if request.method == 'POST':
+        submission_id = request.form.get('submission_id', '').strip().upper()
+        
+        if not submission_id:
+            flash('Please enter your submission ID.', 'error')
+            return render_template('find_squad.html')
+        
+        # Find student by submission ID
+        student = Student.query.filter_by(submission_id=submission_id).first()
+        
+        if not student:
+            flash('ID not found, or your squad has not been created yet. Please check your ID or wait for your teacher to create the squads.', 'error')
+            return render_template('find_squad.html')
+        
+        # Check if student has been assigned to a squad
+        # For now, we'll check if the student exists in the database
+        # Squad assignment logic will be implemented when squads are created
+        squad_info = None
+        
+        # TODO: Implement squad lookup when squad system is enhanced
+        # This is a placeholder for when squads are properly stored in database
+        if hasattr(student, 'squad_id') and student.squad_id:
+            # Squad assignment exists
+            squad_info = {
+                'squad_name': f'Squad {student.squad_id}',
+                'members': [student.name],  # Placeholder
+                'student_name': student.name
+            }
+        else:
+            # No squad assigned yet
+            flash('ID not found, or your squad has not been created yet. Please check your ID or wait for your teacher to create the squads.', 'error')
+            return render_template('find_squad.html')
+        
+        return render_template('find_squad.html', 
+                             squad_info=squad_info,
+                             student=student)
+    
+    # GET request - show the form
+    return render_template('find_squad.html')
+
 
 
 @app.route('/login/teacher', methods=['GET', 'POST'])
