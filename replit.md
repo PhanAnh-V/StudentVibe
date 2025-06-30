@@ -163,6 +163,7 @@ This is a Flask-based web application designed to collect and store student info
 - June 30, 2025. Added discreet teacher login link (先生ログイン) to language selection homepage
 - June 30, 2025. Removed teacher login link from session password page and converted all text to Japanese
 - June 30, 2025. Added Japanese font support (Noto Sans JP) to session password page for proper text rendering
+- June 30, 2025. Added language reselection button on session password page to allow students to change language choice
 
 ## User Preferences
 
