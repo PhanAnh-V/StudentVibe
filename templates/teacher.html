@@ -54,36 +54,7 @@
     
     <!-- Main Dashboard Content -->
     <div class="dashboard-content">
-        <!-- Session Control Section -->
-        <div class="dashboard-section">
-            <h2 class="section-title">
-                <i class="fas fa-shield-alt me-2"></i>
-                Session Control
-            </h2>
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <div class="session-password-display">
-                        <label class="form-label fw-bold">Current Session Password:</label>
-                        <div class="password-container">
-                            <span class="session-password-code">{{ session_password }}</span>
-                            <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyPassword()" title="Copy to clipboard">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                        <small class="text-muted">Share this password with students to access the questionnaire</small>
-                    </div>
-                </div>
-                <div class="col-md-4 text-end">
-                    <form action="{{ url_for('new_session_password') }}" method="POST" style="display: inline;">
-                        <button type="submit" class="btn btn-warning" onclick="return confirm('Generate a new session password? Students will need the new password to access the form.')">
-                            <i class="fas fa-sync-alt me-2"></i>
-                            Generate New Password
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-        
+
         <!-- View Toggle Buttons -->
         <div class="view-toggle-section">
             <div class="toggle-buttons">
