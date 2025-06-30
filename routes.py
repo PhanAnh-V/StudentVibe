@@ -7,16 +7,22 @@ import re
 from collections import Counter, defaultdict
 from ai_recommendations import generate_interest_recommendations, enhance_archetype_with_ai, analyze_compatibility_with_ai
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    """Landing page with session password protection"""
-    # Check if user is authenticated with session password
-    if not session.get('session_authenticated'):
-        return render_template('session_password.html')
+    """Main route with session password protection"""
+    if request.method == 'POST':
+        session_password = request.form.get('session_password', '').strip()
+        if session_password == 'VIBE123':
+            return redirect(url_for('questionnaire'))
+        else:
+            flash('Incorrect password. Please try again.', 'error')
     
-    # If authenticated, show the questionnaire form
-    form = StudentForm()
-    return render_template('questionnaire.html', form=form)
+    return render_template('student_entry.html')
+
+@app.route('/questionnaire')
+def questionnaire():
+    """Questionnaire access page"""
+    return "Access Granted"
 
 @app.route('/session-password')
 def session_password():
@@ -107,7 +113,7 @@ def student_login():
         else:
             flash('Student ID not found. Please check your ID and try again.', 'error')
     
-    return render_template('student_login.html', form=form)
+    return render_template('profile.html', form=form)
 
 @app.route('/login/teacher', methods=['GET', 'POST'])
 def teacher_login():
