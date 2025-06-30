@@ -62,6 +62,7 @@ class Student(db.Model):
     question7 = db.Column(db.Text, nullable=False)  # secret superpower
     country = db.Column(db.String(50), nullable=False)
     gender = db.Column(db.String(50), nullable=False)
+    submission_id = db.Column(db.String(7), unique=True, nullable=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     
     def __repr__(self):
@@ -97,3 +98,19 @@ class Student(db.Model):
             getattr(self, 'question7', '') or ''
         ]
         return ' '.join(filter(None, answers))
+    
+    @staticmethod
+    def generate_submission_id():
+        """Generate a unique submission ID like VIB-482"""
+        while True:
+            # Generate 3 random letters
+            letters = ''.join(random.choices(string.ascii_uppercase, k=3))
+            # Generate 3 random numbers
+            numbers = ''.join(random.choices(string.digits, k=3))
+            # Combine with dash
+            submission_id = f"{letters}-{numbers}"
+            
+            # Check if this ID already exists
+            existing = Student.query.filter_by(submission_id=submission_id).first()
+            if not existing:
+                return submission_id

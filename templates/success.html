@@ -12,10 +12,25 @@
         
         <!-- Success Message -->
         <div class="success-content">
-            <h1 class="success-title">Thank You!</h1>
+            <h1 class="success-title">Thank You{% if student_name %}, {{ student_name }}{% endif %}!</h1>
             <p class="success-message">
                 Your submission has been received.
             </p>
+            
+            {% if submission_id %}
+            <div class="submission-id-section">
+                <div class="submission-id-card">
+                    <h3 class="submission-id-title">
+                        <i class="fas fa-id-card me-2"></i>
+                        Your Personal ID
+                    </h3>
+                    <div class="submission-id-code">{{ submission_id }}</div>
+                    <p class="submission-id-message">
+                        <strong>Please save this!</strong> You will use it to find your Vibe Squad later.
+                    </p>
+                </div>
+            </div>
+            {% endif %}
             
             <div class="success-details">
                 <div class="success-detail-item">
@@ -69,6 +84,54 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.submission-id-section {
+    margin: 2rem 0;
+}
+
+.submission-id-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    text-align: center;
+    margin: 1rem 0;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.submission-id-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.submission-id-code {
+    font-size: 2.5rem;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 3px;
+    margin: 1rem 0;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.submission-id-message {
+    font-size: 1rem;
+    margin-bottom: 0;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.submission-id-message strong {
+    color: #ffeb3b;
+    font-weight: 700;
+}
+</style>
 {% endblock %}
 
 {% block scripts %}

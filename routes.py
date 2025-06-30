@@ -52,6 +52,9 @@ def submit_form():
             # Combine all answers for the vibes field (for backward compatibility)
             combined_vibes = f"{form.question1.data} {form.question2.data} {form.question3.data} {form.question4.data} {form.question5.data} {form.question6.data} {form.question7.data}"
             
+            # Generate unique submission ID
+            submission_id = Student.generate_submission_id()
+            
             # Create new student record
             student = Student(
                 name=form.name.data,
@@ -64,14 +67,18 @@ def submit_form():
                 question6=form.question6.data,
                 question7=form.question7.data,
                 country=form.country.data,
-                gender=form.gender.data
+                gender=form.gender.data,
+                submission_id=submission_id
             )
             
             db.session.add(student)
             db.session.commit()
             
-            logging.info(f"New student registered: {student.name} (ID: {student.id})")
-            flash(f'Thank you {student.name}! Your responses have been saved. Your Student ID is: {student.id}', 'success')
+            logging.info(f"New student registered: {student.name} (ID: {student.id}, Submission ID: {submission_id})")
+            
+            # Store submission ID in session for success page
+            session['submission_id'] = submission_id
+            session['student_name'] = form.name.data
             
             # Clear session authentication so form can't be submitted again
             session.pop('session_authenticated', None)
@@ -92,7 +99,16 @@ def submit_form():
 @app.route('/success')
 def success():
     """Success confirmation page"""
-    return render_template('success.html')
+    submission_id = session.get('submission_id')
+    student_name = session.get('student_name')
+    
+    # Clear the session data after displaying
+    session.pop('submission_id', None)
+    session.pop('student_name', None)
+    
+    return render_template('success.html', 
+                         submission_id=submission_id,
+                         student_name=student_name)
 
 
 

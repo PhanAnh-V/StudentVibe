@@ -150,6 +150,9 @@ This is a Flask-based web application designed to collect and store student info
 - June 30, 2025. Added navigation links throughout app to return to session password page for new sessions
 - June 30, 2025. Removed old welcome page template (index.html) with "Ultimate Student Experience" content
 - June 30, 2025. Updated error handlers to reference session password page instead of deleted welcome template
+- June 30, 2025. Added submission_id column to Student model with unique constraint for tracking submissions
+- June 30, 2025. Implemented unique submission ID generation system (format: ABC-123) for student identification
+- June 30, 2025. Updated success page to display personal submission ID with clear instruction to save for future use
 
 ## User Preferences
 
