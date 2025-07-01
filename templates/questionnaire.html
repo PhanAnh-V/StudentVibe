@@ -30,6 +30,11 @@
             word-wrap: break-word;
             display: block;
             width: 100%;
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: none !important;
+            height: auto !important;
+            max-height: none !important;
         }
         .question-label {
             font-weight: 600;
@@ -43,6 +48,15 @@
         }
         .questions-section {
             margin-bottom: 2rem;
+        }
+        .questions-section p,
+        .questions-section .question-description {
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: none !important;
+            height: auto !important;
+            max-height: none !important;
+            min-height: auto !important;
         }
     </style>
 </head>
