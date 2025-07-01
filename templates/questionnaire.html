@@ -108,7 +108,7 @@
                                     
                                     <div class="form-group mb-5">
                                         <h4 class="question-title mb-3">{{ question_data.title }}</h4>
-                                        <p class="vibe-question-text mb-3">{{ question_data.description }}</p>
+                                        <p style="font-size: 1rem; color: #6c757d; white-space: normal; overflow: visible; height: auto; margin-top: 0.5rem; margin-bottom: 1rem;">{{ question_data.description }}</p>
                                         {{ form[question_field](class="form-control") }}
                                         {% if form[question_field].errors %}
                                             <div class="invalid-feedback d-block">
