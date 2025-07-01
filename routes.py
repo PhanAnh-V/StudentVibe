@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from app import app, db
-from models import Student, SessionSettings
+from models import Student, SessionSettings, Squad
 from forms import StudentForm, TeacherLoginForm, StudentLoginForm
 import logging
 import re
@@ -290,9 +290,14 @@ def teacher():
     # Get current session password
     current_session_password = SessionSettings.get_current_password()
     
+    # Fetch all squads from database with their members
+    squads = Squad.query.all()
+    solo_students_db = Student.query.filter_by(squad_id=None).all()
+    
     return render_template('teacher.html', 
                          students=students_with_interests,
-                         solo_students=solo_students,
+                         squads=squads,
+                         solo_students_db=solo_students_db,
                          ai_advice=ai_advice,
                          session_password=current_session_password)
 
@@ -453,42 +458,50 @@ def create_vibe_squads():
 
 @app.route('/teacher/create-squads', methods=['POST'])
 def create_squads():
-    """Create vibe squads and redirect back to teacher dashboard"""
+    """Create vibe squads and save them to the database"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
         return redirect(url_for('teacher'))
     
     try:
+        # Clear existing squads and reset student assignments
+        Squad.query.delete()
+        db.session.execute(db.text("UPDATE students SET squad_id = NULL"))
+        db.session.commit()
+        
+        # Use the existing squad creation logic
         result = create_vibe_squads()
-        squads = result['squads']
+        squads_data = result['squads']
         solo_students = result['solo_students']
         
-        session['current_squads'] = [
-            {
-                'members': [
-                    {
-                        'id': s.id, 
-                        'name': s.name, 
-                        'vibes': s.vibes, 
-                        'country': s.country, 
-                        'gender': s.gender,
-                        'interests': get_interest_categories_with_colors(s.vibes)
-                    } for s in squad['members']
-                ],
-                'shared_interests': squad['shared_interests']
-            }
-            for squad in squads
-        ]
+        # Save squads to database
+        for i, squad_data in enumerate(squads_data):
+            # Create squad with a creative name
+            squad_names = [
+                "The Innovators", "Creative Minds", "Dream Team", "The Explorers", 
+                "Vibe Squad Alpha", "The Mavericks", "Squad Goals", "The Visionaries",
+                "Dynamic Duo+", "The Catalysts", "Team Phoenix", "The Pioneers"
+            ]
+            squad_name = squad_names[i % len(squad_names)] if i < len(squad_names) else f"Squad {i + 1}"
+            
+            new_squad = Squad(
+                name=squad_name,
+                shared_interests=squad_data['shared_interests']
+            )
+            db.session.add(new_squad)
+            db.session.flush()  # Get the ID
+            
+            # Assign students to this squad
+            for student in squad_data['members']:
+                student.squad_id = new_squad.id
         
-        session['solo_students'] = [
-            {'id': s.id, 'name': s.name, 'vibes': s.vibes, 'country': s.country, 'gender': s.gender}
-            for s in solo_students
-        ]
+        db.session.commit()
         
-        flash(f'Successfully created {len(squads)} vibe squads with {len(solo_students)} solo students!', 'success')
-        logging.info(f"Created {len(squads)} vibe squads with {len(solo_students)} solo students")
+        flash(f'Successfully created {len(squads_data)} vibe squads with {len(solo_students)} solo students!', 'success')
+        logging.info(f"Created {len(squads_data)} vibe squads with {len(solo_students)} solo students")
         
     except Exception as e:
+        db.session.rollback()
         logging.error(f"Error creating squads: {str(e)}")
         flash('There was an error creating the squads. Please try again.', 'error')
     

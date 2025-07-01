@@ -62,6 +62,7 @@ class Student(db.Model):
     country = db.Column(db.String(50), nullable=False)
     gender = db.Column(db.String(50), nullable=False)
     submission_id = db.Column(db.String(7), unique=True, nullable=True)
+    squad_id = db.Column(db.Integer, db.ForeignKey('squads.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     
     def __repr__(self):
@@ -111,3 +112,18 @@ class Student(db.Model):
             existing = Student.query.filter_by(submission_id=submission_id).first()
             if not existing:
                 return submission_id
+
+class Squad(db.Model):
+    """Model for storing student squads"""
+    __tablename__ = 'squads'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    shared_interests = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    # Relationship to students
+    members = db.relationship('Student', backref='squad', lazy=True)
+    
+    def __repr__(self):
+        return f'<Squad {self.name}>'

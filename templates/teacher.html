@@ -120,59 +120,46 @@
             </div>
         </div>
         
-        {% if session.get('current_squads') %}
+        {% if squads %}
             <div class="squads-grid">
-                {% for squad in session['current_squads'] %}
+                {% for squad in squads %}
                 <div class="squad-card">
                     <div class="squad-header">
                         <div class="squad-title-section">
                             <h3 class="squad-title">
                                 <i class="fas fa-users me-2"></i>
-                                Squad {{ loop.index }}
+                                {{ squad.name }}
                             </h3>
                             <span class="squad-interests">
                                 <i class="fas fa-heart me-1"></i>
                                 {{ squad.shared_interests }}
                             </span>
                         </div>
-                        <button class="btn btn-outline-danger btn-sm delete-squad-btn" 
-                                onclick="deleteSquad({{ loop.index0 }})" 
-                                title="Delete Squad">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <div class="squad-member-count">
+                            <span class="badge bg-primary">
+                                {{ squad.members|length }} members
+                            </span>
+                        </div>
                     </div>
                     
-                    <div class="squad-members sortable-list" data-squad-index="{{ loop.index0 }}">
+                    <div class="squad-members-modern">
                         {% for member in squad.members %}
-                        <div class="squad-member draggable-student" data-student-id="{{ member.id }}">
-                            <div class="drag-handle">
-                                <i class="fas fa-grip-vertical"></i>
+                        <div class="modern-member-card">
+                            <div class="member-avatar">
+                                <i class="fas fa-user-circle"></i>
                             </div>
-                            <div class="member-info">
-                                <h4 class="member-name">
-                                    <i class="fas fa-user-graduate me-2"></i>
-                                    {{ member.name }}
-                                </h4>
-                                <div class="member-details">
-                                    <span class="member-tag">
-                                        <i class="fas fa-globe me-1"></i>{{ member.country }}
+                            <div class="member-details">
+                                <h5 class="member-name">{{ member.name }}</h5>
+                                <div class="member-info-tags">
+                                    <span class="info-tag country-tag">
+                                        <i class="fas fa-globe me-1"></i>
+                                        {{ member.country }}
                                     </span>
-                                    <span class="member-tag">
-                                        <i class="fas fa-user me-1"></i>{{ member.gender }}
+                                    <span class="info-tag gender-tag">
+                                        <i class="fas fa-user me-1"></i>
+                                        {{ member.gender }}
                                     </span>
                                 </div>
-                                <p class="member-vibes">{{ member.vibes }}</p>
-                                
-                                {% if member.interests %}
-                                <div class="member-interests">
-                                    {% for interest in member.interests[:3] %}
-                                    <span class="interest-tag" style="background-color: {{ interest.color }}">
-                                        <i class="{{ interest.icon }} me-1"></i>
-                                        {{ interest.name }}
-                                    </span>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
                             </div>
                         </div>
                         {% endfor %}
@@ -180,7 +167,8 @@
                     
                     <div class="squad-footer">
                         <small class="text-muted">
-                            {{ squad.members|length }} members
+                            <i class="fas fa-calendar me-1"></i>
+                            Created: {{ squad.created_at.strftime('%Y-%m-%d %H:%M') }}
                         </small>
                     </div>
                 </div>
@@ -195,40 +183,41 @@
             </div>
         {% endif %}
         
-        <!-- Ungrouped Students Section -->
-        {% if session.get('ungrouped_students') %}
+        <!-- Solo Students Section -->
+        {% if solo_students_db %}
         <div class="ungrouped-section mt-4">
             <div class="section-header">
                 <h3 class="section-title">
                     <i class="fas fa-user-friends me-2"></i>
-                    Ungrouped Students
-                    <span class="badge bg-secondary ms-2">{{ session['ungrouped_students']|length }}</span>
+                    Solo Students
+                    <span class="badge bg-secondary ms-2">{{ solo_students_db|length }}</span>
                 </h3>
                 <p class="section-description">
-                    Drag these students into existing squads or create new squads by grouping them together.
+                    Students who haven't been assigned to any squad yet.
                 </p>
             </div>
             
-            <div class="ungrouped-students sortable-list" data-squad-index="ungrouped">
-                {% for student in session['ungrouped_students'] %}
-                <div class="ungrouped-student draggable-student" data-student-id="{{ student.id }}">
-                    <div class="drag-handle">
-                        <i class="fas fa-grip-vertical"></i>
+            <div class="solo-students-grid">
+                {% for student in solo_students_db %}
+                <div class="modern-member-card">
+                    <div class="member-avatar">
+                        <i class="fas fa-user-circle"></i>
                     </div>
-                    <div class="student-info">
-                        <h4 class="student-name">
-                            <i class="fas fa-user me-2"></i>
-                            {{ student.name }}
-                        </h4>
-                        <div class="student-details">
-                            <span class="student-tag">
-                                <i class="fas fa-globe me-1"></i>{{ student.country }}
+                    <div class="member-details">
+                        <h5 class="member-name">{{ student.name }}</h5>
+                        <div class="member-info-tags">
+                            <span class="info-tag country-tag">
+                                <i class="fas fa-globe me-1"></i>
+                                {{ student.country }}
                             </span>
-                            <span class="student-tag">
-                                <i class="fas fa-user me-1"></i>{{ student.gender }}
+                            <span class="info-tag gender-tag">
+                                <i class="fas fa-user me-1"></i>
+                                {{ student.gender }}
                             </span>
                         </div>
-                        <p class="student-vibes">{{ student.vibes }}</p>
+                        <small class="text-muted mt-2 d-block">
+                            ID: {{ student.submission_id or student.id }}
+                        </small>
                     </div>
                 </div>
                 {% endfor %}
