@@ -58,6 +58,17 @@ def session_password():
         questions = questionnaire_data['questions'].get(selected_language, questionnaire_data['questions']['en'])
         form_labels = questionnaire_data['form_labels']
         
+        # Log question descriptions to verify full text is loading
+        print(f"=== QUESTIONNAIRE DEBUG INFO ===")
+        print(f"Selected language: {selected_language}")
+        print(f"Number of questions loaded: {len(questions)}")
+        for i, question in enumerate(questions):
+            print(f"Question {i+1} - Title: {question.get('title', 'N/A')}")
+            print(f"Question {i+1} - Description: {question.get('description', 'N/A')}")
+            print(f"Question {i+1} - Description length: {len(question.get('description', ''))}")
+            print("---")
+        print("=== END DEBUG INFO ===")
+        
         form = StudentForm()
         return render_template('questionnaire.html', form=form, questions=questions, form_labels=form_labels, selected_language=selected_language)
     
