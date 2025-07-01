@@ -842,6 +842,17 @@ textarea.form-control {
     outline-offset: 2px;
 }
 
+.vibe-question-text {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+    border-left: 4px solid #cfe2ff;
+    white-space: normal; /* Allows text to wrap */
+    overflow: visible;  /* Ensures text is not hidden */
+    height: auto;       /* Allows the element to grow */
+}
+
 /* High Contrast Mode Support */
 @media (prefers-contrast: high) {
     .form-card {
