@@ -7,12 +7,12 @@
   },
   "questions": {
     "en": [
-      {"title": "The Adventure Co-Pilot", "description": "You and a new friend get two 'Anywhere Tickets'..."},
-      {"title": "The Passion Deep-Dive", "description": "Think of your favorite hobby or passion..."},
-      {"title": "The Laughter Test", "description": "Picture a moment you're laughing so hard..."},
-      {"title": "The Secret Superpower & Its Origin Story", "description": "Everyone has a 'secret superpower'..."},
-      {"title": "The Vibe Check", "description": "You're making a 'starter pack'..."},
-      {"title": "The Ultimate Crew", "description": "Imagine you're assembling the ultimate crew..."}
+      {"title": "The Adventure Co-Pilot", "description": "You and a new friend get two 'Anywhere Tickets' that let you go anywhere in the world for 24 hours. Where do you go and what's the first thing you do when you get there? Tell us about your perfect adventure day with your new buddy."},
+      {"title": "The Passion Deep-Dive", "description": "Think of your favorite hobby or passion - something that makes you lose track of time when you're doing it. Now imagine you have unlimited resources and time to take it to the next level. What would you create, learn, or achieve?"},
+      {"title": "The Laughter Test", "description": "Picture a moment you're laughing so hard with friends that you can barely breathe. What's happening? Are you telling jokes, watching something hilarious, or did something completely unexpected happen? Paint us that scene."},
+      {"title": "The Secret Superpower & Its Origin Story", "description": "Everyone has a 'secret superpower' - something they're surprisingly good at or something that comes naturally to them. What's yours? Maybe you can always find parking spots, or you're the friend who remembers everyone's birthday, or you can make anyone feel comfortable. What's your hidden talent?"},
+      {"title": "The Vibe Check", "description": "You're making a 'starter pack' that captures your personal vibe - the essence of who you are. What 5-7 things (objects, activities, quotes, colors, anything!) would you include to help someone understand your energy and personality?"},
+      {"title": "The Ultimate Crew", "description": "Imagine you're assembling the ultimate crew for a fun campus scavenger hunt. You need 4-5 people total, and each person brings a different strength to the team. What kind of people would you recruit and what would each person's 'role' be in your squad?"}
     ],
     "ja": [
       {"title": "冒険の相棒 (The Adventure Co-Pilot)", "description": "新しい友達と一緒に、24時間限定の..."},
