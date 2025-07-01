@@ -24,7 +24,6 @@ class StudentForm(FlaskForm):
             Length(min=3, max=200, message='Please write between 3 and 200 characters')
         ],
         render_kw={
-            'placeholder': 'Sleeping, gaming, exploring random YouTube videos...',
             'class': 'form-control'
         }
     )
@@ -36,7 +35,6 @@ class StudentForm(FlaskForm):
             Length(min=3, max=200, message='Please write between 3 and 200 characters')
         ],
         render_kw={
-            'placeholder': 'Drawing, coding, speaking 10 languages...',
             'class': 'form-control'
         }
     )
@@ -48,7 +46,6 @@ class StudentForm(FlaskForm):
             Length(min=3, max=200, message='Please write between 3 and 200 characters')
         ],
         render_kw={
-            'placeholder': 'Anime theories, space facts, music production...',
             'class': 'form-control'
         }
     )
@@ -60,7 +57,6 @@ class StudentForm(FlaskForm):
             Length(min=3, max=100, message='Please write between 3 and 100 characters')
         ],
         render_kw={
-            'placeholder': 'Netflix, snacks, friends, chaos',
             'class': 'form-control'
         }
     )
@@ -72,7 +68,6 @@ class StudentForm(FlaskForm):
             Length(min=3, max=200, message='Please write between 3 and 200 characters')
         ],
         render_kw={
-            'placeholder': 'Collecting bottle caps, memorizing movie quotes...',
             'class': 'form-control'
         }
     )
@@ -84,7 +79,6 @@ class StudentForm(FlaskForm):
             Length(min=3, max=100, message='Please write between 3 and 100 characters')
         ],
         render_kw={
-            'placeholder': 'Lo-fi hip hop, death metal, classical...',
             'class': 'form-control'
         }
     )
