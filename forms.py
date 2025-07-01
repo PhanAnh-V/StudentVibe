@@ -89,17 +89,7 @@ class StudentForm(FlaskForm):
         }
     )
     
-    question7 = StringField(
-        'What\'s your secret superpower that nobody knows about?',
-        validators=[
-            DataRequired(message='This question is required'),
-            Length(min=3, max=200, message='Please write between 3 and 200 characters')
-        ],
-        render_kw={
-            'placeholder': 'Always finding the best memes, perfect timing...',
-            'class': 'form-control'
-        }
-    )
+
     
     country = SelectField(
         'Country',

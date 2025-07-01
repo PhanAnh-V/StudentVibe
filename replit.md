@@ -163,6 +163,11 @@ This is a Flask-based web application designed to collect and store student info
 - June 30, 2025. Added discreet teacher login link (先生ログイン) to language selection homepage
 - June 30, 2025. Removed teacher login link from session password page and converted all text to Japanese
 - June 30, 2025. Added Japanese font support (Noto Sans JP) to session password page for proper text rendering
+- July 01, 2025. Created questions.json file with multilingual questionnaire data (English, Japanese, Vietnamese, Chinese)
+- July 01, 2025. Implemented dynamic question loading system using JSON data with language-based question selection
+- July 01, 2025. Updated Student model and forms from 7 questions to 6 questions to match new questionnaire structure
+- July 01, 2025. Enhanced questionnaire template with dynamic question rendering and multilingual support
+- July 01, 2025. Added custom styling for question descriptions with improved visual design and Japanese font support
 
 ## User Preferences
 

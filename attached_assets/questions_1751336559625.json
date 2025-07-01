@@ -1,0 +1,42 @@
+{
+  "form_labels": {
+    "name": "あなたの名前",
+    "student_id": "学籍番号の下3桁",
+    "country": "国籍",
+    "gender": "性別"
+  },
+  "questions": {
+    "en": [
+      {"title": "The Adventure Co-Pilot", "description": "You and a new friend get two 'Anywhere Tickets'..."},
+      {"title": "The Passion Deep-Dive", "description": "Think of your favorite hobby or passion..."},
+      {"title": "The Laughter Test", "description": "Picture a moment you're laughing so hard..."},
+      {"title": "The Secret Superpower & Its Origin Story", "description": "Everyone has a 'secret superpower'..."},
+      {"title": "The Vibe Check", "description": "You're making a 'starter pack'..."},
+      {"title": "The Ultimate Crew", "description": "Imagine you're assembling the ultimate crew..."}
+    ],
+    "ja": [
+      {"title": "冒険の相棒 (The Adventure Co-Pilot)", "description": "新しい友達と一緒に、24時間限定の..."},
+      {"title": "情熱の深掘り (The Passion Deep-Dive)", "description": "あなたの好きな趣味や情熱を注いでいることについて..."},
+      {"title": "爆笑テスト (The Laughter Test)", "description": "友達と息ができないほど大笑いした瞬間を..."},
+      {"title": "秘密のスーパーパワーとその誕生秘話", "description": "誰にでも「隠れたスーパーパワー」..."},
+      {"title": "バイブ・チェック (The Vibe Check)", "description": "あなたの「個人的なバイブ」を誰かに..."},
+      {"title": "最強のチーム (The Ultimate Crew)", "description": "大学のキャンパスで楽しいスカベンジャーハントを..."}
+    ],
+    "vi": [
+      {"title": "Phi Công Đồng Hành Chuyến Phiêu Lưu", "description": "Bạn và một người bạn mới có hai vé..."},
+      {"title": "Đào Sâu Đam Mê", "description": "Hãy nghĩ về sở thích hoặc đam mê của bạn..."},
+      {"title": "Bài Test Tiếng Cười", "description": "Hãy tưởng tượng một khoảnh khắc bạn cười..."},
+      {"title": "Siêu Năng Lực Bí Mật & Nguồn Gốc", "description": "Ai cũng có một 'siêu năng lực bí mật'..."},
+      {"title": "Kiểm Tra 'Vibe'", "description": "Bạn đang tạo một 'gói khởi đầu'..."},
+      {"title": "Biệt Đội Đỉnh Nhất", "description": "Hãy tưởng tượng bạn đang tập hợp một 'biệt đội'..."}
+    ],
+    "zh": [
+      {"title": "冒险副驾 (The Adventure Co-Pilot)", "description": "你和一位新朋友得到了两张24小时有效的..."},
+      {"title": "热情深潜 (The Passion Deep-Dive)", "description": "想一想你最爱的爱好或热情所在..."},
+      {"title": "爆笑测试 (The Laughter Test)", "description": "想象一个你和朋友们笑到喘不过气的瞬间..."},
+      {"title": "秘密超能力与它的起源故事", "description": "每个人都有一种“秘密超能力”..."},
+      {"title": "“范儿”检查 (The Vibe Check)", "description": "现在要你制作一个“入门套装”..."},
+      {"title": "终极小队 (The Ultimate Crew)", "description": "想象一下，你要为一场有趣的校园寻宝游戏..."}
+    ]
+  }
+}

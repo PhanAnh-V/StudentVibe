@@ -59,7 +59,6 @@ class Student(db.Model):
     question4 = db.Column(db.Text, nullable=False)  # ideal Friday night
     question5 = db.Column(db.Text, nullable=False)  # weirdest obsession
     question6 = db.Column(db.Text, nullable=False)  # energy soundtrack
-    question7 = db.Column(db.Text, nullable=False)  # secret superpower
     country = db.Column(db.String(50), nullable=False)
     gender = db.Column(db.String(50), nullable=False)
     submission_id = db.Column(db.String(7), unique=True, nullable=True)
@@ -80,7 +79,6 @@ class Student(db.Model):
             'question4': getattr(self, 'question4', ''),
             'question5': getattr(self, 'question5', ''),
             'question6': getattr(self, 'question6', ''),
-            'question7': getattr(self, 'question7', ''),
             'country': self.country,
             'gender': self.gender,
             'created_at': self.created_at.isoformat() if self.created_at else None
@@ -94,8 +92,7 @@ class Student(db.Model):
             getattr(self, 'question3', '') or '',
             getattr(self, 'question4', '') or '',
             getattr(self, 'question5', '') or '',
-            getattr(self, 'question6', '') or '',
-            getattr(self, 'question7', '') or ''
+            getattr(self, 'question6', '') or ''
         ]
         return ' '.join(filter(None, answers))
     

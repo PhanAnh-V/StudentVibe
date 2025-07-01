@@ -4,8 +4,21 @@ from models import Student, SessionSettings
 from forms import StudentForm, TeacherLoginForm, StudentLoginForm
 import logging
 import re
+import json
 from collections import Counter, defaultdict
 from ai_recommendations import generate_interest_recommendations, enhance_archetype_with_ai, analyze_compatibility_with_ai
+
+def load_questionnaire_data():
+    """Load questionnaire data from questions.json file"""
+    try:
+        with open('questions.json', 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        logging.error("questions.json file not found")
+        return None
+    except json.JSONDecodeError:
+        logging.error("Error decoding questions.json")
+        return None
 
 @app.route('/')
 def index():
@@ -32,8 +45,21 @@ def session_password():
     """Session password page that shows questionnaire when authenticated"""
     # If already authenticated, show the questionnaire form
     if session.get('session_authenticated'):
+        # Load questionnaire data
+        questionnaire_data = load_questionnaire_data()
+        if not questionnaire_data:
+            flash('Error loading questionnaire data', 'error')
+            return render_template('session_password.html')
+        
+        # Get selected language from session, default to English
+        selected_language = session.get('selected_language', 'en')
+        
+        # Get questions for the selected language
+        questions = questionnaire_data['questions'].get(selected_language, questionnaire_data['questions']['en'])
+        form_labels = questionnaire_data['form_labels']
+        
         form = StudentForm()
-        return render_template('questionnaire.html', form=form)
+        return render_template('questionnaire.html', form=form, questions=questions, form_labels=form_labels, selected_language=selected_language)
     
     # Otherwise show session password entry
     return render_template('session_password.html')
@@ -63,7 +89,7 @@ def submit_form():
     if form.validate_on_submit():
         try:
             # Combine all answers for the vibes field (for backward compatibility)
-            combined_vibes = f"{form.question1.data} {form.question2.data} {form.question3.data} {form.question4.data} {form.question5.data} {form.question6.data} {form.question7.data}"
+            combined_vibes = f"{form.question1.data} {form.question2.data} {form.question3.data} {form.question4.data} {form.question5.data} {form.question6.data}"
             
             # Generate unique submission ID
             submission_id = Student.generate_submission_id()
@@ -78,7 +104,6 @@ def submit_form():
                 question4=form.question4.data,
                 question5=form.question5.data,
                 question6=form.question6.data,
-                question7=form.question7.data,
                 country=form.country.data,
                 gender=form.gender.data,
                 submission_id=submission_id

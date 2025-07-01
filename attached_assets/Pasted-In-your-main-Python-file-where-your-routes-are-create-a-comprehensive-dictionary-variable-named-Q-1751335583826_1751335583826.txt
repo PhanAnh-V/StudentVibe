@@ -1,0 +1,59 @@
+In your main Python file (where your routes are), create a comprehensive dictionary variable named QUESTIONNAIRE_DATA. This will hold all the text for the form. Please use this exact structure, including all the translated text provided.
+
+Python
+
+QUESTIONNAIRE_DATA = {
+    'form_labels': {
+        'name': 'あなたの名前',
+        'student_id': '学籍番号の下3桁',
+        'country': '国籍',
+        'gender': '性別'
+    },
+    'questions': {
+        'en': [
+            {'title': 'The Adventure Co-Pilot', 'description': "You and a new friend get two 'Anywhere Tickets' that are good for just 24 hours. Where do you go (e.g., a city, a beach, the mountains?), and what's the #1 rule for the day's adventure?"},
+            {'title': 'The Passion Deep-Dive', 'description': "Think of your favorite hobby or passion. What's one cool, interesting thing about it that you wish more people understood? (It could be a fun fact or why it's important to you)."},
+            {'title': 'The Laughter Test', 'description': "Picture a moment you're laughing so hard with your friends that you can't breathe. What's the scene? (A specific memory or the general type of joke works!)"},
+            {'title': 'The Secret Superpower & Its Origin Story', 'description': "Everyone has a 'secret superpower'—a small, weird, or useful skill (like always finding lost things!). What's yours, and can you share a quick story of a time it actually came in handy?"},
+            {'title': 'The Vibe Check', 'description': "You're making a 'starter pack' to introduce someone to your personal vibe. What are three things (e.g., songs, movies, books, games) you'd include, and what mood does each one represent?"},
+            {'title': 'The Ultimate Crew', 'description': "Imagine you're assembling the ultimate crew for a fun campus scavenger hunt. What’s the one must-have quality you’d want each teammate to have?"}
+        ],
+        'ja': [
+            {'title': '冒険の相棒 (The Adventure Co-Pilot)', 'description': "新しい友達と一緒に、24時間限定の「どこへでも行けるチケット」を2枚手に入れました。どこへ行きますか？ (例えば、都会、ビーチ、山とか？) そして、その日の冒険に欠かせない「たった一つのルール」は何にしますか？"},
+            {'title': '情熱の深掘り (The Passion Deep-Dive)', 'description': "あなたの好きな趣味や情熱を注いでいることについて考えてみてください。それについて「もっと多くの人に知ってほしい！」と思う、クールで面白い点は何ですか？ (豆知識や、なぜそれが自分にとって大切なのか、など。)"},
+            {'title': '爆笑テスト (The Laughter Test)', 'description': "友達と息ができないほど大笑いした瞬間を思い浮かべてみて。それはどんな場面でしたか？ (具体的な思い出でも、いつも笑っちゃうジョークの種類でもOK！)"},
+            {'title': '秘密のスーパーパワーとその誕生秘話', 'description': "誰にでも「隠れたスーパーパワー」、つまり、ちょっと変わった、または便利なスキルがあります (例えば、なくし物をいつも見つけられる！とか)。あなたのスーパーパワーは何ですか？そして、それが実際に役立った時の短いエピソードを教えてください。"},
+            {'title': 'バイブ・チェック (The Vibe Check)', 'description': "あなたの「個人的なバイブ」を誰かに紹介するための「スターターパック」を作るとします。あなたなら何を選びますか？ (例えば、曲、映画、本、ゲームなどから3つ) そして、それぞれがどんなムードを表していますか？"},
+            {'title': '最強のチーム (The Ultimate Crew)', 'description': "大学のキャンパスで楽しいスカベンジャーハントをするとします。あなたが「最強のチーム」を組むとしたら、チームメイトに求める「絶対に欠かせない資質」は何ですか？"}
+        ],
+        'vi': [
+            {'title': 'Phi Công Đồng Hành Chuyến Phiêu Lưu', 'description': "Bạn và một người bạn mới có hai vé 'Đi Bất Cứ Đâu' chỉ có hiệu lực trong 24 giờ. Bạn sẽ đi đâu (ví dụ: thành phố, bãi biển, hay lên núi?), và quy tắc SỐ 1 cho chuyến phiêu lưu trong ngày là gì?"},
+            {'title': 'Đào Sâu Đam Mê', 'description': "Hãy nghĩ về sở thích hoặc đam mê của bạn. Có một điều gì 'cool' và thú vị về nó mà bạn ước nhiều người hơn có thể hiểu không? (Có thể là một sự thật thú vị hoặc lý do tại sao nó quan trọng với bạn)."},
+            {'title': 'Bài Test Tiếng Cười', 'description': "Hãy tưởng tượng một khoảnh khắc bạn cười đến không thở nổi với đám bạn. Khung cảnh lúc đó như thế nào? (Một kỷ niệm cụ thể hay thể loại chuyện đùa thường khiến bạn bật cười đều được nhé!)"},
+            {'title': 'Siêu Năng Lực Bí Mật & Nguồn Gốc', 'description': "Ai cũng có một 'siêu năng lực bí mật'—một kỹ năng nhỏ, kỳ quặc hoặc hữu ích (ví dụ: luôn tìm thấy đồ thất lạc!). Siêu năng lực của bạn là gì, và bạn có thể chia sẻ một câu chuyện ngắn về lần nó thực sự có ích không?"},
+            {'title': 'Kiểm Tra "Vibe"', 'description': "Bạn đang tạo một 'gói khởi đầu' (starter pack) để giới thiệu 'vibe' cá nhân của mình cho ai đó. Bạn sẽ chọn ba thứ gì (ví dụ: bài hát, phim, sách, game), và mỗi thứ đại diện cho một 'mood' (tâm trạng) nào?"},
+            {'title': 'Biệt Đội Đỉnh Nhất', 'description': "Hãy tưởng tượng bạn đang tập hợp một 'biệt đội' đỉnh nhất cho một cuộc truy tìm kho báu vui vẻ trong khuôn viên trường. Phẩm chất 'bắt buộc phải có' mà bạn muốn mỗi đồng đội sở hữu là gì?"}
+        ],
+        'zh': [
+            {'title': '冒险副驾 (The Adventure Co-Pilot)', 'description': "你和一位新朋友得到了两张24小时有效的“任意门票”。你们会去哪里呢？（比如：城市、海滩、还是山里？）以及，当天冒险的“第一准则”是什么？"},
+            {'title': '热情深潜 (The Passion Deep-Dive)', 'description': "想一想你最爱的爱好或热情所在。关于它，有什么你希望更多人能理解的、又酷又有趣的地方吗？（可以是一个冷知识，或者它为什么对你很重要。）"},
+            {'title': '爆笑测试 (The Laughter Test)', 'description': "想象一个你和朋友们笑到喘不过气的瞬间。那是什么样的场景呢？（可以是一个具体的回忆，也可以是通常能戳中你笑点的那种玩笑！）"},
+            {'title': '秘密超能力与它的起源故事', 'description': "每个人都有一种“秘密超能力”——某个微小、奇特或有用的小技能（比如：总能找到丢失的东西！）。你的超能力是什么？可以分享一个它真的派上用场的小故事吗？"},
+            {'title': '“范儿”检查 (The Vibe Check)', 'description': "现在要你制作一个“入门套装”来向别人介绍你的个人“范儿”(vibe)。你会包含哪三样东西呢？（比如：歌曲、电影、书、游戏）它们各自代表了什么样的心情(mood)？"},
+            {'title': '终极小队 (The Ultimate Crew)', 'description': "想象一下，你要为一场有趣的校园寻宝游戏组建一支“终极小队”。你希望每位队友都拥有的那个“必备品质”是什么？"}
+        ]
+    }
+}
+Go to the Flask route that renders the questionnaire page. Inside this route, get the student's chosen language code from the session. Use this code to select the correct list of questions from the QUESTIONNAIRE_DATA['questions'] dictionary. Pass this list, along with the QUESTIONNAIRE_DATA['form_labels'] dictionary, to the HTML template.
+
+Completely redesign the questionnaire HTML template:
+
+At the top, add text inputs for Name, the last 3 digits of the student number, Country, and Gender. Use the labels from form_labels.
+
+Below that, create a loop that renders all 6 questions.
+
+For each question in the loop, display its title as a bold heading (<h4>) and its description as smaller paragraph text (<p>) below the title.
+
+Below each question's description, provide a <textarea> for the student's answer.
+
+Finally, go to the Python route that handles the form submission (POST request). Update it to correctly receive and save all the new fields: the student's name, their 3-digit number, country, gender, and all 6 of their new answers.
