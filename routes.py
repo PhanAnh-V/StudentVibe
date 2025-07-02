@@ -1105,6 +1105,32 @@ def teacher_ai_insights():
                          student_profiles=student_profiles,
                          compatibility_matrix=compatibility_matrix)
 
+@app.route('/reset-database')
+def reset_database():
+    """Temporary route to reset database for testing"""
+    try:
+        # Delete all squad records first (to handle foreign key constraints)
+        Squad.query.delete()
+        
+        # Delete all student records
+        Student.query.delete()
+        
+        # Delete all session settings
+        SessionSettings.query.delete()
+        
+        # Commit the changes
+        db.session.commit()
+        
+        flash('Database has been reset!', 'success')
+        logging.info("Database reset completed successfully")
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error resetting database: {str(e)}', 'error')
+        logging.error(f"Database reset failed: {str(e)}")
+    
+    return redirect(url_for('teacher_login'))
+
 @app.errorhandler(404)
 def not_found_error(error):
     """Handle 404 errors"""
