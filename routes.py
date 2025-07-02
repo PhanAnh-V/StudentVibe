@@ -1109,11 +1109,11 @@ def teacher_ai_insights():
 def reset_database():
     """Temporary route to reset database for testing"""
     try:
-        # Delete all squad records first (to handle foreign key constraints)
-        Squad.query.delete()
-        
-        # Delete all student records
+        # Delete all student records first (to handle foreign key constraints)
         Student.query.delete()
+        
+        # Delete all squad records
+        Squad.query.delete()
         
         # Delete all session settings
         SessionSettings.query.delete()
