@@ -529,32 +529,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const genderFilter = document.getElementById('genderFilter');
     const studentCount = document.getElementById('studentCount');
     
-    function filterStudents() {
-        const selectedCountry = countryFilter.value;
-        const selectedGender = genderFilter.value;
-        const studentCards = document.querySelectorAll('.student-card');
-        let visibleCount = 0;
-        
-        studentCards.forEach(card => {
-            const cardCountry = card.dataset.country;
-            const cardGender = card.dataset.gender;
+    // Only add event listeners if elements exist
+    if (countryFilter && genderFilter && studentCount) {
+        function filterStudents() {
+            const selectedCountry = countryFilter.value;
+            const selectedGender = genderFilter.value;
+            const studentCards = document.querySelectorAll('.student-card');
+            let visibleCount = 0;
             
-            const countryMatch = !selectedCountry || cardCountry === selectedCountry;
-            const genderMatch = !selectedGender || cardGender === selectedGender;
+            studentCards.forEach(card => {
+                const cardCountry = card.dataset.country;
+                const cardGender = card.dataset.gender;
+                
+                const countryMatch = !selectedCountry || cardCountry === selectedCountry;
+                const genderMatch = !selectedGender || cardGender === selectedGender;
+                
+                if (countryMatch && genderMatch) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
             
-            if (countryMatch && genderMatch) {
-                card.style.display = 'block';
-                visibleCount++;
-            } else {
-                card.style.display = 'none';
-            }
-        });
+            studentCount.textContent = visibleCount;
+        }
         
-        studentCount.textContent = visibleCount;
+        countryFilter.addEventListener('change', filterStudents);
+        genderFilter.addEventListener('change', filterStudents);
     }
-    
-    countryFilter.addEventListener('change', filterStudents);
-    genderFilter.addEventListener('change', filterStudents);
 });
 
 // Delete functionality
