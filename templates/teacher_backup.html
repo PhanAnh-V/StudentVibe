@@ -371,6 +371,92 @@
         </div>
 
 
+                <div class="student-card" data-country="{{ student.country }}" data-gender="{{ student.gender }}">
+                    <div class="student-header">
+                        <div class="student-title">
+                            <h3 class="student-name">
+                                <i class="fas fa-user-graduate me-2"></i>
+                                <a href="{{ url_for('student_profile', student_id=student.id) }}" class="text-decoration-none text-dark">
+                                    {{ student.name }}
+                                </a>
+                                <span class="student-id-badge">ID: {{ student.id }}</span>
+                            </h3>
+                            <a href="{{ url_for('delete_student', student_id=student.id) }}" 
+                               class="delete-student-btn" 
+                               onclick="return confirm('Are you sure you want to delete {{ student.name }}?')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </div>
+                        <div class="student-meta">
+                            <div class="student-details">
+                                <span class="student-tag">
+                                    <i class="fas fa-globe me-1"></i>{{ student.country }}
+                                </span>
+                                <span class="student-tag">
+                                    <i class="fas fa-user me-1"></i>{{ student.gender }}
+                                </span>
+                            </div>
+                            <small class="student-date">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ student.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="student-content">
+                        <h4 class="vibes-label">
+                            <i class="fas fa-heart me-2"></i>
+                            Interests & Vibes
+                        </h4>
+                        <div class="vibes-text">
+                            {{ student.vibes }}
+                        </div>
+                        
+                        {% if student.interests %}
+                        <div class="interest-visualization mt-3">
+                            <h5 class="interest-label">
+                                <i class="fas fa-tags me-2"></i>
+                                Interest Categories
+                            </h5>
+                            <div class="interest-bubbles">
+                                {% for interest in student.interests %}
+                                <div class="interest-bubble" 
+                                     style="background-color: {{ interest.color }}; opacity: {{ 0.7 + (interest.intensity * 0.3) }}">
+                                    <i class="{{ interest.icon }} me-1"></i>
+                                    {{ interest.name }}
+                                    <span class="interest-intensity" 
+                                          style="width: {{ interest.intensity * 100 }}%"></span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="student-footer">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>
+                            Submitted {{ student.created_at.strftime('%m/%d at %H:%M') }}
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <h3 class="empty-title">No Submissions Yet</h3>
+                <p class="empty-message">
+                    Student submissions will appear here once they start filling out the form.
+                </p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>
+                    View Student Form
+                </a>
+            </div>
+        {% endif %}
     
     <!-- Solo Students Section -->
     {% if solo_students %}
