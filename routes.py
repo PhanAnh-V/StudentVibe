@@ -564,46 +564,104 @@ def create_squads():
         
         # Get AI-powered squad groupings
         ai_response = group_students_into_squads(students_data)
+        
+        # CRITICAL DEBUGGING: Log the complete raw AI response
+        print("=" * 80)
+        print("🔍 RAW AI RESPONSE FOR DEBUGGING:")
+        print(f"Type: {type(ai_response)}")
+        print(f"Content: {ai_response}")
+        print("=" * 80)
+        
         squads_created = 0
         
-        # Process each AI-suggested squad
-        for squad_data in ai_response['squads']:
-            # Create the squad
-            new_squad = Squad(
-                name=squad_data['name'],
-                shared_interests=squad_data['shared_interests']
-            )
-            db.session.add(new_squad)
-            db.session.flush()  # Get the ID
+        # Process each AI-suggested squad with robust error handling
+        try:
+            print(f"🔍 PARSING: AI response type is {type(ai_response)}")
+            print(f"🔍 PARSING: AI response keys: {ai_response.keys() if isinstance(ai_response, dict) else 'Not a dict'}")
             
-            # Assign students to this squad
-            squad_members_data = []
-            for student_id in squad_data['member_ids']:
-                if student_id in student_map:
-                    student = student_map[student_id]
-                    student.squad_id = new_squad.id
-                    # Collect member data for icebreaker generation
-                    squad_members_data.append({
-                        'name': student.name,
-                        'question1': student.question1,
-                        'question2': student.question2,
-                        'question3': student.question3,
-                        'question4': student.question4,
-                        'question5': student.question5,
-                        'question6': student.question6,
-                    })
+            if not isinstance(ai_response, dict):
+                raise ValueError(f"AI response is not a dictionary. Got: {type(ai_response)}")
             
-            # Generate personalized icebreaker for this squad
-            if squad_members_data:
-                try:
-                    icebreaker = generate_squad_icebreaker(squad_members_data, new_squad.name)
-                    new_squad.icebreaker_text = icebreaker
-                    logging.info(f"Generated icebreaker for {new_squad.name}: {icebreaker}")
-                except Exception as e:
-                    logging.error(f"Error generating icebreaker for {new_squad.name}: {str(e)}")
-                    new_squad.icebreaker_text = "If your squad had to create a theme song using only sounds you can make with your body, what would it sound like?"
+            if 'squads' not in ai_response:
+                raise KeyError(f"'squads' key not found in AI response. Available keys: {list(ai_response.keys())}")
             
-            squads_created += 1
+            squads_list = ai_response['squads']
+            print(f"🔍 PARSING: Found {len(squads_list)} squads in AI response")
+            
+            for i, squad_data in enumerate(squads_list):
+                print(f"🔍 PROCESSING SQUAD {i+1}: {squad_data}")
+                
+                # Validate squad structure
+                if not isinstance(squad_data, dict):
+                    print(f"❌ ERROR: Squad {i+1} is not a dictionary: {squad_data}")
+                    continue
+                
+                required_keys = ['name', 'shared_interests', 'member_ids']
+                missing_keys = [key for key in required_keys if key not in squad_data]
+                if missing_keys:
+                    print(f"❌ ERROR: Squad {i+1} missing keys: {missing_keys}")
+                    print(f"Available keys: {list(squad_data.keys())}")
+                    continue
+                # Create the squad
+                print(f"✅ Creating squad: {squad_data['name']}")
+                new_squad = Squad(
+                    name=squad_data['name'],
+                    shared_interests=squad_data['shared_interests']
+                )
+                db.session.add(new_squad)
+                db.session.flush()  # Get the ID
+                print(f"✅ Squad created with ID: {new_squad.id}")
+                
+                # Assign students to this squad
+                squad_members_data = []
+                member_ids = squad_data['member_ids']
+                print(f"🔍 Processing {len(member_ids)} members for squad {new_squad.name}")
+                
+                for student_id in member_ids:
+                    print(f"🔍 Processing student ID: {student_id} (type: {type(student_id)})")
+                    
+                    if student_id in student_map:
+                        student = student_map[student_id]
+                        student.squad_id = new_squad.id
+                        print(f"✅ Assigned {student.name} to squad {new_squad.name}")
+                        
+                        # Collect member data for icebreaker generation
+                        squad_members_data.append({
+                            'name': student.name,
+                            'question1': student.question1,
+                            'question2': student.question2,
+                            'question3': student.question3,
+                            'question4': student.question4,
+                            'question5': student.question5,
+                            'question6': student.question6,
+                        })
+                    else:
+                        print(f"❌ ERROR: Student ID {student_id} not found in student_map")
+                        print(f"Available student IDs: {list(student_map.keys())}")
+                
+                # Generate personalized icebreaker for this squad
+                if squad_members_data:
+                    try:
+                        print(f"🔍 Generating icebreaker for {new_squad.name} with {len(squad_members_data)} members")
+                        icebreaker = generate_squad_icebreaker(squad_members_data, new_squad.name)
+                        new_squad.icebreaker_text = icebreaker
+                        print(f"✅ Generated icebreaker for {new_squad.name}: {icebreaker}")
+                        logging.info(f"Generated icebreaker for {new_squad.name}: {icebreaker}")
+                    except Exception as e:
+                        print(f"❌ ERROR generating icebreaker for {new_squad.name}: {str(e)}")
+                        logging.error(f"Error generating icebreaker for {new_squad.name}: {str(e)}")
+                        new_squad.icebreaker_text = "If your squad had to create a theme song using only sounds you can make with your body, what would it sound like?"
+                else:
+                    print(f"❌ WARNING: No valid members found for squad {new_squad.name}")
+                
+                squads_created += 1
+                print(f"✅ Successfully processed squad {i+1}/{len(squads_list)}")
+                
+        except Exception as parsing_error:
+            print(f"❌ CRITICAL ERROR during AI response parsing: {str(parsing_error)}")
+            print(f"❌ Error type: {type(parsing_error)}")
+            logging.error(f"AI response parsing error: {str(parsing_error)}")
+            raise parsing_error
         
         db.session.commit()
         
