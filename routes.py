@@ -177,32 +177,34 @@ def find_squad():
             return render_template('find_squad.html')
         
         # Check if student has been assigned to a squad
-        # For now, we'll check if the student exists in the database
-        # Squad assignment logic will be implemented when squads are created
-        squad_info = None
-        
-        # TODO: Implement squad lookup when squad system is enhanced
-        # This is a placeholder for when squads are properly stored in database
-        if hasattr(student, 'squad_id') and student.squad_id:
-            # Squad assignment exists
-            squad_info = {
-                'squad_name': f'Squad {student.squad_id}',
-                'members': [student.name],  # Placeholder
-                'student_name': student.name
-            }
+        if student.squad_id:
+            # Redirect to the squad hub
+            return redirect(url_for('squad_hub', squad_id=student.squad_id))
         else:
             # No squad assigned yet
-            flash('ID not found, or your squad has not been created yet. Please check your ID or wait for your teacher to create the squads.', 'error')
+            flash('Your squad has not been created yet. Please wait for your teacher to create the squads.', 'error')
             return render_template('find_squad.html')
-        
-        return render_template('find_squad.html', 
-                             squad_info=squad_info,
-                             student=student)
     
     # GET request - show the form
     return render_template('find_squad.html')
 
-
+@app.route('/squad-hub/<int:squad_id>')
+def squad_hub(squad_id):
+    """Display the squad hub for a specific squad"""
+    try:
+        # Fetch the squad with all its members
+        squad = Squad.query.get_or_404(squad_id)
+        
+        # Add icebreaker_text attribute if it doesn't exist (placeholder for future AI integration)
+        if not hasattr(squad, 'icebreaker_text'):
+            squad.icebreaker_text = None
+        
+        return render_template('squad_hub.html', squad=squad)
+        
+    except Exception as e:
+        logging.error(f"Error accessing squad hub {squad_id}: {str(e)}")
+        flash('Squad not found or unable to access squad details.', 'error')
+        return redirect(url_for('find_squad'))
 
 @app.route('/login/teacher', methods=['GET', 'POST'])
 def teacher_login():
