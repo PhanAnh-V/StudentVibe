@@ -15,19 +15,25 @@
         </p>
     </div>
     
-    {% if squads %}
+    {% if squads and not no_squads %}
         <div class="squads-showcase">
             {% for squad in squads %}
             <div class="squad-showcase">
                 <div class="squad-showcase-header">
                     <h2 class="squad-showcase-title">
                         <i class="fas fa-star me-2"></i>
-                        Squad {{ loop.index }}
+                        {{ squad.name }}
                     </h2>
                     <span class="squad-theme">
                         <i class="fas fa-heart me-1"></i>
                         {{ squad.shared_interests }}
                     </span>
+                    <div class="squad-meta">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>
+                            Created: {{ squad.created_at.strftime('%B %d, %Y') }}
+                        </small>
+                    </div>
                 </div>
                 
                 <div class="vibe-cards-grid">
@@ -49,12 +55,14 @@
                         <div class="vibe-card-content">
                             <div class="member-info-section">
                                 <div class="member-details">
-                                    <span class="member-tag">
+                                    <span class="member-tag country-tag">
                                         <i class="fas fa-globe me-1"></i>{{ member.country }}
                                     </span>
-                                    <span class="member-tag">
-                                        <i class="fas fa-user me-1"></i>{{ member.gender }}
+                                    {% if member.submission_id %}
+                                    <span class="member-tag id-tag">
+                                        <i class="fas fa-id-card me-1"></i>{{ member.submission_id }}
                                     </span>
+                                    {% endif %}
                                 </div>
                             </div>
                             
