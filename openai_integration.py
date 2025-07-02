@@ -99,7 +99,7 @@ Create TWO distinct, engaging icebreaker questions that:
 1. Reference specific interests or answers from the squad members
 2. Encourage creative, fun responses
 3. Help the squad bond over shared experiences or discover new things about each other
-4. Are playful and age-appropriate for students
+4. Are playful and age-appropriate for students (18-23 years old, college age)
 5. Spark conversation and laughter
 
 The first question should be fun and lighthearted.

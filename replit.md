@@ -207,6 +207,10 @@ This is a Flask-based web application designed to collect and store student info
 - July 02, 2025. Added "Clear All Squads" functionality to teacher dashboard with comprehensive database cleanup
 - July 02, 2025. Created /clear-squads route that properly unassigns all students before deleting squad records
 - July 02, 2025. Fixed browser console errors by improving clipboard functionality with robust fallbacks and CSP error suppression
+- July 02, 2025. Enhanced icebreaker system with dual JSON questions (lighthearted & thoughtful) and improved visual styling
+- July 02, 2025. Added custom Flask template filter for reliable JSON parsing in squad hub icebreaker display
+- July 02, 2025. Modified /clear-squads route to completely delete all student and squad records (total database reset)
+- July 02, 2025. Updated teacher dashboard button from "全スクワッドクリア" to "すべて削除" with enhanced confirmation message
 
 ## User Preferences
 

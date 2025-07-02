@@ -222,9 +222,9 @@
                 <form method="POST" action="{{ url_for('clear_squads') }}" style="display: inline;">
                     <button type="submit" 
                             class="btn btn-danger me-2"
-                            onclick="return confirm('すべてのスクワッドをクリアしてもよろしいですか？すべての学生がグループ化されていない状態に戻ります。')">
-                        <i class="fas fa-broom me-2"></i>
-                        全スクワッドクリア
+                            onclick="return confirm('すべてのデータを削除してもよろしいですか？すべての学生とスクワッドのデータが完全に削除されます。この操作は元に戻せません。')">
+                        <i class="fas fa-trash-alt me-2"></i>
+                        すべて削除
                     </button>
                 </form>
 
