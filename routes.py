@@ -7,7 +7,7 @@ import re
 import json
 import random
 from collections import Counter, defaultdict
-from ai_recommendations import generate_interest_recommendations, enhance_archetype_with_ai, analyze_compatibility_with_ai
+# AI recommendations functions will be imported where needed
 
 def load_questionnaire_data():
     """Load questionnaire data from questions.json file"""
@@ -655,128 +655,32 @@ def create_fallback_squads(students_data):
 
 def analyze_students_and_create_squads(students_data):
     """
-    Send student data to AI (Gemini) acting as social dynamics expert
+    Send student data to AI (OpenAI) acting as social dynamics expert
     Returns JSON with intelligent squad groupings based on shared interests
     """
-    import os
-    import json
-    
     try:
-        from google import genai
-        # Initialize Gemini client
-        client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+        from openai_integration import group_students_into_squads
+        return group_students_into_squads(students_data)
     except ImportError:
-        logging.error("Google Gemini API not available")
+        logging.error("OpenAI integration not available")
         return create_fallback_squads(students_data)
-    
-    # Construct the social dynamics expert prompt
-    prompt = f"""You are an expert social dynamics consultant specializing in creating meaningful group formations.
-
-Analyze the following {len(students_data)} students and their responses to 6 personality questions. Group them into squads of 3-4 members each based on shared interests, complementary personalities, and potential for genuine connections.
-
-STUDENT DATA:
-{json.dumps(students_data, indent=2)}
-
-INSTRUCTIONS:
-- Create squads of 3-4 members each
-- Focus on shared interests and complementary personalities
-- Generate creative, engaging squad names that reflect the group's essence
-- Identify 2-3 key shared interests for each squad
-- Ensure balanced group dynamics
-
-REQUIRED OUTPUT FORMAT (JSON only, no other text):
-{{
-  "squads": [
-    {{
-      "name": "Creative Squad Name",
-      "shared_interests": "Brief description of 2-3 shared interests",
-      "member_ids": [1, 2, 3, 4]
-    }}
-  ]
-}}
-
-Respond only with valid JSON in the exact format above."""
-
-    try:
-        # Send to Gemini API
-        response = client.models.generate_content(
-            model="gemini-2.5-pro",
-            contents=prompt,
-            config=genai.types.GenerateContentConfig(
-                response_mime_type="application/json"
-            )
-        )
-        
-        # Parse and return the JSON response
-        return json.loads(response.text)
-        
     except Exception as e:
-        logging.error(f"AI squad formation failed: {str(e)}")
-        # Fallback: Create simple sequential squads
+        logging.error(f"Error in AI squad formation: {str(e)}")
         return create_fallback_squads(students_data)
+
 
 def generate_squad_icebreaker_with_ai(member_data, squad_name):
     """
     Generate a personalized icebreaker question for a specific squad using OpenAI ChatGPT API
     """
-    import os
     try:
-        from openai import OpenAI
-        # Initialize OpenAI client
-        client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-        
-        # Create the AI prompt
-        prompt = f"""You are a social dynamics expert specializing in creating engaging icebreaker questions for small groups. 
-
-Squad Name: {squad_name}
-Squad Members: {len(member_data)} students
-
-Member Details:
-"""
-        
-        for i, member in enumerate(member_data, 1):
-            prompt += f"""
-Member {i}: {member['name']} ({member['country']}, {member['gender']})
-- Go-to activity when free: {member['answers']['go_to_activity']}
-- Skill they'd master instantly: {member['answers']['skill_to_master']}
-- Topic they could talk about for hours: {member['answers']['talk_about_for_hours']}
-- Ideal Friday night: {member['answers']['ideal_friday_night']}
-- Weirdest obsession: {member['answers']['weirdest_obsession']}
-- Energy soundtrack genre: {member['answers']['energy_soundtrack']}
-"""
-        
-        prompt += """
-Based on these members' interests and personalities, create ONE engaging icebreaker question that:
-1. Connects to their shared interests or complementary differences
-2. Is fun and creates natural conversation
-3. Helps them discover surprising things about each other
-4. Takes 10-15 minutes to discuss as a group
-5. Is appropriate for their age group and backgrounds
-
-Return ONLY the icebreaker question text, nothing else. Make it engaging and specific to this group.
-"""
-        
-        # Call OpenAI API
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=200,
-            temperature=0.7
-        )
-        
-        icebreaker_text = response.choices[0].message.content.strip()
-        
-        # Validate response
-        if not icebreaker_text or len(icebreaker_text) < 10:
-            return get_fallback_icebreaker()
-        
-        logging.info(f"Generated icebreaker for squad {squad_name}: {icebreaker_text[:50]}...")
-        return icebreaker_text
-        
+        from openai_integration import generate_squad_icebreaker
+        return generate_squad_icebreaker(member_data, squad_name)
+    except ImportError:
+        logging.error("OpenAI integration not available")
+        return get_fallback_icebreaker()
     except Exception as e:
-        logging.error(f"AI icebreaker generation failed: {str(e)}")
+        logging.error(f"Error generating icebreaker: {str(e)}")
         return get_fallback_icebreaker()
 
 def get_fallback_icebreaker():

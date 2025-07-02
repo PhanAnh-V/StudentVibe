@@ -189,6 +189,9 @@ This is a Flask-based web application designed to collect and store student info
 - July 02, 2025. Completely rewrote create_squads function to use Gemini AI for both grouping and icebreaker generation
 - July 02, 2025. Created gemini_integration.py module with functions for AI-powered squad grouping and icebreaker creation
 - July 02, 2025. Enhanced squad creation to include AI-generated creative squad names based on member characteristics
+- July 02, 2025. Migrated from Google Gemini API to OpenAI ChatGPT API (gpt-4o model) for improved reliability
+- July 02, 2025. Renamed gemini_integration.py to openai_integration.py and updated all API calls to use OpenAI format
+- July 02, 2025. Updated routes.py to use openai_integration module for both squad formation and icebreaker generation
 
 ## User Preferences
 

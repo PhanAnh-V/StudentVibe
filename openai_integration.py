@@ -2,20 +2,18 @@ import json
 import logging
 import os
 
-from google import genai
-from google.genai import types
-from pydantic import BaseModel
+from openai import OpenAI
 
 
 # IMPORTANT: KEEP THIS COMMENT
 # Follow these instructions when using this blueprint:
-# - Note that the newest Gemini model series is "gemini-2.5-flash" or gemini-2.5-pro"
-#   - do not change this unless explicitly requested by the user
-# - Sometimes the google genai SDK has occasional type errors. You might need to run to validate, at time.  
-# The SDK was recently renamed from google-generativeai to google-genai. This file reflects the new name and the new APIs.
+# - Note that the newest OpenAI model is "gpt-4o" which was released May 13, 2024.
+#   do not change this unless explicitly requested by the user
+# - Use the response_format: { type: "json_object" } option when requesting JSON responses
+# - Request output in JSON format in the prompt
 
-# This API key is from Gemini Developer API Key, not vertex AI API Key
-client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+# Initialize OpenAI client
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 
 def group_students_into_squads(students_data):
@@ -56,17 +54,18 @@ Respond with a JSON object in this exact format:
 
 Make sure every student is assigned to exactly one squad."""
 
-        response = client.models.generate_content(
-            model="gemini-2.5-pro",
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                temperature=0.8,
-            ),
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "You are a social dynamics expert specializing in creating meaningful connections between students."},
+                {"role": "user", "content": prompt}
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.8,
         )
 
-        if response.text:
-            return json.loads(response.text)
+        if response.choices[0].message.content:
+            return json.loads(response.choices[0].message.content)
         else:
             raise ValueError("Empty response from AI")
 
@@ -107,17 +106,18 @@ The icebreaker should feel personal to THIS specific group, not generic.
 
 Respond with just the icebreaker question text, nothing else."""
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                temperature=0.9,
-                max_output_tokens=150,
-            ),
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "You are creating fun, personalized icebreaker questions for student squads."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.9,
+            max_tokens=150,
         )
 
-        if response.text:
-            return response.text.strip()
+        if response.choices[0].message.content:
+            return response.choices[0].message.content.strip()
         else:
             raise ValueError("Empty response from AI")
 
