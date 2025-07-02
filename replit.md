@@ -204,6 +204,8 @@ This is a Flask-based web application designed to collect and store student info
 - July 02, 2025. Added database migration to support new Japanese translation columns in production
 - July 02, 2025. Enhanced translation system with intelligent language detection to skip unnecessary AI calls for Japanese students
 - July 02, 2025. Optimized form submission performance by preserving original Japanese answers when student language is 'ja'
+- July 02, 2025. Added "Clear All Squads" functionality to teacher dashboard with comprehensive database cleanup
+- July 02, 2025. Created /clear-squads route that properly unassigns all students before deleting squad records
 
 ## User Preferences
 

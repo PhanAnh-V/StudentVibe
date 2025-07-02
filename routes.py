@@ -857,6 +857,46 @@ def delete_squad(squad_id):
     
     return redirect(url_for('teacher'))
 
+@app.route('/clear-squads', methods=['POST'])
+def clear_squads():
+    """Clear all squads and reset all student squad assignments"""
+    if not session.get('teacher_authenticated'):
+        flash('Access denied. Please log in first.', 'error')
+        return redirect(url_for('teacher'))
+    
+    try:
+        # First, update all students to remove their squad assignments
+        students_updated = Student.query.filter(Student.squad_id.isnot(None)).all()
+        total_students = len(students_updated)
+        
+        for student in students_updated:
+            student.squad_id = None
+            logging.info(f"Cleared squad assignment for student {student.name} (ID: {student.id})")
+        
+        # Flush the student updates
+        db.session.flush()
+        
+        # Second, delete all squad records
+        squads_to_delete = Squad.query.all()
+        total_squads = len(squads_to_delete)
+        
+        for squad in squads_to_delete:
+            logging.info(f"Deleting squad {squad.name} (ID: {squad.id})")
+            db.session.delete(squad)
+        
+        # Commit all changes
+        db.session.commit()
+        
+        flash(f'すべてのスクワッドがクリアされました。{total_squads}つのスクワッドが削除され、{total_students}人の学生がグループ化されていない状態に戻りました。', 'success')
+        logging.info(f"All squads cleared successfully: {total_squads} squads deleted, {total_students} students unassigned")
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'スクワッドクリア中にエラーが発生しました: {str(e)}', 'error')
+        logging.error(f"Failed to clear all squads: {str(e)}")
+    
+    return redirect(url_for('teacher'))
+
 @app.route('/generate-icebreaker/<int:squad_id>')
 def generate_icebreaker(squad_id):
     """Generate AI-powered icebreaker for a specific squad"""
