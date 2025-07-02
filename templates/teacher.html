@@ -530,6 +530,38 @@
 <script>
 let deleteStudentId = null;
 
+// Suppress harmless browser console warnings
+window.addEventListener('error', function(e) {
+    // Suppress specific CSP and permissions policy errors that are harmless
+    const suppressedErrors = [
+        'allowfullscreen',
+        'allowpaymentrequest', 
+        'ambient-light-sensor',
+        'battery',
+        'execution-while-not-rendered',
+        'navigation-override',
+        'oversized-images',
+        'publickey-credentials',
+        'speaker-selection',
+        'unoptimized-images',
+        'unsized-media',
+        'pointer-lock'
+    ];
+    
+    if (suppressedErrors.some(err => e.message.includes(err))) {
+        e.preventDefault();
+        return false;
+    }
+});
+
+// Suppress unhandled promise rejections for clipboard operations
+window.addEventListener('unhandledrejection', function(e) {
+    if (e.reason && e.reason.message && e.reason.message.includes('clipboard')) {
+        e.preventDefault();
+        return false;
+    }
+});
+
 // Dashboard functionality
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -603,14 +635,20 @@ function deleteStudent() {
     }
 }
 
-// Copy password functionality
+// Copy password functionality with better error handling
 function copyPassword() {
     const passwordElement = document.querySelector('.session-password-code');
-    const password = passwordElement.textContent;
+    if (!passwordElement) {
+        console.log('Password element not found');
+        return;
+    }
     
-    navigator.clipboard.writeText(password).then(function() {
-        // Show success feedback
-        const button = event.target.closest('button');
+    const password = passwordElement.textContent.trim();
+    const button = event.target.closest('button');
+    
+    // Function to show success feedback
+    function showSuccess() {
+        if (!button) return;
         const originalHTML = button.innerHTML;
         button.innerHTML = '<i class="fas fa-check"></i>';
         button.classList.add('btn-success');
@@ -621,28 +659,50 @@ function copyPassword() {
             button.classList.remove('btn-success');
             button.classList.add('btn-outline-secondary');
         }, 2000);
-    }).catch(function(err) {
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
-        textArea.value = password;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        
-        // Show success feedback
-        const button = event.target.closest('button');
-        const originalHTML = button.innerHTML;
-        button.innerHTML = '<i class="fas fa-check"></i>';
-        button.classList.add('btn-success');
-        button.classList.remove('btn-outline-secondary');
-        
-        setTimeout(function() {
-            button.innerHTML = originalHTML;
-            button.classList.remove('btn-success');
-            button.classList.add('btn-outline-secondary');
-        }, 2000);
-    });
+    }
+    
+    // Try modern clipboard API first (requires HTTPS or localhost)
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(password).then(function() {
+            showSuccess();
+        }).catch(function(err) {
+            console.log('Clipboard API failed, using fallback:', err);
+            fallbackCopy();
+        });
+    } else {
+        // Use fallback for non-secure contexts
+        fallbackCopy();
+    }
+    
+    function fallbackCopy() {
+        try {
+            // Create a temporary text area
+            const textArea = document.createElement('textarea');
+            textArea.value = password;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            // Try to copy
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            if (successful) {
+                showSuccess();
+            } else {
+                console.log('Copy command failed');
+                // Show password in alert as final fallback
+                alert('パスワード: ' + password);
+            }
+        } catch (err) {
+            console.log('Fallback copy failed:', err);
+            // Show password in alert as final fallback
+            alert('パスワード: ' + password);
+        }
+    }
 }
 
 // Close modal when clicking outside
