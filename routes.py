@@ -5,6 +5,7 @@ from forms import StudentForm, TeacherLoginForm, StudentLoginForm
 import logging
 import re
 import json
+import random
 from collections import Counter, defaultdict
 from ai_recommendations import generate_interest_recommendations, enhance_archetype_with_ai, analyze_compatibility_with_ai
 
@@ -714,6 +715,77 @@ Respond only with valid JSON in the exact format above."""
         # Fallback: Create simple sequential squads
         return create_fallback_squads(students_data)
 
+def generate_squad_icebreaker_with_ai(member_data, squad_name):
+    """
+    Generate a personalized icebreaker question for a specific squad using Gemini AI
+    """
+    import os
+    try:
+        from google import genai
+        # Initialize Gemini client
+        client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+        
+        # Create the AI prompt
+        prompt = f"""You are a social dynamics expert specializing in creating engaging icebreaker questions for small groups. 
+
+Squad Name: {squad_name}
+Squad Members: {len(member_data)} students
+
+Member Details:
+"""
+        
+        for i, member in enumerate(member_data, 1):
+            prompt += f"""
+Member {i}: {member['name']} ({member['country']}, {member['gender']})
+- Go-to activity when free: {member['answers']['go_to_activity']}
+- Skill they'd master instantly: {member['answers']['skill_to_master']}
+- Topic they could talk about for hours: {member['answers']['talk_about_for_hours']}
+- Ideal Friday night: {member['answers']['ideal_friday_night']}
+- Weirdest obsession: {member['answers']['weirdest_obsession']}
+- Energy soundtrack genre: {member['answers']['energy_soundtrack']}
+"""
+        
+        prompt += """
+Based on these members' interests and personalities, create ONE engaging icebreaker question that:
+1. Connects to their shared interests or complementary differences
+2. Is fun and creates natural conversation
+3. Helps them discover surprising things about each other
+4. Takes 10-15 minutes to discuss as a group
+5. Is appropriate for their age group and backgrounds
+
+Return ONLY the icebreaker question text, nothing else. Make it engaging and specific to this group.
+"""
+        
+        # Call Gemini API
+        response = client.models.generate_content(
+            model="gemini-2.5-pro",
+            contents=prompt
+        )
+        
+        icebreaker_text = response.text.strip()
+        
+        # Validate response
+        if not icebreaker_text or len(icebreaker_text) < 10:
+            return get_fallback_icebreaker()
+        
+        logging.info(f"Generated icebreaker for squad {squad_name}: {icebreaker_text[:50]}...")
+        return icebreaker_text
+        
+    except Exception as e:
+        logging.error(f"AI icebreaker generation failed: {str(e)}")
+        return get_fallback_icebreaker()
+
+def get_fallback_icebreaker():
+    """Fallback icebreaker when AI is unavailable"""
+    fallback_icebreakers = [
+        "Share something you've learned recently that surprised you, and ask each other follow-up questions about it.",
+        "What's one skill or hobby you'd love to try together as a group? Plan how you might actually do it.",
+        "If you could create the perfect weekend together, what would you include? Build on each other's ideas.",
+        "What's something you're curious about that someone else in the group might know? Teach each other something new.",
+        "Share a story about a time you tried something completely new. What would you encourage each other to try next?"
+    ]
+    return random.choice(fallback_icebreakers)
+
 @app.route('/delete-student/<int:student_id>')
 def delete_student(student_id):
     """Delete a student record from the database"""
@@ -832,6 +904,57 @@ def delete_squad(squad_id):
         db.session.rollback()
         flash(f'Error deleting squad: {str(e)}', 'error')
         logging.error(f"Failed to delete squad {squad_id}: {str(e)}")
+    
+    return redirect(url_for('teacher'))
+
+@app.route('/generate-icebreaker/<int:squad_id>')
+def generate_icebreaker(squad_id):
+    """Generate AI-powered icebreaker for a specific squad"""
+    if not session.get('teacher_authenticated'):
+        flash('Access denied. Please log in first.', 'error')
+        return redirect(url_for('teacher'))
+    
+    try:
+        # Fetch the squad and its members
+        squad = Squad.query.get_or_404(squad_id)
+        members = squad.members
+        
+        if not members:
+            flash(f'No members found in squad "{squad.name}".', 'error')
+            return redirect(url_for('teacher'))
+        
+        # Prepare member data for AI analysis
+        member_data = []
+        for member in members:
+            member_info = {
+                'name': member.name,
+                'country': member.country,
+                'gender': member.gender,
+                'answers': {
+                    'go_to_activity': member.question1,
+                    'skill_to_master': member.question2,
+                    'talk_about_for_hours': member.question3,
+                    'ideal_friday_night': member.question4,
+                    'weirdest_obsession': member.question5,
+                    'energy_soundtrack': member.question6
+                }
+            }
+            member_data.append(member_info)
+        
+        # Call Gemini AI to generate icebreaker
+        icebreaker_text = generate_squad_icebreaker_with_ai(member_data, squad.name)
+        
+        # Save the icebreaker to the database
+        squad.icebreaker_text = icebreaker_text
+        db.session.commit()
+        
+        flash(f'Icebreaker generated for squad "{squad.name}"!', 'success')
+        logging.info(f"Generated icebreaker for squad {squad.name} (ID: {squad_id})")
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error generating icebreaker: {str(e)}', 'error')
+        logging.error(f"Failed to generate icebreaker for squad {squad_id}: {str(e)}")
     
     return redirect(url_for('teacher'))
 

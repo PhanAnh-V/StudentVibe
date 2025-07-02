@@ -53,6 +53,25 @@
         border-radius: 0 0 12px 12px;
     }
     
+    .generate-icebreaker-btn {
+        color: #28a745;
+        text-decoration: none;
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        margin-right: 0.5rem;
+        border: 1px solid #28a745;
+    }
+    
+    .generate-icebreaker-btn:hover {
+        background-color: #28a745;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    }
+    
     .delete-squad-btn {
         color: #dc3545;
         text-decoration: none;
@@ -235,6 +254,12 @@
                     </a>
                     
                     <div class="squad-actions-bar">
+                        <a href="{{ url_for('generate_icebreaker', squad_id=squad.id) }}" 
+                           class="generate-icebreaker-btn"
+                           title="Generate AI-powered icebreaker for this squad">
+                            <i class="fas fa-lightbulb"></i>
+                            Generate Icebreaker
+                        </a>
                         <a href="{{ url_for('delete_squad', squad_id=squad.id) }}" 
                            class="delete-squad-btn"
                            onclick="return confirm('Are you sure you want to delete the entire {{ squad.name }} squad? This will move all members to ungrouped.')">
