@@ -211,7 +211,13 @@ def student_profile(student_id):
     """Student profile page displaying detailed character sheet"""
     try:
         # Fetch the student with all their data
-        student = Student.query.get_or_404(student_id)
+        student = Student.query.get(student_id)
+        
+        if not student:
+            # Student not found - show error on profile page itself
+            return render_template('profile.html', 
+                                 student=None,
+                                 error_message="Profile not found")
         
         # Load questionnaire data for displaying question titles
         try:
@@ -256,8 +262,10 @@ def student_profile(student_id):
         
     except Exception as e:
         logging.error(f"Error accessing student profile {student_id}: {str(e)}")
-        flash('Student profile not found or unable to access details.', 'error')
-        return redirect(url_for('teacher'))
+        # Show error on profile page itself instead of redirecting
+        return render_template('profile.html', 
+                             student=None,
+                             error_message="Profile not found")
 
 @app.route('/login/teacher', methods=['GET', 'POST'])
 def teacher_login():
@@ -808,7 +816,7 @@ def get_creative_vibe_archetype(student):
             student.question4 or '',
             student.question5 or '',
             student.question6 or '',
-            student.question7 or ''
+
         ]).lower()
     else:
         # Fallback to legacy vibes field
