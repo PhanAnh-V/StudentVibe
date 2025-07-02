@@ -141,84 +141,186 @@
     
     <!-- Main Dashboard Content -->
     <div class="dashboard-content">
-        <!-- Session Control Section -->
-        <div class="dashboard-section">
-            <h2 class="section-title">
-                <i class="fas fa-shield-alt me-2"></i>
-                セッション制御
+        
+        <!-- Section 1: Session Management -->
+        <div class="dashboard-section mb-5">
+            <h2 class="section-title mb-4">
+                <i class="fas fa-cog me-2"></i>
+                セッション管理
             </h2>
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <div class="session-password-display">
+                    <div class="session-password-display p-4 bg-light rounded">
                         <label class="form-label fw-bold">現在のセッションパスワード:</label>
-                        <div class="password-container">
-                            <span class="session-password-code">{{ session_password }}</span>
-                            <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyPassword()" title="クリップボードにコピー">
-                                <i class="fas fa-copy"></i>
+                        <div class="password-container d-flex align-items-center">
+                            <span class="session-password-code fs-4 me-3">{{ session_password }}</span>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="copyPassword()" title="クリップボードにコピー">
+                                <i class="fas fa-copy me-1"></i>
+                                コピー
                             </button>
                         </div>
-                        <small class="text-muted">このパスワードを学生と共有してアンケートにアクセスしてもらってください</small>
+                        <small class="text-muted">このパスワードを学生と共有してください</small>
                     </div>
                 </div>
-                <div class="col-md-4 text-end">
-                    <form action="{{ url_for('new_session_password') }}" method="POST" style="display: inline;">
-                        <button type="submit" class="btn btn-warning" onclick="return confirm('Generate a new session password? Students will need the new password to access the form.')">
+                <div class="col-md-4 text-center">
+                    <form action="{{ url_for('new_session_password') }}" method="POST">
+                        <button type="submit" class="btn btn-warning btn-lg" onclick="return confirm('新しいセッションパスワードを生成しますか？')">
                             <i class="fas fa-sync-alt me-2"></i>
-                            新しいパスワードを生成
+                            新しいパスワード生成
                         </button>
                     </form>
                 </div>
             </div>
         </div>
         
-        <!-- Squad Actions Section -->
-        <div class="squad-actions-section">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="section-title">
-                    <i class="fas fa-users me-2"></i>
-                    学生管理
-                </h2>
-            </div>
-        </div>
-        
-        <!-- All Student Submissions Section -->
-        <div class="dashboard-section view-content">
-            <div class="students-section">
-        <h2 class="section-title">
-            <i class="fas fa-list me-2"></i>
-            全学生提出一覧
+        <!-- Section 2: Squad Actions -->
+        <div class="dashboard-section mb-5">
+            <h2 class="section-title mb-4">
+                <i class="fas fa-users me-2"></i>
+                スクワッド操作
             </h2>
-            <div class="squad-actions">
-                <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
-                    <button type="submit" class="btn btn-success me-2">
-                        <i class="fas fa-magic me-2"></i>
-                        バイブスクワッド作成
-                    </button>
-                </form>
-                
-                <form method="POST" action="{{ url_for('clear_squads') }}" style="display: inline;">
-                    <button type="submit" 
-                            class="btn btn-danger me-2"
-                            onclick="return confirm('すべてのデータを削除してもよろしいですか？すべての学生とスクワッドのデータが完全に削除されます。この操作は元に戻せません。')">
-                        <i class="fas fa-trash-alt me-2"></i>
-                        すべて削除
-                    </button>
-                </form>
-
+            <div class="row text-center">
+                <div class="col-md-6 mb-3">
+                    <form method="POST" action="{{ url_for('create_squads') }}">
+                        <button type="submit" class="btn btn-success btn-lg w-100 py-3">
+                            <i class="fas fa-magic me-2"></i>
+                            AIスクワッド作成
+                        </button>
+                    </form>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <form method="POST" action="{{ url_for('clear_squads') }}">
+                        <button type="submit" 
+                                class="btn btn-danger btn-lg w-100 py-3"
+                                onclick="return confirm('すべてのデータを削除してもよろしいですか？すべての学生とスクワッドのデータが完全に削除されます。この操作は元に戻せません。')">
+                            <i class="fas fa-trash-alt me-2"></i>
+                            すべて削除
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
         
-        {% if squads %}
-            <div class="squads-grid">
-                {% for squad in squads %}
-                <div class="squad-card">
-                    <a href="{{ url_for('squad_hub', squad_id=squad.id) }}" class="squad-link">
-                        <div class="squad-header clickable-header">
-                            <div class="squad-title-section">
-                                <h3 class="squad-title">
-                                    <i class="fas fa-users me-2"></i>
-                                    {{ squad.name }}
-                                    <i class="fas fa-external-link-alt ms-2 external-link-icon"></i>
+        <!-- Section 3: Current Status -->
+        <div class="dashboard-section">
+            <h2 class="section-title mb-4">
+                <i class="fas fa-list me-2"></i>
+                現在の状況
+            </h2>
+            
+            <!-- Solo Students -->
+            {% if solo_students_db %}
+            <div class="mb-5">
+                <h3 class="mb-3">
+                    <i class="fas fa-user me-2"></i>
+                    未配属学生 ({{ solo_students_db|length }}人)
+                </h3>
+                <div class="row">
+                    {% for student in solo_students_db %}
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a href="{{ url_for('student_profile', student_id=student.id) }}" class="text-decoration-none">
+                                        {{ student.name }}
+                                    </a>
+                                </h5>
+                                <p class="card-text">
+                                    <span class="badge bg-secondary me-2">{{ student.country }}</span>
+                                    <span class="badge bg-info">{{ student.gender }}</span>
+                                </p>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ url_for('get_ai_advice', student_id=student.id) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-brain me-1"></i>
+                                        AIアドバイス
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="showDeleteModal({{ student.id }}, '{{ student.name }}')">
+                                        <i class="fas fa-trash me-1"></i>
+                                        削除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Vibe Squads -->
+            {% if squads %}
+            <div class="mb-5">
+                <h3 class="mb-3">
+                    <i class="fas fa-users me-2"></i>
+                    バイブスクワッド ({{ squads|length }}グループ)
+                </h3>
+                <div class="row">
+                    {% for squad in squads %}
+                    <div class="col-lg-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-primary text-white">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">
+                                        <a href="{{ url_for('squad_hub', squad_id=squad.id) }}" class="text-white text-decoration-none">
+                                            {{ squad.name }}
+                                            <i class="fas fa-external-link-alt ms-2"></i>
+                                        </a>
+                                    </h5>
+                                    <span class="badge bg-light text-dark">
+                                        {{ squad.members|length }} メンバー
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text mb-3">
+                                    <i class="fas fa-heart me-1"></i>
+                                    {{ squad.shared_interests }}
+                                </p>
+                                <h6>メンバー:</h6>
+                                <div class="mb-3">
+                                    {% for member in squad.members %}
+                                    <div class="d-flex justify-content-between align-items-center py-1">
+                                        <a href="{{ url_for('student_profile', student_id=member.id) }}" class="text-decoration-none">
+                                            {{ member.name }}
+                                        </a>
+                                        <small class="text-muted">{{ member.country }}</small>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <form method="POST" action="{{ url_for('generate_icebreaker', squad_id=squad.id) }}" class="flex-fill">
+                                        <button type="submit" class="btn btn-sm btn-outline-success w-100">
+                                            <i class="fas fa-lightbulb me-1"></i>
+                                            ミッション生成
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ url_for('delete_squad', squad_id=squad.id) }}">
+                                        <button type="submit" 
+                                                class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('本当にこのスクワッドを削除しますか？')">
+                                            <i class="fas fa-trash me-1"></i>
+                                            削除
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if not squads and not solo_students_db %}
+            <div class="text-center py-5">
+                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">まだ学生が登録されていません</h4>
+                <p class="text-muted">学生がアンケートを提出するとここに表示されます</p>
+            </div>
+            {% endif %}
+            
+        </div>
+    </div>
                                 </h3>
                                 <span class="squad-interests">
                                     <i class="fas fa-heart me-1"></i>
