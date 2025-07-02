@@ -212,6 +212,7 @@ This is a Flask-based web application designed to collect and store student info
 - July 02, 2025. Modified /clear-squads route to completely delete all student and squad records (total database reset)
 - July 02, 2025. Updated teacher dashboard button from "全スクワッドクリア" to "すべて削除" with enhanced confirmation message
 - July 02, 2025. Added form submission protection to questionnaire.html with JavaScript to disable submit button and show "送信中..." loading state
+- July 02, 2025. Translated all English text in success.html template to friendly Japanese including titles, messages, buttons, and timestamp formatting
 
 ## User Preferences
 

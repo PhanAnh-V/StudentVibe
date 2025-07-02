@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Success - Information Submitted{% endblock %}
+{% block title %}送信完了 - 情報が送信されました{% endblock %}
 
 {% block content %}
 <div class="success-container">
@@ -12,9 +12,9 @@
         
         <!-- Success Message -->
         <div class="success-content">
-            <h1 class="success-title">Thank You{% if student_name %}, {{ student_name }}{% endif %}!</h1>
+            <h1 class="success-title">ありがとうございました{% if student_name %}、{{ student_name }}さん{% endif %}！</h1>
             <p class="success-message">
-                Your submission has been received.
+                あなたの回答を受け取りました。
             </p>
             
             {% if submission_id %}
@@ -22,11 +22,11 @@
                 <div class="submission-id-card">
                     <h3 class="submission-id-title">
                         <i class="fas fa-id-card me-2"></i>
-                        Your Personal ID
+                        あなたの個人ID
                     </h3>
                     <div class="submission-id-code">{{ submission_id }}</div>
                     <p class="submission-id-message">
-                        <strong>Please save this!</strong> You will use it to find your Vibe Squad later.
+                        <strong>必ず保存してください！</strong> 後でバイブスクワッドを見つけるときに使います。
                     </p>
                 </div>
             </div>
@@ -35,15 +35,15 @@
             <div class="success-details">
                 <div class="success-detail-item">
                     <i class="fas fa-database me-2"></i>
-                    <span>Information securely stored</span>
+                    <span>情報が安全に保存されました</span>
                 </div>
                 <div class="success-detail-item">
                     <i class="fas fa-clock me-2"></i>
-                    <span>Submitted just now</span>
+                    <span>送信されました</span>
                 </div>
                 <div class="success-detail-item">
                     <i class="fas fa-user-graduate me-2"></i>
-                    <span>Ready for processing</span>
+                    <span>処理準備完了</span>
                 </div>
             </div>
         </div>
@@ -52,11 +52,11 @@
         <div class="success-actions">
             <a href="{{ url_for('find_squad') }}" class="btn btn-primary btn-lg me-2">
                 <i class="fas fa-search me-2"></i>
-                Find My Squad
+                マイスクワッドを探す
             </a>
             <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-lg">
                 <i class="fas fa-plus me-2"></i>
-                Submit Another Response
+                別の回答を送信
             </a>
         </div>
     </div>
@@ -67,22 +67,22 @@
             <div class="col-md-4">
                 <div class="success-info-item">
                     <i class="fas fa-shield-alt"></i>
-                    <h6>Secure</h6>
-                    <small class="text-muted">Your data is protected</small>
+                    <h6>セキュア</h6>
+                    <small class="text-muted">あなたのデータは保護されています</small>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="success-info-item">
                     <i class="fas fa-users"></i>
-                    <h6>Community</h6>
-                    <small class="text-muted">Join our student network</small>
+                    <h6>コミュニティ</h6>
+                    <small class="text-muted">学生ネットワークに参加しよう</small>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="success-info-item">
                     <i class="fas fa-rocket"></i>
-                    <h6>Growth</h6>
-                    <small class="text-muted">Enhance your journey</small>
+                    <h6>成長</h6>
+                    <small class="text-muted">あなたの旅路を充実させよう</small>
                 </div>
             </div>
         </div>
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const timeElement = document.querySelector('.success-detail-item:nth-child(2) span');
     if (timeElement) {
         const now = new Date();
-        timeElement.textContent = `Submitted at ${now.toLocaleTimeString()}`;
+        timeElement.textContent = `${now.toLocaleTimeString()}に送信されました`;
     }
 });
 </script>
