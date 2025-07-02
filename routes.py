@@ -206,6 +206,59 @@ def squad_hub(squad_id):
         flash('Squad not found or unable to access squad details.', 'error')
         return redirect(url_for('find_squad'))
 
+@app.route('/profile/<int:student_id>')
+def student_profile(student_id):
+    """Student profile page displaying detailed character sheet"""
+    try:
+        # Fetch the student with all their data
+        student = Student.query.get_or_404(student_id)
+        
+        # Load questionnaire data for displaying question titles
+        try:
+            questions = load_questionnaire_data()
+            en_questions = questions.get('en', [])
+        except:
+            en_questions = []
+        
+        # Create a mapping of answers to questions for easy display
+        if len(en_questions) >= 6:
+            student_answers = [
+                {'question': en_questions[0]['title'], 'answer': student.question1},
+                {'question': en_questions[1]['title'], 'answer': student.question2},
+                {'question': en_questions[2]['title'], 'answer': student.question3},
+                {'question': en_questions[3]['title'], 'answer': student.question4},
+                {'question': en_questions[4]['title'], 'answer': student.question5},
+                {'question': en_questions[5]['title'], 'answer': student.question6},
+            ]
+        else:
+            # Fallback question titles if questions.json is not available
+            student_answers = [
+                {'question': 'Adventure Preference', 'answer': student.question1},
+                {'question': 'Passion Interest', 'answer': student.question2},
+                {'question': 'Humor Style', 'answer': student.question3},
+                {'question': 'Secret Superpower', 'answer': student.question4},
+                {'question': 'Personal Vibe', 'answer': student.question5},
+                {'question': 'Team Quality', 'answer': student.question6},
+            ]
+        
+        # Get enhanced profile data
+        vibes_text = student.vibes or student.get_combined_answers()
+        archetype = get_creative_vibe_archetype(student)
+        core_sparks = get_core_sparks(vibes_text)
+        interests = get_interest_categories_with_colors(vibes_text)
+        
+        return render_template('profile.html', 
+                             student=student,
+                             student_answers=student_answers,
+                             archetype=archetype,
+                             core_sparks=core_sparks,
+                             interests=interests)
+        
+    except Exception as e:
+        logging.error(f"Error accessing student profile {student_id}: {str(e)}")
+        flash('Student profile not found or unable to access details.', 'error')
+        return redirect(url_for('teacher'))
+
 @app.route('/login/teacher', methods=['GET', 'POST'])
 def teacher_login():
     """Teacher login with password authentication"""
@@ -222,30 +275,7 @@ def teacher_login():
     
     return render_template('teacher_login.html', form=form)
 
-@app.route('/profile/<int:id>')
-def student_profile(id):
-    """Student private profile page"""
-    # Check if student is logged in and accessing their own profile
-    if 'student_id' not in session or session['student_id'] != id:
-        flash('Please login to access your profile.', 'error')
-        return redirect(url_for('student_login'))
-    
-    student = Student.query.get_or_404(id)
-    
-    # Get archetype information
-    archetype_info = get_creative_vibe_archetype(student)
-    
-    # Get core interests
-    core_sparks = get_core_sparks(student.get_combined_answers())
-    
-    # Get interest categories
-    interests = get_interest_categories_with_colors(student.get_combined_answers())
-    
-    return render_template('profile.html', 
-                         student=student, 
-                         archetype=archetype_info,
-                         core_sparks=core_sparks,
-                         interests=interests)
+
 
 @app.route('/logout_student', methods=['POST'])
 def logout_student():

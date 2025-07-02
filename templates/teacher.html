@@ -216,7 +216,11 @@
                         <i class="fas fa-user-circle"></i>
                     </div>
                     <div class="member-details">
-                        <h5 class="member-name">{{ student.name }}</h5>
+                        <h5 class="member-name">
+                            <a href="{{ url_for('student_profile', student_id=student.id) }}" class="text-decoration-none text-dark">
+                                {{ student.name }}
+                            </a>
+                        </h5>
                         <div class="member-info-tags">
                             <span class="info-tag country-tag">
                                 <i class="fas fa-globe me-1"></i>
@@ -298,7 +302,9 @@
                         <div class="student-title">
                             <h3 class="student-name">
                                 <i class="fas fa-user-graduate me-2"></i>
-                                {{ student.name }}
+                                <a href="{{ url_for('student_profile', student_id=student.id) }}" class="text-decoration-none text-dark">
+                                    {{ student.name }}
+                                </a>
                                 <span class="student-id-badge">ID: {{ student.id }}</span>
                             </h3>
                             <a href="{{ url_for('delete_student', student_id=student.id) }}" 
