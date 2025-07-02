@@ -954,44 +954,7 @@ def get_core_sparks(vibes_text):
     
     return sparks if sparks else ['#unique (ユニーク)']
 
-@app.route('/squads')
-def squads():
-    """Public page displaying vibe squads with cards"""
-    # Fetch all squads from database with their members
-    db_squads = Squad.query.all()
-    
-    # If no squads exist in database, show empty state
-    if not db_squads:
-        return render_template('squads.html', squads=[], no_squads=True)
-    
-    # Transform database squads into enhanced format for display
-    enhanced_squads = []
-    for squad in db_squads:
-        enhanced_members = []
-        for member in squad.members:
-            vibes_text = member.vibes or member.get_combined_answers()
-            enhanced_member = {
-                'id': member.id,
-                'name': member.name,
-                'vibes': vibes_text,
-                'country': member.country,
-                'gender': member.gender,
-                'submission_id': member.submission_id,
-                'archetype': get_vibe_archetype(vibes_text),
-                'sparks': get_core_sparks(vibes_text),
-                'interests': get_interest_categories_with_colors(vibes_text)
-            }
-            enhanced_members.append(enhanced_member)
-        
-        enhanced_squads.append({
-            'id': squad.id,
-            'name': squad.name,
-            'members': enhanced_members,
-            'shared_interests': squad.shared_interests,
-            'created_at': squad.created_at
-        })
-    
-    return render_template('squads.html', squads=enhanced_squads, no_squads=False)
+
 
 @app.route('/recommendations/<int:student_id>')
 def student_recommendations(student_id):

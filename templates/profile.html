@@ -20,9 +20,7 @@
                     <a class="nav-link" href="{{ url_for('session_password') }}">
                         <i class="fas fa-key me-1"></i>New Session
                     </a>
-                    <a class="nav-link" href="{{ url_for('squads') }}">
-                        <i class="fas fa-users me-1"></i>View Squads
-                    </a>
+
                     <a class="nav-link" href="{{ url_for('student_recommendations', student_id=student.id) }}">
                         <i class="fas fa-lightbulb me-1"></i>My Recommendations
                     </a>
@@ -212,9 +210,7 @@
                     <div class="card-body text-center py-3">
                         <h5 class="mb-3">Explore More</h5>
                         <div class="d-flex justify-content-center gap-3 flex-wrap">
-                            <a href="{{ url_for('squads') }}" class="btn btn-primary">
-                                <i class="fas fa-users me-2"></i>View All Squads
-                            </a>
+
                             <a href="{{ url_for('student_recommendations', student_id=student.id) }}" class="btn btn-success">
                                 <i class="fas fa-lightbulb me-2"></i>Get AI Recommendations
                             </a>
