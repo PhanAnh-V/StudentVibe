@@ -322,9 +322,9 @@ def teacher_logout():
     return redirect(url_for('teacher'))
 
 def create_vibe_squads():
-    """Group students into squads of 4-5 members based on shared interests"""
-    # Get all students
-    students = Student.query.all()
+    """Group students into squads based on their answer to 'The Ultimate Crew' question"""
+    # Get all unassigned students from database
+    students = Student.query.filter_by(squad_id=None).all()
     
     if len(students) < 4:
         return {
@@ -332,124 +332,148 @@ def create_vibe_squads():
             'solo_students': students
         }
     
-    # Define interest keywords to look for
-    interest_keywords = [
-        'game', 'gaming', 'games', 'video games', 'gamer',
-        'music', 'musical', 'musician', 'singing', 'guitar', 'piano', 'song',
-        'anime', 'manga', 'japanese', 'cosplay', 'otaku',
-        'travel', 'traveling', 'adventure', 'explore', 'trip',
-        'food', 'cooking', 'baking', 'cuisine', 'restaurant', 'eat',
-        'sport', 'sports', 'football', 'basketball', 'soccer', 'tennis', 'athletic',
-        'art', 'drawing', 'painting', 'creative', 'design', 'sketch',
-        'reading', 'books', 'literature', 'novel', 'story',
-        'technology', 'tech', 'programming', 'coding', 'computer', 'software',
-        'fitness', 'gym', 'workout', 'exercise', 'running', 'health',
-        'photography', 'photo', 'camera', 'picture',
-        'dance', 'dancing', 'ballet', 'hip hop',
-        'movie', 'film', 'cinema', 'netflix',
-        'nature', 'outdoor', 'hiking', 'camping'
-    ]
+    # Define quality-based groupings based on Ultimate Crew question (question6)
+    quality_groups = {
+        'humor_team': {
+            'keywords': ['funny', 'humor', 'laugh', 'joke', 'comedy', 'witty', 'hilarious', 'fun', 'entertaining', 'cheerful', 'upbeat'],
+            'name': 'The Comedy Crew',
+            'description': 'Masters of Fun & Laughter'
+        },
+        'leadership_team': {
+            'keywords': ['leader', 'leadership', 'organize', 'organized', 'planner', 'responsible', 'reliable', 'dependable', 'take charge', 'motivate'],
+            'name': 'The Leadership Squad',
+            'description': 'Natural Born Leaders'
+        },
+        'creative_team': {
+            'keywords': ['creative', 'imagination', 'artistic', 'innovative', 'original', 'unique', 'inventive', 'design', 'ideas', 'thinking outside'],
+            'name': 'The Creative Collective',
+            'description': 'Innovation & Imagination'
+        },
+        'analytical_team': {
+            'keywords': ['smart', 'intelligent', 'analytical', 'logical', 'strategic', 'problem-solving', 'think', 'plan', 'strategy', 'clever'],
+            'name': 'The Think Tank',
+            'description': 'Strategic Problem Solvers'
+        },
+        'supportive_team': {
+            'keywords': ['supportive', 'kind', 'caring', 'empathetic', 'understanding', 'helpful', 'team player', 'collaborative', 'encouraging', 'positive'],
+            'name': 'The Support Squad',
+            'description': 'Champions of Teamwork'
+        },
+        'energetic_team': {
+            'keywords': ['energetic', 'enthusiastic', 'passionate', 'motivated', 'driven', 'active', 'dynamic', 'spirited', 'ambitious', 'determined'],
+            'name': 'The Energy Force',
+            'description': 'Pure Power & Enthusiasm'
+        }
+    }
     
-    # Create student interest profiles with compatibility scores
-    student_data = []
+    # Analyze each student's Ultimate Crew answer and assign to quality groups
+    student_assignments = {}
+    group_members = {group: [] for group in quality_groups.keys()}
+    
     for student in students:
-        interests = set()
-        vibes_lower = student.vibes.lower()
+        ultimate_crew_answer = (student.question6 or "").lower()
+        best_group = None
+        max_matches = 0
         
-        # Find matching keywords in student's vibes
-        for keyword in interest_keywords:
-            if keyword in vibes_lower:
-                interests.add(keyword)
+        # Find the quality group with most keyword matches
+        for group_name, group_info in quality_groups.items():
+            match_count = sum(1 for keyword in group_info['keywords'] 
+                            if keyword in ultimate_crew_answer)
+            
+            if match_count > max_matches:
+                max_matches = match_count
+                best_group = group_name
         
-        student_data.append({
-            'student': student,
-            'interests': interests,
-            'compatibility_scores': {}
-        })
+        # If no keywords match, categorize based on general sentiment
+        if best_group is None:
+            # Look for general positive team qualities
+            if any(word in ultimate_crew_answer for word in ['team', 'together', 'help', 'work', 'support']):
+                best_group = 'supportive_team'
+            elif any(word in ultimate_crew_answer for word in ['smart', 'think', 'solve', 'plan']):
+                best_group = 'analytical_team'
+            elif any(word in ultimate_crew_answer for word in ['fun', 'enjoy', 'happy', 'good']):
+                best_group = 'humor_team'
+            else:
+                best_group = 'creative_team'  # Default fallback
+        
+        student_assignments[student.id] = best_group
+        group_members[best_group].append(student)
     
-    # Calculate compatibility scores between all students
-    for i, student1 in enumerate(student_data):
-        for j, student2 in enumerate(student_data):
-            if i != j:
-                shared_interests = student1['interests'].intersection(student2['interests'])
-                compatibility = len(shared_interests)
-                student1['compatibility_scores'][j] = compatibility
-    
+    # Create balanced squads from quality groups
     squads = []
-    processed_indices = set()
+    processed_students = set()
     
-    # Form squads ensuring 4-5 members each
-    while len(student_data) - len(processed_indices) >= 4:
-        # Find student with most unprocessed compatible connections
-        best_starter = None
-        best_score = -1
+    # Sort groups by size (largest first) to ensure good distribution
+    sorted_groups = sorted(group_members.items(), key=lambda x: len(x[1]), reverse=True)
+    
+    while len(students) - len(processed_students) >= 4:
+        current_squad = []
+        squad_qualities = []
         
-        for i, student_info in enumerate(student_data):
-            if i in processed_indices:
-                continue
-                
-            # Count compatible unprocessed students
-            compatible_count = sum(1 for j, score in student_info['compatibility_scores'].items() 
-                                 if j not in processed_indices and score > 0)
-            
-            if compatible_count > best_score:
-                best_score = compatible_count
-                best_starter = i
+        # Try to get one student from each quality group for diversity
+        for group_name, members in sorted_groups:
+            available_members = [s for s in members if s.id not in processed_students]
+            if available_members and len(current_squad) < 4:
+                selected_student = available_members[0]
+                current_squad.append(selected_student)
+                processed_students.add(selected_student.id)
+                squad_qualities.append(quality_groups[group_name]['description'])
         
-        if best_starter is None:
-            # No clear starter, pick first unprocessed
-            best_starter = next(i for i in range(len(student_data)) if i not in processed_indices)
-        
-        # Start squad with best starter
-        current_squad = [best_starter]
-        processed_indices.add(best_starter)
-        
-        # Find best compatible students for this squad
-        while len(current_squad) < 5 and len(student_data) - len(processed_indices) > 0:
-            best_candidate = None
-            best_compatibility = -1
-            
-            # Don't fill to 5 if it would leave less than 4 for another squad
-            remaining_after = len(student_data) - len(processed_indices) - 1
-            if len(current_squad) >= 4 and remaining_after > 0 and remaining_after < 4:
+        # Fill remaining spots if squad has less than 4 members
+        while len(current_squad) < 4:
+            available_students = [s for s in students if s.id not in processed_students]
+            if not available_students:
                 break
             
-            for candidate_idx in range(len(student_data)):
-                if candidate_idx in processed_indices:
-                    continue
-                
-                # Calculate average compatibility with current squad
-                total_compatibility = sum(student_data[squad_member]['compatibility_scores'].get(candidate_idx, 0) 
-                                        for squad_member in current_squad)
-                avg_compatibility = total_compatibility / len(current_squad)
-                
-                if avg_compatibility > best_compatibility:
-                    best_compatibility = avg_compatibility
-                    best_candidate = candidate_idx
+            # Prioritize students from groups not yet represented in this squad
+            represented_groups = {student_assignments[s.id] for s in current_squad}
             
-            if best_candidate is not None:
-                current_squad.append(best_candidate)
-                processed_indices.add(best_candidate)
+            next_student = None
+            for group_name, members in sorted_groups:
+                if group_name not in represented_groups:
+                    available_from_group = [s for s in members if s.id not in processed_students]
+                    if available_from_group:
+                        next_student = available_from_group[0]
+                        squad_qualities.append(quality_groups[group_name]['description'])
+                        break
+            
+            # If no unrepresented groups, take any available student
+            if next_student is None and available_students:
+                next_student = available_students[0]
+                group = student_assignments[next_student.id]
+                squad_qualities.append(quality_groups[group]['description'])
+            
+            if next_student:
+                current_squad.append(next_student)
+                processed_students.add(next_student.id)
             else:
                 break
         
-        # Create squad if it has at least 4 members
+        # Add one more member if possible (max 5 per squad)
+        if len(current_squad) == 4:
+            remaining_count = len(students) - len(processed_students)
+            if remaining_count >= 4:  # Only add 5th if it won't prevent another squad
+                available_students = [s for s in students if s.id not in processed_students]
+                if available_students:
+                    fifth_member = available_students[0]
+                    current_squad.append(fifth_member)
+                    processed_students.add(fifth_member.id)
+                    group = student_assignments[fifth_member.id]
+                    squad_qualities.append(quality_groups[group]['description'])
+        
+        # Create squad if it has enough members
         if len(current_squad) >= 4:
-            squad_members = [student_data[i]['student'] for i in current_squad]
-            
-            # Calculate shared interests for display
-            all_interests = set()
-            for i in current_squad:
-                all_interests.update(student_data[i]['interests'])
+            # Create a meaningful shared interests description
+            unique_qualities = list(set(squad_qualities))
+            shared_interests = ', '.join(unique_qualities[:3])  # Show top 3 qualities
             
             squads.append({
-                'members': squad_members,
-                'shared_interests': ', '.join(sorted(list(all_interests))[:4]) or 'diverse interests'
+                'members': current_squad,
+                'shared_interests': shared_interests
             })
     
     # Students who couldn't be placed in squads become solo students
-    solo_students = [student_data[i]['student'] for i in range(len(student_data)) 
-                    if i not in processed_indices]
+    solo_students = [s for s in students if s.id not in processed_students]
     
     return {
         'squads': squads,
@@ -476,13 +500,13 @@ def create_squads():
         
         # Save squads to database
         for i, squad_data in enumerate(squads_data):
-            # Create squad with a creative name
+            # Create squad with a meaningful name based on their qualities
             squad_names = [
-                "The Innovators", "Creative Minds", "Dream Team", "The Explorers", 
-                "Vibe Squad Alpha", "The Mavericks", "Squad Goals", "The Visionaries",
-                "Dynamic Duo+", "The Catalysts", "Team Phoenix", "The Pioneers"
+                "The Harmony Makers", "The Innovation Station", "The Dream Builders", "The Spark Squad", 
+                "The Power Players", "The Creative Collective", "The Unity Squad", "The Bright Minds",
+                "The Dynamic Force", "The Catalyst Crew", "The Phoenix Team", "The Visionary Squad"
             ]
-            squad_name = squad_names[i % len(squad_names)] if i < len(squad_names) else f"Squad {i + 1}"
+            squad_name = squad_names[i % len(squad_names)] if i < len(squad_names) else f"Vibe Squad {i + 1}"
             
             new_squad = Squad(
                 name=squad_name,
