@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Teacher Dashboard - Student Submissions{% endblock %}
+{% block title %}先生ダッシュボード - 学生提出{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -109,19 +109,19 @@
     <div class="teacher-header">
         <h1 class="teacher-title">
             <i class="fas fa-chalkboard-teacher me-3"></i>
-            Teacher Dashboard
+            先生ダッシュボード
         </h1>
         <p class="teacher-description">
-            View and manage all student submissions
+            全ての学生提出を見る・管理する
         </p>
         <div class="teacher-actions">
             <a href="{{ url_for('session_password') }}" class="btn btn-outline-primary me-2">
                 <i class="fas fa-key me-2"></i>
-                Student Login Page
+                学生ログインページ
             </a>
             <a href="{{ url_for('teacher_logout') }}" class="btn btn-outline-secondary">
                 <i class="fas fa-sign-out-alt me-2"></i>
-                Logout
+                ログアウト
             </a>
         </div>
     </div>
@@ -133,21 +133,21 @@
                 <div class="stat-item">
                     <i class="fas fa-users"></i>
                     <h3>{{ students|length }}</h3>
-                    <p>Total Students</p>
+                    <p>学生総数</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="stat-item">
                     <i class="fas fa-calendar-day"></i>
                     <h3>{{ students|selectattr('created_at')|selectattr('created_at', 'equalto', students|map(attribute='created_at')|max)|list|length if students else 0 }}</h3>
-                    <p>Today's Submissions</p>
+                    <p>今日の提出</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="stat-item">
                     <i class="fas fa-clock"></i>
                     <h3>{% if students %}{{ students[0].created_at.strftime('%H:%M') }}{% else %}--{% endif %}</h3>
-                    <p>Latest Submission</p>
+                    <p>最新の提出</p>
                 </div>
             </div>
         </div>
@@ -159,19 +159,19 @@
         <div class="dashboard-section">
             <h2 class="section-title">
                 <i class="fas fa-shield-alt me-2"></i>
-                Session Control
+                セッション制御
             </h2>
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <div class="session-password-display">
-                        <label class="form-label fw-bold">Current Session Password:</label>
+                        <label class="form-label fw-bold">現在のセッションパスワード:</label>
                         <div class="password-container">
                             <span class="session-password-code">{{ session_password }}</span>
                             <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyPassword()" title="Copy to clipboard">
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
-                        <small class="text-muted">Share this password with students to access the questionnaire</small>
+                        <small class="text-muted">このパスワードを学生と共有してアンケートにアクセスしてもらってください</small>
                     </div>
                 </div>
                 <div class="col-md-4 text-end">
@@ -252,13 +252,13 @@
                            class="generate-icebreaker-btn"
                            title="Generate AI-powered icebreaker for this squad">
                             <i class="fas fa-lightbulb"></i>
-                            Generate Icebreaker
+                            アイスブレーカー生成
                         </a>
                         <a href="{{ url_for('delete_squad', squad_id=squad.id) }}" 
                            class="delete-squad-btn"
                            onclick="return confirm('Are you sure you want to delete the entire {{ squad.name }} squad? This will move all members to ungrouped.')">
                             <i class="fas fa-trash-alt"></i>
-                            Delete Squad
+                            スクワッド削除
                         </a>
                     </div>
                     
@@ -504,16 +504,16 @@
 <div id="deleteModal" class="modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
-            <h4>Confirm Delete</h4>
+            <h4>削除の確認</h4>
             <span class="modal-close" onclick="closeDeleteModal()">&times;</span>
         </div>
         <div class="modal-body">
-            <p>Are you sure you want to delete <strong id="deleteStudentName"></strong>?</p>
-            <p class="text-danger">This action cannot be undone.</p>
+            <p><strong id="deleteStudentName"></strong>を削除してもよろしいですか？</p>
+            <p class="text-danger">この操作は元に戻せません。</p>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
-            <button class="btn btn-danger" onclick="deleteStudent()">Delete Student</button>
+            <button class="btn btn-secondary" onclick="closeDeleteModal()">キャンセル</button>
+            <button class="btn btn-danger" onclick="deleteStudent()">学生を削除</button>
         </div>
     </div>
 </div>
