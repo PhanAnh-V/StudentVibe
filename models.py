@@ -59,6 +59,13 @@ class Student(db.Model):
     question4 = db.Column(db.Text, nullable=False)  # ideal Friday night
     question5 = db.Column(db.Text, nullable=False)  # weirdest obsession
     question6 = db.Column(db.Text, nullable=False)  # energy soundtrack
+    # Japanese translations for each question
+    question1_jp = db.Column(db.Text, nullable=True)  # Japanese translation of question1
+    question2_jp = db.Column(db.Text, nullable=True)  # Japanese translation of question2
+    question3_jp = db.Column(db.Text, nullable=True)  # Japanese translation of question3
+    question4_jp = db.Column(db.Text, nullable=True)  # Japanese translation of question4
+    question5_jp = db.Column(db.Text, nullable=True)  # Japanese translation of question5
+    question6_jp = db.Column(db.Text, nullable=True)  # Japanese translation of question6
     country = db.Column(db.String(50), nullable=False)
     gender = db.Column(db.String(50), nullable=False)
     submission_id = db.Column(db.String(7), unique=True, nullable=True)

@@ -106,7 +106,31 @@ def submit_form():
             # Generate unique submission ID
             submission_id = Student.generate_submission_id()
             
-            # Create new student record
+            # Get original answers
+            original_answers = [
+                form.question1.data,
+                form.question2.data,
+                form.question3.data,
+                form.question4.data,
+                form.question5.data,
+                form.question6.data
+            ]
+            
+            # Translate each answer to Japanese
+            logging.info("Starting Japanese translation for student answers...")
+            japanese_translations = []
+            
+            for i, answer in enumerate(original_answers, 1):
+                try:
+                    from openai_integration import translate_to_japanese
+                    translation = translate_to_japanese(answer)
+                    japanese_translations.append(translation)
+                    logging.info(f"Question {i} translated successfully")
+                except Exception as e:
+                    logging.error(f"Translation failed for question {i}: {str(e)}")
+                    japanese_translations.append("")  # Save empty translation if it fails
+            
+            # Create new student record with both original and translated answers
             student = Student(
                 name=form.name.data,
                 vibes=combined_vibes,
@@ -116,6 +140,12 @@ def submit_form():
                 question4=form.question4.data,
                 question5=form.question5.data,
                 question6=form.question6.data,
+                question1_jp=japanese_translations[0],
+                question2_jp=japanese_translations[1],
+                question3_jp=japanese_translations[2],
+                question4_jp=japanese_translations[3],
+                question5_jp=japanese_translations[4],
+                question6_jp=japanese_translations[5],
                 country=form.country.data,
                 gender=form.gender.data,
                 submission_id=submission_id
@@ -124,7 +154,7 @@ def submit_form():
             db.session.add(student)
             db.session.commit()
             
-            logging.info(f"New student registered: {student.name} (ID: {student.id}, Submission ID: {submission_id})")
+            logging.info(f"New student registered: {student.name} (ID: {student.id}, Submission ID: {submission_id}) with Japanese translations")
             
             # Store submission ID in session for success page
             session['submission_id'] = submission_id
@@ -227,25 +257,25 @@ def student_profile(student_id):
         except:
             en_questions = []
         
-        # Create a mapping of answers to questions for easy display
+        # Create a mapping of answers to questions for easy display (including Japanese translations)
         if len(en_questions) >= 6:
             student_answers = [
-                {'question': en_questions[0]['title'], 'answer': student.question1},
-                {'question': en_questions[1]['title'], 'answer': student.question2},
-                {'question': en_questions[2]['title'], 'answer': student.question3},
-                {'question': en_questions[3]['title'], 'answer': student.question4},
-                {'question': en_questions[4]['title'], 'answer': student.question5},
-                {'question': en_questions[5]['title'], 'answer': student.question6},
+                {'question': en_questions[0]['title'], 'answer': student.question1, 'answer_jp': getattr(student, 'question1_jp', '')},
+                {'question': en_questions[1]['title'], 'answer': student.question2, 'answer_jp': getattr(student, 'question2_jp', '')},
+                {'question': en_questions[2]['title'], 'answer': student.question3, 'answer_jp': getattr(student, 'question3_jp', '')},
+                {'question': en_questions[3]['title'], 'answer': student.question4, 'answer_jp': getattr(student, 'question4_jp', '')},
+                {'question': en_questions[4]['title'], 'answer': student.question5, 'answer_jp': getattr(student, 'question5_jp', '')},
+                {'question': en_questions[5]['title'], 'answer': student.question6, 'answer_jp': getattr(student, 'question6_jp', '')},
             ]
         else:
             # Fallback question titles if questions.json is not available
             student_answers = [
-                {'question': 'Adventure Preference', 'answer': student.question1},
-                {'question': 'Passion Interest', 'answer': student.question2},
-                {'question': 'Humor Style', 'answer': student.question3},
-                {'question': 'Secret Superpower', 'answer': student.question4},
-                {'question': 'Personal Vibe', 'answer': student.question5},
-                {'question': 'Team Quality', 'answer': student.question6},
+                {'question': 'Adventure Preference', 'answer': student.question1, 'answer_jp': getattr(student, 'question1_jp', '')},
+                {'question': 'Passion Interest', 'answer': student.question2, 'answer_jp': getattr(student, 'question2_jp', '')},
+                {'question': 'Humor Style', 'answer': student.question3, 'answer_jp': getattr(student, 'question3_jp', '')},
+                {'question': 'Secret Superpower', 'answer': student.question4, 'answer_jp': getattr(student, 'question4_jp', '')},
+                {'question': 'Personal Vibe', 'answer': student.question5, 'answer_jp': getattr(student, 'question5_jp', '')},
+                {'question': 'Team Quality', 'answer': student.question6, 'answer_jp': getattr(student, 'question6_jp', '')},
             ]
         
         # Get enhanced profile data

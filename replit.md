@@ -197,6 +197,11 @@ This is a Flask-based web application designed to collect and store student info
 - July 02, 2025. Fixed JavaScript error in teacher.html by adding null checks before accessing DOM elements with addEventListener
 - July 02, 2025. Updated key translations: "Character Attributes" → "キャラクター属性", "Core Abilities" → "コア能力", "Character Traits" → "キャラクター特性"
 - July 02, 2025. Enhanced teacher dashboard with Japanese text for all buttons, modals, and confirmation dialogs
+- July 02, 2025. Implemented AI-powered Japanese translation system for student answers using OpenAI ChatGPT API
+- July 02, 2025. Added 6 new database columns (question1_jp through question6_jp) to store Japanese translations of student responses
+- July 02, 2025. Enhanced form submission route with robust translation loop that handles individual question failures gracefully
+- July 02, 2025. Updated profile.html to display bilingual answers with original and Japanese versions side-by-side
+- July 02, 2025. Added database migration to support new Japanese translation columns in production
 
 ## User Preferences
 

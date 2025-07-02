@@ -408,7 +408,13 @@
                                             <h6 class="answer-label">
                                                 <i class="fas fa-language me-2"></i>日本語バイブ
                                             </h6>
-                                            <div class="answer-text japanese-text">{{ qa.answer }}</div>
+                                            <div class="answer-text japanese-text">
+                                                {% if qa.answer_jp %}
+                                                    {{ qa.answer_jp }}
+                                                {% else %}
+                                                    <em class="text-muted">翻訳が利用できません</em>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
