@@ -706,21 +706,30 @@ def move_student():
 
 @app.route('/delete-squad/<int:squad_id>')
 def delete_squad(squad_id):
-    """Delete a specific squad and move all members to ungrouped"""
+    """Delete a specific squad and cleanly unassign all members"""
     try:
+        # Find the squad to delete
         squad = Squad.query.get_or_404(squad_id)
         squad_name = squad.name
+        member_count = len(squad.members)
         
-        # Move all squad members to ungrouped (set squad_id to None)
-        for member in squad.members:
-            member.squad_id = None
+        # First, explicitly unassign all students from this squad
+        # Using a direct database update for efficiency and clarity
+        students_to_unassign = Student.query.filter_by(squad_id=squad_id).all()
         
-        # Delete the squad record
+        for student in students_to_unassign:
+            student.squad_id = None
+            logging.info(f"Unassigned student {student.name} (ID: {student.id}) from squad {squad_name}")
+        
+        # Ensure all changes are flushed before deletion
+        db.session.flush()
+        
+        # Now delete the squad record itself (including icebreaker_text and all associated data)
         db.session.delete(squad)
         db.session.commit()
         
-        flash(f'Squad "{squad_name}" has been deleted and all members moved to ungrouped.', 'success')
-        logging.info(f"Squad {squad_name} (ID: {squad_id}) deleted successfully")
+        flash(f'Squad "{squad_name}" has been cleanly deleted. {member_count} students are now available for new squads.', 'success')
+        logging.info(f"Squad {squad_name} (ID: {squad_id}) deleted successfully, {member_count} students unassigned")
         
     except Exception as e:
         db.session.rollback()
