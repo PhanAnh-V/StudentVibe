@@ -326,7 +326,7 @@ def teacher_login():
         if password == "1234":  # Teacher password
             session['teacher_authenticated'] = True
             flash('Welcome to the teacher dashboard!', 'success')
-            return redirect(url_for('teacher_dashboard'))
+            return redirect(url_for('teacher'))
         else:
             flash('Invalid password. Please try again.', 'error')
     
@@ -343,29 +343,52 @@ def logout_student():
 
 
 @app.route('/teacher')
-def teacher_dashboard():
+def teacher():
     """Teacher dashboard with authentication required"""
     # Check if teacher is authenticated
     if not session.get('teacher_authenticated'):
         flash('Please login to access the teacher dashboard.', 'error')
         return redirect(url_for('teacher_login'))
-
-    try:
-        students = Student.query.all() or []
-        solo_students = Student.query.filter_by(squad_id=None).all() or []
-        squads = Squad.query.all() or []
-        # Get current session password
-        session_password = SessionSettings.get_current_password()
-    except Exception as e:
-        app.logger.error(f"Database error on teacher dashboard: {e}")
-        # If database fails, return an empty but stable page
-        students, solo_students, squads, session_password = [], [], [], "Error"
-
-    return render_template('teacher.html',
-                           students=students,
-                           solo_students_db=solo_students,
-                           squads=squads,
-                           session_password=session_password)
+    
+    # Fetch all students from database
+    students = Student.query.order_by(Student.created_at.desc()).all()
+    logging.info(f"Teacher accessed dashboard. Found {len(students)} students.")
+    
+    # Get solo students and AI advice from session
+    solo_students = session.get('solo_students', [])
+    ai_advice = {}
+    for student in solo_students:
+        advice_key = f'ai_advice_{student["id"]}'
+        if advice_key in session:
+            ai_advice[student['id']] = session[advice_key]
+    
+    # Add interest visualization data to students
+    students_with_interests = []
+    for student in students:
+        student_dict = {
+            'id': student.id,
+            'name': student.name,
+            'vibes': student.vibes or student.get_combined_answers(),
+            'country': student.country,
+            'gender': student.gender,
+            'created_at': student.created_at,
+            'interests': get_interest_categories_with_colors(student.vibes or student.get_combined_answers())
+        }
+        students_with_interests.append(student_dict)
+    
+    # Get current session password
+    current_session_password = SessionSettings.get_current_password()
+    
+    # Fetch all squads from database with their members
+    squads = Squad.query.all()
+    solo_students_db = Student.query.filter_by(squad_id=None).all()
+    
+    return render_template('teacher.html', 
+                         students=students_with_interests,
+                         squads=squads,
+                         solo_students_db=solo_students_db,
+                         ai_advice=ai_advice,
+                         session_password=current_session_password)
 
 @app.route('/teacher/new-session-password', methods=['POST'])
 def new_session_password():
@@ -378,14 +401,14 @@ def new_session_password():
     flash(f'New session password generated: {new_password}', 'success')
     logging.info(f"Teacher generated new session password: {new_password}")
     
-    return redirect(url_for('teacher_dashboard'))
+    return redirect(url_for('teacher'))
 
 @app.route('/teacher/logout')
 def teacher_logout():
     """Log out teacher and clear session"""
     session.pop('teacher_authenticated', None)
     flash('You have been logged out.', 'info')
-    return redirect(url_for('teacher_dashboard'))
+    return redirect(url_for('teacher'))
 
 def create_vibe_squads():
     """Group students into squads based on their answer to 'The Ultimate Crew' question"""
@@ -551,7 +574,7 @@ def create_squads():
     """AI-powered squad formation - The Sorting Hat of the application"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
-        return redirect(url_for('teacher_dashboard'))
+        return redirect(url_for('teacher'))
     
     try:
         # Step 1: Clean slate - Reset all existing squad assignments
@@ -566,7 +589,7 @@ def create_squads():
         
         if len(unassigned_students) < 3:
             flash('Need at least 3 students to create squads.', 'warning')
-            return redirect(url_for('teacher_dashboard'))
+            return redirect(url_for('teacher'))
         
         # Step 3: Prepare student data with their 6 question responses for AI analysis
         students_data = []
@@ -645,7 +668,7 @@ def create_squads():
         logging.error(f"Error during squad formation: {str(e)}")
         flash('Squad formation failed. Please try again.', 'error')
     
-    return redirect(url_for('teacher_dashboard'))
+    return redirect(url_for('teacher'))
 
 
 def create_fallback_squads(students_data):
@@ -726,7 +749,7 @@ def delete_student(student_id):
     """Delete a student record from the database"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
-        return redirect(url_for('teacher_dashboard'))
+        return redirect(url_for('teacher'))
     
     try:
         student = Student.query.get_or_404(student_id)
@@ -748,7 +771,7 @@ def delete_student(student_id):
         logging.error(f"Error deleting student {student_id}: {str(e)}")
         flash('There was an error deleting the student. Please try again.', 'error')
     
-    return redirect(url_for('teacher_dashboard'))
+    return redirect(url_for('teacher'))
 
 @app.route('/teacher/move-student', methods=['POST'])
 def move_student():
@@ -840,14 +863,14 @@ def delete_squad(squad_id):
         flash(f'Error deleting squad: {str(e)}', 'error')
         logging.error(f"Failed to delete squad {squad_id}: {str(e)}")
     
-    return redirect(url_for('teacher_dashboard'))
+    return redirect(url_for('teacher'))
 
 @app.route('/clear-squads', methods=['POST'])
 def clear_squads():
     """Delete all records from students and squads tables"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
-        return redirect(url_for('teacher_dashboard'))
+        return redirect(url_for('teacher'))
     
     try:
         # First, delete all records from the students table
@@ -880,14 +903,14 @@ def clear_squads():
         flash(f'スクワッドクリア中にエラーが発生しました: {str(e)}', 'error')
         logging.error(f"Failed to clear all squads: {str(e)}")
     
-    return redirect(url_for('teacher_dashboard'))
+    return redirect(url_for('teacher'))
 
 @app.route('/generate-icebreaker/<int:squad_id>')
 def generate_icebreaker(squad_id):
     """Generate AI-powered icebreaker for a specific squad"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
-        return redirect(url_for('teacher_dashboard'))
+        return redirect(url_for('teacher'))
     
     try:
         # Fetch the squad and its members
@@ -896,7 +919,7 @@ def generate_icebreaker(squad_id):
         
         if not members:
             flash(f'No members found in squad "{squad.name}".', 'error')
-            return redirect(url_for('teacher_dashboard'))
+            return redirect(url_for('teacher'))
         
         # Prepare member data for AI analysis
         member_data = []
@@ -931,14 +954,14 @@ def generate_icebreaker(squad_id):
         flash(f'Error generating icebreaker: {str(e)}', 'error')
         logging.error(f"Failed to generate icebreaker for squad {squad_id}: {str(e)}")
     
-    return redirect(url_for('teacher_dashboard'))
+    return redirect(url_for('teacher'))
 
 @app.route('/teacher/ai-advice/<int:student_id>', methods=['POST'])
 def get_ai_advice(student_id):
     """Generate AI advice for a solo student"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
-        return redirect(url_for('teacher_dashboard'))
+        return redirect(url_for('teacher'))
     
     try:
         student = Student.query.get_or_404(student_id)
@@ -967,7 +990,7 @@ def get_ai_advice(student_id):
         logging.error(f"Error generating AI advice for student {student_id}: {str(e)}")
         flash('Unable to generate AI advice at this time.', 'error')
     
-    return redirect(url_for('teacher_dashboard'))
+    return redirect(url_for('teacher'))
 
 def get_interest_categories_with_colors(vibes_text):
     """Extract interest categories and assign colors for visualization"""
@@ -1307,13 +1330,13 @@ def teacher_ai_insights():
     """Teacher page with AI-powered insights about students and squad formation"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
-        return redirect(url_for('teacher_dashboard'))
+        return redirect(url_for('teacher'))
     
     students = Student.query.all()
     
     if len(students) < 2:
         flash('Need at least 2 students to generate AI insights.', 'info')
-        return redirect(url_for('teacher_dashboard'))
+        return redirect(url_for('teacher'))
     
     # Generate profiles for all students using fallback to avoid API timeouts
     student_profiles = []
@@ -1556,7 +1579,7 @@ def seed_database():
         flash(f'Error seeding database: {str(e)}', 'error')
         logging.error(f"Database seeding failed: {str(e)}")
     
-    return redirect(url_for('teacher_dashboard'))
+    return redirect(url_for('teacher'))
 
 
 
