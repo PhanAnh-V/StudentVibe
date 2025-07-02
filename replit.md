@@ -202,6 +202,8 @@ This is a Flask-based web application designed to collect and store student info
 - July 02, 2025. Enhanced form submission route with robust translation loop that handles individual question failures gracefully
 - July 02, 2025. Updated profile.html to display bilingual answers with original and Japanese versions side-by-side
 - July 02, 2025. Added database migration to support new Japanese translation columns in production
+- July 02, 2025. Enhanced translation system with intelligent language detection to skip unnecessary AI calls for Japanese students
+- July 02, 2025. Optimized form submission performance by preserving original Japanese answers when student language is 'ja'
 
 ## User Preferences
 

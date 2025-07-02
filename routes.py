@@ -116,19 +116,28 @@ def submit_form():
                 form.question6.data
             ]
             
-            # Translate each answer to Japanese
-            logging.info("Starting Japanese translation for student answers...")
+            # Get student's chosen language from session
+            student_language = session.get('language', 'en')
+            
+            # Handle Japanese translations based on student's language choice
+            logging.info(f"Processing answers for language: {student_language}")
             japanese_translations = []
             
             for i, answer in enumerate(original_answers, 1):
-                try:
-                    from openai_integration import translate_to_japanese
-                    translation = translate_to_japanese(answer)
-                    japanese_translations.append(translation)
-                    logging.info(f"Question {i} translated successfully")
-                except Exception as e:
-                    logging.error(f"Translation failed for question {i}: {str(e)}")
-                    japanese_translations.append("")  # Save empty translation if it fails
+                if student_language == 'ja':
+                    # Student chose Japanese - no translation needed, use original answer
+                    japanese_translations.append(answer)
+                    logging.info(f"Question {i}: Japanese detected, using original answer")
+                else:
+                    # Student chose other language - translate to Japanese
+                    try:
+                        from openai_integration import translate_to_japanese
+                        translation = translate_to_japanese(answer)
+                        japanese_translations.append(translation)
+                        logging.info(f"Question {i} translated successfully from {student_language} to Japanese")
+                    except Exception as e:
+                        logging.error(f"Translation failed for question {i}: {str(e)}")
+                        japanese_translations.append("")  # Save empty translation if it fails
             
             # Create new student record with both original and translated answers
             student = Student(
