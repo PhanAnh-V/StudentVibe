@@ -107,11 +107,18 @@ This is a Flask-based web application designed to collect and store student info
 - **Connection Insights**: Recommends ways to connect with like-minded peers
 - **Compatibility Analysis**: AI evaluates student pairing potential for optimal squad formation
 
+### Intelligent Squad Formation System (NEW)
+- **Google Gemini AI Integration**: Uses Gemini 2.5 Pro model for intelligent student grouping
+- **Smart Squad Creation**: AI analyzes all 6 questionnaire responses to create balanced squads of 3-4 students
+- **Personalized Icebreakers**: Each squad receives a unique, AI-generated icebreaker question based on members' specific interests
+- **Automatic Squad Naming**: AI generates creative, engaging names for each squad based on member characteristics
+- **Graceful Error Handling**: Falls back to default icebreakers if AI service is unavailable
+
 ### Vibe Squads System
 - **Archetype Detection**: Automatically assigns personality archetypes based on student interests (Gaming Guru, Music Maestro, Creative Artist, etc.)
 - **Japanese Translations**: Core interests displayed as hashtags with Japanese translations (#gaming (ゲーム))
 - **Visual Identity Cards**: Beautiful vibe cards with gradient borders, avatars, and professional styling
-- **Public Display Page**: `/squads` route for students to view their teams
+- **Private Squad Hub**: Exclusive `/squad-hub/<squad_id>` route for squad members only
 - **AI Recommendation Links**: Direct access to personalized AI suggestions from each vibe card
 
 ### Teacher Management
@@ -173,6 +180,15 @@ This is a Flask-based web application designed to collect and store student info
 - July 02, 2025. Removed all "View Squads" navigation links from templates (base.html, find_squad.html, profile.html, questionnaire.html, recommendations.html)
 - July 02, 2025. Modified /find-squad route to redirect students directly to their private squad hub when submission ID is found
 - July 02, 2025. Enhanced Squad Hub with gradient backgrounds, member profile cards, AI mission section, and mobile-responsive design
+- July 02, 2025. Created student profile system with game-inspired character sheet design at /profile/<int:student_id>
+- July 02, 2025. Made all student names clickable links in teacher dashboard and squad hub, leading to individual profiles
+- July 02, 2025. Fixed profile route error handling to display "Profile not found" directly on page without redirects
+- July 02, 2025. Removed erroneous question7 reference that was causing profile access errors
+- July 02, 2025. Integrated Google Gemini AI for intelligent squad formation using all 6 questionnaire responses
+- July 02, 2025. Added icebreaker_text field to Squad model for storing AI-generated personalized icebreakers
+- July 02, 2025. Completely rewrote create_squads function to use Gemini AI for both grouping and icebreaker generation
+- July 02, 2025. Created gemini_integration.py module with functions for AI-powered squad grouping and icebreaker creation
+- July 02, 2025. Enhanced squad creation to include AI-generated creative squad names based on member characteristics
 
 ## User Preferences
 

@@ -522,52 +522,98 @@ def create_vibe_squads():
 
 @app.route('/teacher/create-squads', methods=['POST'])
 def create_squads():
-    """Create vibe squads and save them to the database"""
+    """Create AI-powered vibe squads with personalized icebreakers"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
         return redirect(url_for('teacher'))
     
     try:
+        # Import AI functions
+        from gemini_integration import group_students_into_squads, generate_squad_icebreaker
+        
         # Clear existing squads and reset student assignments
         Squad.query.delete()
         db.session.execute(db.text("UPDATE students SET squad_id = NULL"))
         db.session.commit()
         
-        # Use the existing squad creation logic
-        result = create_vibe_squads()
-        squads_data = result['squads']
-        solo_students = result['solo_students']
+        # Get all students without a squad
+        unassigned_students = Student.query.filter_by(squad_id=None).all()
         
-        # Save squads to database
-        for i, squad_data in enumerate(squads_data):
-            # Create squad with a meaningful name based on their qualities
-            squad_names = [
-                "The Harmony Makers", "The Innovation Station", "The Dream Builders", "The Spark Squad", 
-                "The Power Players", "The Creative Collective", "The Unity Squad", "The Bright Minds",
-                "The Dynamic Force", "The Catalyst Crew", "The Phoenix Team", "The Visionary Squad"
-            ]
-            squad_name = squad_names[i % len(squad_names)] if i < len(squad_names) else f"Vibe Squad {i + 1}"
-            
+        if not unassigned_students:
+            flash('No students available to create squads.', 'warning')
+            return redirect(url_for('teacher'))
+        
+        # Prepare student data for AI
+        students_data = []
+        student_map = {}
+        for student in unassigned_students:
+            student_data = {
+                'id': student.id,
+                'name': student.name,
+                'question1': student.question1,
+                'question2': student.question2,
+                'question3': student.question3,
+                'question4': student.question4,
+                'question5': student.question5,
+                'question6': student.question6,
+            }
+            students_data.append(student_data)
+            student_map[student.id] = student
+        
+        logging.info(f"Sending {len(students_data)} students to AI for grouping")
+        
+        # Get AI-powered squad groupings
+        ai_response = group_students_into_squads(students_data)
+        squads_created = 0
+        
+        # Process each AI-suggested squad
+        for squad_data in ai_response['squads']:
+            # Create the squad
             new_squad = Squad(
-                name=squad_name,
+                name=squad_data['name'],
                 shared_interests=squad_data['shared_interests']
             )
             db.session.add(new_squad)
             db.session.flush()  # Get the ID
             
             # Assign students to this squad
-            for student in squad_data['members']:
-                student.squad_id = new_squad.id
+            squad_members_data = []
+            for student_id in squad_data['member_ids']:
+                if student_id in student_map:
+                    student = student_map[student_id]
+                    student.squad_id = new_squad.id
+                    # Collect member data for icebreaker generation
+                    squad_members_data.append({
+                        'name': student.name,
+                        'question1': student.question1,
+                        'question2': student.question2,
+                        'question3': student.question3,
+                        'question4': student.question4,
+                        'question5': student.question5,
+                        'question6': student.question6,
+                    })
+            
+            # Generate personalized icebreaker for this squad
+            if squad_members_data:
+                try:
+                    icebreaker = generate_squad_icebreaker(squad_members_data, new_squad.name)
+                    new_squad.icebreaker_text = icebreaker
+                    logging.info(f"Generated icebreaker for {new_squad.name}: {icebreaker}")
+                except Exception as e:
+                    logging.error(f"Error generating icebreaker for {new_squad.name}: {str(e)}")
+                    new_squad.icebreaker_text = "If your squad had to create a theme song using only sounds you can make with your body, what would it sound like?"
+            
+            squads_created += 1
         
         db.session.commit()
         
-        flash(f'Successfully created {len(squads_data)} vibe squads with {len(solo_students)} solo students!', 'success')
-        logging.info(f"Created {len(squads_data)} vibe squads with {len(solo_students)} solo students")
+        flash(f'Successfully created {squads_created} AI-powered vibe squads with personalized icebreakers!', 'success')
+        logging.info(f"Created {squads_created} AI-powered squads with icebreakers")
         
     except Exception as e:
         db.session.rollback()
-        logging.error(f"Error creating squads: {str(e)}")
-        flash('There was an error creating the squads. Please try again.', 'error')
+        logging.error(f"Error creating AI-powered squads: {str(e)}")
+        flash('There was an error creating the squads. Please check the logs and try again.', 'error')
     
     return redirect(url_for('teacher'))
 
