@@ -717,13 +717,13 @@ Respond only with valid JSON in the exact format above."""
 
 def generate_squad_icebreaker_with_ai(member_data, squad_name):
     """
-    Generate a personalized icebreaker question for a specific squad using Gemini AI
+    Generate a personalized icebreaker question for a specific squad using OpenAI ChatGPT API
     """
     import os
     try:
-        from google import genai
-        # Initialize Gemini client
-        client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+        from openai import OpenAI
+        # Initialize OpenAI client
+        client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
         
         # Create the AI prompt
         prompt = f"""You are a social dynamics expert specializing in creating engaging icebreaker questions for small groups. 
@@ -756,13 +756,17 @@ Based on these members' interests and personalities, create ONE engaging icebrea
 Return ONLY the icebreaker question text, nothing else. Make it engaging and specific to this group.
 """
         
-        # Call Gemini API
-        response = client.models.generate_content(
-            model="gemini-2.5-pro",
-            contents=prompt
+        # Call OpenAI API
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=200,
+            temperature=0.7
         )
         
-        icebreaker_text = response.text.strip()
+        icebreaker_text = response.choices[0].message.content.strip()
         
         # Validate response
         if not icebreaker_text or len(icebreaker_text) < 10:
