@@ -522,30 +522,28 @@ def create_vibe_squads():
 
 @app.route('/teacher/create-squads', methods=['POST'])
 def create_squads():
-    """Create AI-powered vibe squads with personalized icebreakers"""
+    """AI-powered squad formation - The Sorting Hat of the application"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
         return redirect(url_for('teacher'))
     
     try:
-        # Import AI functions
-        from gemini_integration import group_students_into_squads, generate_squad_icebreaker
-        
-        # Clear existing squads and reset student assignments
+        # Step 1: Clean slate - Reset all existing squad assignments
         Squad.query.delete()
         db.session.execute(db.text("UPDATE students SET squad_id = NULL"))
         db.session.commit()
         
-        # Get all students without a squad
+        # Step 2: Fetch all unassigned student submissions from database
         unassigned_students = Student.query.filter_by(squad_id=None).all()
         
-        if not unassigned_students:
-            flash('No students available to create squads.', 'warning')
+        if len(unassigned_students) < 3:
+            flash('Need at least 3 students to create squads.', 'warning')
             return redirect(url_for('teacher'))
         
-        # Prepare student data for AI
+        # Step 3: Prepare student data with their 6 question responses for AI analysis
         students_data = []
-        student_map = {}
+        student_map = {}  # For efficient lookups during assignment
+        
         for student in unassigned_students:
             student_data = {
                 'id': student.id,
@@ -560,120 +558,161 @@ def create_squads():
             students_data.append(student_data)
             student_map[student.id] = student
         
-        logging.info(f"Sending {len(students_data)} students to AI for grouping")
+        logging.info(f"Sending {len(students_data)} students to AI for intelligent grouping")
         
-        # Get AI-powered squad groupings
-        ai_response = group_students_into_squads(students_data)
+        # Step 4: Send to AI as a social dynamics expert for squad formation
+        ai_response = analyze_students_and_create_squads(students_data)
         
-        # CRITICAL DEBUGGING: Log the complete raw AI response
-        print("=" * 80)
-        print("🔍 RAW AI RESPONSE FOR DEBUGGING:")
-        print(f"Type: {type(ai_response)}")
-        print(f"Content: {ai_response}")
-        print("=" * 80)
+        # Step 5: Parse AI response and validate structure
+        if not isinstance(ai_response, dict) or 'squads' not in ai_response:
+            raise ValueError("Invalid AI response format - expected dict with 'squads' key")
         
         squads_created = 0
         
-        # Process each AI-suggested squad with robust error handling
-        try:
-            print(f"🔍 PARSING: AI response type is {type(ai_response)}")
-            print(f"🔍 PARSING: AI response keys: {ai_response.keys() if isinstance(ai_response, dict) else 'Not a dict'}")
+        # Step 6: Process each AI-suggested squad and save to database
+        for squad_data in ai_response['squads']:
+            # Validate squad structure
+            required_keys = ['name', 'shared_interests', 'member_ids']
+            if not all(key in squad_data for key in required_keys):
+                logging.warning(f"Skipping squad with missing keys: {squad_data}")
+                continue
             
-            if not isinstance(ai_response, dict):
-                raise ValueError(f"AI response is not a dictionary. Got: {type(ai_response)}")
+            # Create new squad record
+            new_squad = Squad(
+                name=squad_data['name'],
+                shared_interests=squad_data['shared_interests']
+            )
+            db.session.add(new_squad)
+            db.session.flush()  # Get the squad ID for student assignments
             
-            if 'squads' not in ai_response:
-                raise KeyError(f"'squads' key not found in AI response. Available keys: {list(ai_response.keys())}")
-            
-            squads_list = ai_response['squads']
-            print(f"🔍 PARSING: Found {len(squads_list)} squads in AI response")
-            
-            for i, squad_data in enumerate(squads_list):
-                print(f"🔍 PROCESSING SQUAD {i+1}: {squad_data}")
-                
-                # Validate squad structure
-                if not isinstance(squad_data, dict):
-                    print(f"❌ ERROR: Squad {i+1} is not a dictionary: {squad_data}")
-                    continue
-                
-                required_keys = ['name', 'shared_interests', 'member_ids']
-                missing_keys = [key for key in required_keys if key not in squad_data]
-                if missing_keys:
-                    print(f"❌ ERROR: Squad {i+1} missing keys: {missing_keys}")
-                    print(f"Available keys: {list(squad_data.keys())}")
-                    continue
-                # Create the squad
-                print(f"✅ Creating squad: {squad_data['name']}")
-                new_squad = Squad(
-                    name=squad_data['name'],
-                    shared_interests=squad_data['shared_interests']
-                )
-                db.session.add(new_squad)
-                db.session.flush()  # Get the ID
-                print(f"✅ Squad created with ID: {new_squad.id}")
-                
-                # Assign students to this squad
-                squad_members_data = []
-                member_ids = squad_data['member_ids']
-                print(f"🔍 Processing {len(member_ids)} members for squad {new_squad.name}")
-                
-                for student_id in member_ids:
-                    print(f"🔍 Processing student ID: {student_id} (type: {type(student_id)})")
-                    
-                    if student_id in student_map:
-                        student = student_map[student_id]
-                        student.squad_id = new_squad.id
-                        print(f"✅ Assigned {student.name} to squad {new_squad.name}")
-                        
-                        # Collect member data for icebreaker generation
-                        squad_members_data.append({
-                            'name': student.name,
-                            'question1': student.question1,
-                            'question2': student.question2,
-                            'question3': student.question3,
-                            'question4': student.question4,
-                            'question5': student.question5,
-                            'question6': student.question6,
-                        })
-                    else:
-                        print(f"❌ ERROR: Student ID {student_id} not found in student_map")
-                        print(f"Available student IDs: {list(student_map.keys())}")
-                
-                # Generate personalized icebreaker for this squad
-                if squad_members_data:
-                    try:
-                        print(f"🔍 Generating icebreaker for {new_squad.name} with {len(squad_members_data)} members")
-                        icebreaker = generate_squad_icebreaker(squad_members_data, new_squad.name)
-                        new_squad.icebreaker_text = icebreaker
-                        print(f"✅ Generated icebreaker for {new_squad.name}: {icebreaker}")
-                        logging.info(f"Generated icebreaker for {new_squad.name}: {icebreaker}")
-                    except Exception as e:
-                        print(f"❌ ERROR generating icebreaker for {new_squad.name}: {str(e)}")
-                        logging.error(f"Error generating icebreaker for {new_squad.name}: {str(e)}")
-                        new_squad.icebreaker_text = "If your squad had to create a theme song using only sounds you can make with your body, what would it sound like?"
+            # Assign students to this squad
+            members_assigned = 0
+            for student_id in squad_data['member_ids']:
+                if student_id in student_map:
+                    student = student_map[student_id]
+                    student.squad_id = new_squad.id
+                    members_assigned += 1
+                    logging.info(f"Assigned {student.name} to squad '{new_squad.name}'")
                 else:
-                    print(f"❌ WARNING: No valid members found for squad {new_squad.name}")
-                
+                    logging.warning(f"Student ID {student_id} not found in database")
+            
+            if members_assigned > 0:
                 squads_created += 1
-                print(f"✅ Successfully processed squad {i+1}/{len(squads_list)}")
-                
-        except Exception as parsing_error:
-            print(f"❌ CRITICAL ERROR during AI response parsing: {str(parsing_error)}")
-            print(f"❌ Error type: {type(parsing_error)}")
-            logging.error(f"AI response parsing error: {str(parsing_error)}")
-            raise parsing_error
+                logging.info(f"Created squad '{new_squad.name}' with {members_assigned} members")
+            else:
+                # Remove empty squads
+                db.session.delete(new_squad)
         
+        # Step 7: Commit all changes to database
         db.session.commit()
         
-        flash(f'Successfully created {squads_created} AI-powered vibe squads with personalized icebreakers!', 'success')
-        logging.info(f"Created {squads_created} AI-powered squads with icebreakers")
+        if squads_created > 0:
+            flash(f'Successfully created {squads_created} AI-powered squads! Students have been intelligently grouped based on shared interests.', 'success')
+            logging.info(f"Squad formation complete: {squads_created} squads created")
+        else:
+            flash('No squads were created. Please try again or check the student data.', 'warning')
         
     except Exception as e:
         db.session.rollback()
-        logging.error(f"Error creating AI-powered squads: {str(e)}")
-        flash('There was an error creating the squads. Please check the logs and try again.', 'error')
+        logging.error(f"Error during squad formation: {str(e)}")
+        flash('Squad formation failed. Please try again.', 'error')
     
     return redirect(url_for('teacher'))
+
+
+def create_fallback_squads(students_data):
+    """
+    Fallback squad creation when AI is unavailable
+    Creates simple squads of 3-4 students sequentially
+    """
+    squads = []
+    current_squad = []
+    squad_number = 1
+    
+    for student in students_data:
+        current_squad.append(student['id'])
+        
+        # Create squad when we have 4 members or when we're at the end
+        if len(current_squad) == 4 or student == students_data[-1]:
+            # Don't create squads with less than 3 members unless it's the only option
+            if len(current_squad) >= 3 or len(squads) == 0:
+                squads.append({
+                    'name': f'Squad {squad_number}',
+                    'shared_interests': 'Mixed interests and personalities',
+                    'member_ids': current_squad.copy()
+                })
+                squad_number += 1
+            else:
+                # Add remaining students to the last squad
+                if squads:
+                    squads[-1]['member_ids'].extend(current_squad)
+            
+            current_squad = []
+    
+    return {'squads': squads}
+
+
+def analyze_students_and_create_squads(students_data):
+    """
+    Send student data to AI (Gemini) acting as social dynamics expert
+    Returns JSON with intelligent squad groupings based on shared interests
+    """
+    import os
+    import json
+    
+    try:
+        from google import genai
+        # Initialize Gemini client
+        client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+    except ImportError:
+        logging.error("Google Gemini API not available")
+        return create_fallback_squads(students_data)
+    
+    # Construct the social dynamics expert prompt
+    prompt = f"""You are an expert social dynamics consultant specializing in creating meaningful group formations.
+
+Analyze the following {len(students_data)} students and their responses to 6 personality questions. Group them into squads of 3-4 members each based on shared interests, complementary personalities, and potential for genuine connections.
+
+STUDENT DATA:
+{json.dumps(students_data, indent=2)}
+
+INSTRUCTIONS:
+- Create squads of 3-4 members each
+- Focus on shared interests and complementary personalities
+- Generate creative, engaging squad names that reflect the group's essence
+- Identify 2-3 key shared interests for each squad
+- Ensure balanced group dynamics
+
+REQUIRED OUTPUT FORMAT (JSON only, no other text):
+{{
+  "squads": [
+    {{
+      "name": "Creative Squad Name",
+      "shared_interests": "Brief description of 2-3 shared interests",
+      "member_ids": [1, 2, 3, 4]
+    }}
+  ]
+}}
+
+Respond only with valid JSON in the exact format above."""
+
+    try:
+        # Send to Gemini API
+        response = client.models.generate_content(
+            model="gemini-2.5-pro",
+            contents=prompt,
+            config=genai.types.GenerateContentConfig(
+                response_mime_type="application/json"
+            )
+        )
+        
+        # Parse and return the JSON response
+        return json.loads(response.text)
+        
+    except Exception as e:
+        logging.error(f"AI squad formation failed: {str(e)}")
+        # Fallback: Create simple sequential squads
+        return create_fallback_squads(students_data)
 
 @app.route('/delete-student/<int:student_id>')
 def delete_student(student_id):
