@@ -119,8 +119,11 @@ def submit_form():
             # Get student's chosen language from session
             student_language = session.get('language', 'en')
             
-            # Handle Japanese translations based on student's language choice
+            # Debug session data to understand language detection
+            logging.info(f"Session data: {dict(session)}")
             logging.info(f"Processing answers for language: {student_language}")
+            
+            # Handle Japanese translations based on student's language choice
             japanese_translations = []
             
             for i, answer in enumerate(original_answers, 1):
