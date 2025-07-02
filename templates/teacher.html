@@ -129,25 +129,11 @@
     <!-- Statistics Card -->
     <div class="stats-card">
         <div class="row text-center">
-            <div class="col-md-4">
+            <div class="col-12">
                 <div class="stat-item">
                     <i class="fas fa-users"></i>
                     <h3>{{ students|length }}</h3>
                     <p>学生総数</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-item">
-                    <i class="fas fa-calendar-day"></i>
-                    <h3>{{ students|selectattr('created_at')|selectattr('created_at', 'equalto', students|map(attribute='created_at')|max)|list|length if students else 0 }}</h3>
-                    <p>今日の提出</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-item">
-                    <i class="fas fa-clock"></i>
-                    <h3>{% if students %}{{ students[0].created_at.strftime('%H:%M') }}{% else %}--{% endif %}</h3>
-                    <p>最新の提出</p>
                 </div>
             </div>
         </div>
