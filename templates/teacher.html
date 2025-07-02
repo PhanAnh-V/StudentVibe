@@ -166,27 +166,34 @@
             </div>
         </div>
         
-        <!-- View Toggle Buttons -->
-        <div class="view-toggle-section">
-            <div class="toggle-buttons">
-                <button id="viewSquadsBtn" class="toggle-btn active" onclick="showView('squads')">
+        <!-- Squad Actions Section -->
+        <div class="squad-actions-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title">
                     <i class="fas fa-users me-2"></i>
-                    View Vibe Squads
-                </button>
-                <button id="viewSubmissionsBtn" class="toggle-btn" onclick="showView('submissions')">
-                    <i class="fas fa-list me-2"></i>
-                    View All Submissions
-                </button>
+                    Student Management
+                </h2>
+                <div class="squad-actions">
+                    <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
+                        <button type="submit" class="btn btn-success me-2">
+                            <i class="fas fa-magic me-2"></i>
+                            Create AI Squads
+                        </button>
+                    </form>
+                    <a href="{{ url_for('teacher_ai_insights') }}" class="btn btn-info">
+                        <i class="fas fa-brain me-2"></i>
+                        AI Insights
+                    </a>
+                </div>
             </div>
         </div>
         
-        <!-- Vibe Squads Section -->
-        <div id="squadsView" class="dashboard-section view-content">
-            <div class="squads-section">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="section-title">
-                <i class="fas fa-users me-2"></i>
-                Vibe Squads
+        <!-- All Student Submissions Section -->
+        <div class="dashboard-section view-content">
+            <div class="students-section">
+        <h2 class="section-title">
+            <i class="fas fa-list me-2"></i>
+            All Student Submissions
             </h2>
             <div class="squad-actions">
                 <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
@@ -343,14 +350,7 @@
             </div>
         </div>
         </div>
-        
-        <!-- All Student Submissions Section -->
-        <div id="submissionsView" class="dashboard-section view-content" style="display: none;">
-            <div class="students-section">
-        <h2 class="section-title">
-            <i class="fas fa-list me-2"></i>
-            All Student Submissions
-        </h2>
+
         
         {% if students %}
             <!-- Filter Controls -->
@@ -626,36 +626,8 @@
 <script>
 let deleteStudentId = null;
 
-// View Toggle Functionality
-function showView(viewType) {
-    const squadsView = document.getElementById('squadsView');
-    const submissionsView = document.getElementById('submissionsView');
-    const squadsBtn = document.getElementById('viewSquadsBtn');
-    const submissionsBtn = document.getElementById('viewSubmissionsBtn');
-    
-    if (viewType === 'squads') {
-        // Show squads, hide submissions
-        squadsView.style.display = 'block';
-        submissionsView.style.display = 'none';
-        
-        // Update button states
-        squadsBtn.classList.add('active');
-        submissionsBtn.classList.remove('active');
-    } else if (viewType === 'submissions') {
-        // Show submissions, hide squads
-        squadsView.style.display = 'none';
-        submissionsView.style.display = 'block';
-        
-        // Update button states
-        squadsBtn.classList.remove('active');
-        submissionsBtn.classList.add('active');
-    }
-}
-
 // Dashboard functionality
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize with squads view visible
-    showView('squads');
     
     // Filter functionality
     const countryFilter = document.getElementById('countryFilter');
