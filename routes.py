@@ -572,8 +572,10 @@ def create_squads():
     
     try:
         # Step 1: Clean slate - Reset all existing squad assignments
-        Squad.query.delete()
+        # First unassign all students from squads
         db.session.execute(db.text("UPDATE students SET squad_id = NULL"))
+        # Then delete all squads
+        Squad.query.delete()
         db.session.commit()
         
         # Step 2: Fetch all unassigned student submissions from database
@@ -1421,95 +1423,95 @@ def reset_database():
 def seed_database():
     """Temporary route to seed database with fake student data for testing"""
     try:
-        # Sample fake student data with realistic answers
+        # Test student data: 4 Chinese, 2 Vietnamese, 2 English speakers
         fake_students_data = [
             {
-                'name': 'Alex Chen',
+                'name': '李小明',
                 'country': 'China',
                 'gender': 'Male',
-                'question1': 'Hit the beach with friends and play volleyball all day',
-                'question2': 'Photography - I love capturing street art and the way light changes throughout the day',
-                'question3': 'When we tried to recreate a TikTok dance and failed spectacularly',
-                'question4': 'I can always find the best food spots in any city within 10 minutes',
-                'question5': 'Lo-fi hip hop playlist, Studio Ghibli films, and my vintage camera',
-                'question6': 'Someone who stays calm under pressure and thinks outside the box'
+                'question1': '和朋友一起打游戏',
+                'question2': '学习编程和人工智能',
+                'question3': '科技趋势和游戏策略',
+                'question4': '在线游戏聚会',
+                'question5': '收集稀有游戏卡片',
+                'question6': '电子舞曲音乐'
             },
             {
-                'name': 'Maria Nguyen',
+                'name': '王小华',
+                'country': 'China',  
+                'gender': 'Female',
+                'question1': '在咖啡厅看小说',
+                'question2': '数字艺术和插画设计',
+                'question3': '书籍、电影和创意故事',
+                'question4': '看电影吃爆米花',
+                'question5': '收集古董书籍',
+                'question6': 'Lo-fi和独立音乐'
+            },
+            {
+                'name': '张伟',
+                'country': 'China',
+                'gender': 'Male',
+                'question1': '打篮球和户外运动',
+                'question2': '体育训练和健身',
+                'question3': '运动统计和健身方法',
+                'question4': '和朋友打篮球',
+                'question5': '收集运动鞋',
+                'question6': '嘻哈和说唱音乐'
+            },
+            {
+                'name': '刘美丽',
+                'country': 'China',
+                'gender': 'Female',
+                'question1': '画画和做手工艺品',
+                'question2': '传统艺术和书法',
+                'question3': '艺术文化和传统工艺',
+                'question4': '艺术创作之夜',
+                'question5': '收集艺术用品',
+                'question6': '古典音乐和民族音乐'
+            },
+            {
+                'name': 'Nguyễn Thị Lan',
                 'country': 'Vietnam',
                 'gender': 'Female',
-                'question1': 'Explore hidden cafes in the city and try different coffee brewing methods',
-                'question2': 'Cooking fusion dishes - mixing Vietnamese and Italian flavors creates amazing combinations',
-                'question3': 'My friend trying to speak Vietnamese with Google Translate during a family dinner',
-                'question4': 'I can organize any messy space into something beautiful and functional',
-                'question5': 'Indie pop music, cooking shows, and my collection of vintage recipe books',
-                'question6': 'Someone with great communication skills who can keep everyone motivated'
+                'question1': 'Nấu các món ăn truyền thống Việt Nam',
+                'question2': 'Nghệ thuật ẩm thực và chụp ảnh món ăn',
+                'question3': 'Văn hóa ẩm thực và kỹ thuật nấu nướng',
+                'question4': 'Nấu bữa tối cho gia đình',
+                'question5': 'Sưu tập sách nấu ăn cổ',
+                'question6': 'Nhạc dân ca Việt Nam'
             },
             {
-                'name': 'Yuki Tanaka',
-                'country': 'Japan',
-                'gender': 'Female',
-                'question1': 'Visit art museums and sketch in quiet gardens',
-                'question2': 'Anime illustration - the way artists convey emotion through simple lines is incredible',
-                'question3': 'Watching my dad try to use emoji for the first time and sending random combinations',
-                'question4': 'I can remember every detail from movies and TV shows I watch',
-                'question5': 'J-pop ballads, slice-of-life anime, and my digital art tablet',
-                'question6': 'Someone creative who notices small details others might miss'
-            },
-            {
-                'name': 'Jake Rodriguez',
-                'country': 'Other',
-                'gender': 'Male',
-                'question1': 'Go hiking in the mountains and set up camp under the stars',
-                'question2': 'Rock climbing - the mental puzzle of finding the right route is as important as physical strength',
-                'question3': 'Our camping trip when we realized we forgot the tent poles and had to build a shelter from branches',
-                'question4': 'I can fix almost anything electronic with basic tools and patience',
-                'question5': 'Alternative rock, adventure documentaries, and my climbing gear',
-                'question6': 'Someone reliable who can problem-solve when things go wrong'
-            },
-            {
-                'name': 'Emma Li',
-                'country': 'China',
-                'gender': 'Female',
-                'question1': 'Attend live music concerts and discover new indie bands',
-                'question2': 'Playing guitar - writing songs helps me process emotions and connect with others',
-                'question3': 'Band practice when our drummer forgot his sticks and used chopsticks instead',
-                'question4': 'I can learn any song by ear after listening to it a few times',
-                'question5': 'Indie folk music, music documentaries, and my acoustic guitar',
-                'question6': 'Someone with good rhythm who can keep the team in sync'
-            },
-            {
-                'name': 'Minh Pham',
+                'name': 'Trần Văn Minh',
                 'country': 'Vietnam',
                 'gender': 'Male',
-                'question1': 'Try street food from different vendors and rate each dish',
-                'question2': 'Gaming - the storytelling in modern RPGs rivals the best novels and films',
-                'question3': 'Online gaming session where our teammate accidentally revealed their age as 12',
-                'question4': 'I can spot patterns and strategies in games that others miss',
-                'question5': 'Electronic music, RPG games, and my gaming setup',
-                'question6': 'Someone strategic who can think several steps ahead'
+                'question1': 'Chụp ảnh và khám phá các con phố thành phố',
+                'question2': 'Nhiếp ảnh và kể chuyện bằng hình ảnh',
+                'question3': 'Nghệ thuật, nhiếp ảnh và văn hóa đô thị',
+                'question4': 'Đi dạo chụp ảnh quanh thành phố',
+                'question5': 'Sưu tập máy ảnh vintage',
+                'question6': 'Nhạc rock độc lập và alternative'
             },
             {
-                'name': 'Sophie Kim',
+                'name': 'Emma Johnson',
                 'country': 'Other',
                 'gender': 'Female',
-                'question1': 'Browse bookstores and read in cozy coffee shops all day',
-                'question2': 'Creative writing - crafting characters and worlds that feel real is my passion',
-                'question3': 'Reading my terrible poetry from middle school to my friends last week',
-                'question4': 'I can remember quotes from books and movies with perfect accuracy',
-                'question5': 'Acoustic covers, fantasy novels, and my leather-bound journal',
-                'question6': 'Someone imaginative who brings fresh perspectives to challenges'
+                'question1': 'Reading fantasy novels in cozy places',
+                'question2': 'Creative writing and storytelling',
+                'question3': 'Literature, movies, and creative arts',
+                'question4': 'Reading with tea and snacks',
+                'question5': 'Collecting first edition books',
+                'question6': 'Folk and acoustic music'
             },
             {
-                'name': 'David Wong',
-                'country': 'China',
+                'name': 'Michael Smith',
+                'country': 'Other',
                 'gender': 'Male',
-                'question1': 'Visit science museums and experiment with interactive exhibits',
-                'question2': 'Robotics - building machines that can help solve real-world problems',
-                'question3': 'Our robot competition when our bot started dancing instead of following the course',
-                'question4': 'I can explain complex technical concepts in simple terms',
-                'question5': 'Electronic beats, sci-fi films, and my Arduino kit',
-                'question6': 'Someone analytical who can break down complex problems into steps'
+                'question1': 'Building electronics and coding projects',
+                'question2': 'Software engineering and robotics',
+                'question3': 'Technology innovation and engineering',
+                'question4': 'Coding and building projects',
+                'question5': 'Collecting vintage electronics',
+                'question6': 'Electronic and synthwave music'
             }
         ]
         

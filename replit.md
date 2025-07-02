@@ -213,6 +213,9 @@ This is a Flask-based web application designed to collect and store student info
 - July 02, 2025. Updated teacher dashboard button from "全スクワッドクリア" to "すべて削除" with enhanced confirmation message
 - July 02, 2025. Added form submission protection to questionnaire.html with JavaScript to disable submit button and show "送信中..." loading state
 - July 02, 2025. Translated all English text in success.html template to friendly Japanese including titles, messages, buttons, and timestamp formatting
+- July 02, 2025. Fixed "Create Vibe Squads" button conflict by removing duplicate AIスクワッド作成 button from teacher dashboard
+- July 02, 2025. Fixed foreign key constraint error in squad creation by unassigning students before deleting squads
+- July 02, 2025. Created test dataset with 8 students: 4 Chinese, 2 Vietnamese, 2 English speakers for squad creation testing
 
 ## User Preferences
 
