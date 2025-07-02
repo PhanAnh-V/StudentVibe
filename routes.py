@@ -507,7 +507,7 @@ def create_squads():
     
     return redirect(url_for('teacher'))
 
-@app.route('/teacher/delete-student/<int:student_id>', methods=['POST'])
+@app.route('/delete-student/<int:student_id>')
 def delete_student(student_id):
     """Delete a student record from the database"""
     if not session.get('teacher_authenticated'):
@@ -594,36 +594,30 @@ def move_student():
         logging.error(f"Error moving student: {str(e)}")
         return jsonify({'success': False, 'error': 'Server error'})
 
-@app.route('/teacher/delete-squad', methods=['POST'])
-def delete_squad():
-    """Delete a squad and move all members to ungrouped list"""
-    if not session.get('teacher_authenticated'):
-        return jsonify({'success': False, 'error': 'Not authenticated'})
-    
+@app.route('/delete-squad/<int:squad_id>')
+def delete_squad(squad_id):
+    """Delete a specific squad and move all members to ungrouped"""
     try:
-        data = request.get_json()
-        squad_index = int(data['squad_index'])
+        squad = Squad.query.get_or_404(squad_id)
+        squad_name = squad.name
         
-        # Get current squads and ungrouped students from session
-        current_squads = session.get('current_squads', [])
-        ungrouped_students = session.get('ungrouped_students', [])
+        # Move all squad members to ungrouped (set squad_id to None)
+        for member in squad.members:
+            member.squad_id = None
         
-        if 0 <= squad_index < len(current_squads):
-            # Move all squad members to ungrouped list
-            squad_to_delete = current_squads.pop(squad_index)
-            ungrouped_students.extend(squad_to_delete['members'])
-            
-            # Update session
-            session['current_squads'] = current_squads
-            session['ungrouped_students'] = ungrouped_students
-            
-            return jsonify({'success': True})
-        else:
-            return jsonify({'success': False, 'error': 'Invalid squad index'})
-            
+        # Delete the squad record
+        db.session.delete(squad)
+        db.session.commit()
+        
+        flash(f'Squad "{squad_name}" has been deleted and all members moved to ungrouped.', 'success')
+        logging.info(f"Squad {squad_name} (ID: {squad_id}) deleted successfully")
+        
     except Exception as e:
-        logging.error(f"Error deleting squad: {str(e)}")
-        return jsonify({'success': False, 'error': 'Server error'})
+        db.session.rollback()
+        flash(f'Error deleting squad: {str(e)}', 'error')
+        logging.error(f"Failed to delete squad {squad_id}: {str(e)}")
+    
+    return redirect(url_for('teacher'))
 
 @app.route('/teacher/ai-advice/<int:student_id>', methods=['POST'])
 def get_ai_advice(student_id):
@@ -1286,6 +1280,9 @@ def seed_database():
         logging.error(f"Database seeding failed: {str(e)}")
     
     return redirect(url_for('teacher'))
+
+
+
 
 @app.errorhandler(404)
 def not_found_error(error):
