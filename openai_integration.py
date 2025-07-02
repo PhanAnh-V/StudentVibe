@@ -125,3 +125,31 @@ Respond with just the icebreaker question text, nothing else."""
         logging.error(f"Error generating icebreaker: {str(e)}")
         # Return a fallback icebreaker
         return "If your squad had to create a theme song using only sounds you can make with your body, what would it sound like?"
+
+
+def translate_to_japanese(text):
+    """
+    Translate text to Japanese using OpenAI
+    """
+    try:
+        prompt = f"Please translate the following text to Japanese: {text}"
+
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "You are a professional translator specializing in English to Japanese translation. Provide natural, conversational Japanese translations."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.3,  # Lower temperature for more consistent translations
+            max_tokens=200,
+        )
+
+        if response.choices[0].message.content:
+            return response.choices[0].message.content.strip()
+        else:
+            raise ValueError("Empty response from AI")
+
+    except Exception as e:
+        logging.error(f"Error translating text to Japanese: {str(e)}")
+        # Return original text if translation fails
+        return text
