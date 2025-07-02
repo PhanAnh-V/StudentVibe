@@ -54,22 +54,40 @@
     }
     
     .generate-icebreaker-btn {
-        color: #28a745;
-        text-decoration: none;
-        padding: 0.25rem 0.75rem;
-        border-radius: 6px;
-        transition: all 0.3s ease;
-        font-size: 0.875rem;
-        margin-right: 0.5rem;
-        border: 1px solid #28a745;
-    }
-    
-    .generate-icebreaker-btn:hover {
         background-color: #28a745;
         color: white;
         text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        margin-right: 0.5rem;
+        border: none;
+        display: inline-block;
+        font-weight: 500;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        cursor: pointer;
+        user-select: none;
+        line-height: 1.5;
+        box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+    }
+    
+    .generate-icebreaker-btn:hover {
+        background-color: #218838;
+        color: white;
+        text-decoration: none;
         transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+    }
+    
+    .generate-icebreaker-btn:disabled {
+        background-color: #6c757d;
+        color: white;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
     }
     
     .delete-squad-btn {
@@ -126,32 +144,7 @@
         </div>
     </div>
     
-    <!-- Statistics Card -->
-    <div class="stats-card">
-        <div class="row text-center">
-            <div class="col-md-4">
-                <div class="stat-item">
-                    <i class="fas fa-users"></i>
-                    <h3>{{ students|length }}</h3>
-                    <p>学生総数</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-item">
-                    <i class="fas fa-calendar-day"></i>
-                    <h3>{{ students|selectattr('created_at')|selectattr('created_at', 'equalto', students|map(attribute='created_at')|max)|list|length if students else 0 }}</h3>
-                    <p>今日の提出</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-item">
-                    <i class="fas fa-clock"></i>
-                    <h3>{% if students %}{{ students[0].created_at.strftime('%H:%M') }}{% else %}--{% endif %}</h3>
-                    <p>最新の提出</p>
-                </div>
-            </div>
-        </div>
-    </div>
+
     
     <!-- Main Dashboard Content -->
     <div class="dashboard-content">
@@ -212,13 +205,7 @@
             全学生提出一覧
             </h2>
             <div class="squad-actions">
-                <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
-                    <button type="submit" class="btn btn-success me-2">
-                        <i class="fas fa-magic me-2"></i>
-                        バイブスクワッド作成
-                    </button>
-                </form>
-                
+
                 <form method="POST" action="{{ url_for('clear_squads') }}" style="display: inline;">
                     <button type="submit" 
                             class="btn btn-danger me-2"
@@ -564,6 +551,56 @@ window.addEventListener('unhandledrejection', function(e) {
 
 // Dashboard functionality
 document.addEventListener('DOMContentLoaded', function() {
+    
+    // Add click protection to squad creation buttons
+    const createSquadButtons = document.querySelectorAll('button[type="submit"]');
+    createSquadButtons.forEach(button => {
+        // Only target buttons with magic icon (squad creation buttons)
+        if (!button.querySelector('i.fa-magic')) return;
+        button.addEventListener('click', function(e) {
+            // Prevent double clicking
+            if (this.disabled) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Disable button and show loading state
+            this.disabled = true;
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>処理中...';
+            
+            // Re-enable after 10 seconds as failsafe (in case form doesn't redirect)
+            setTimeout(() => {
+                this.disabled = false;
+                this.innerHTML = originalHTML;
+            }, 10000);
+        });
+    });
+    
+    // Add click protection to icebreaker generation buttons
+    const icebreakerButtons = document.querySelectorAll('.generate-icebreaker-btn');
+    icebreakerButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Prevent double clicking
+            if (this.classList.contains('loading')) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Add loading state
+            this.classList.add('loading');
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 生成中...';
+            this.style.pointerEvents = 'none';
+            
+            // Re-enable after 15 seconds as failsafe
+            setTimeout(() => {
+                this.classList.remove('loading');
+                this.innerHTML = originalHTML;
+                this.style.pointerEvents = 'auto';
+            }, 15000);
+        });
+    });
     
     // Filter functionality
     const countryFilter = document.getElementById('countryFilter');
