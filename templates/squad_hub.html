@@ -318,29 +318,26 @@
                                 スクワッドアイスブレーカー
                             </h2>
                             <div class="icebreaker-content">
-                                {% if squad.icebreaker_text %}
-                                    {% set icebreaker_data = squad.icebreaker_text | from_json %}
-                                    {% if icebreaker_data and icebreaker_data.lighthearted and icebreaker_data.thoughtful %}
-                                        <div class="icebreaker-questions">
-                                            <div class="icebreaker-question lighthearted">
-                                                <div class="question-label">
-                                                    <i class="fas fa-laugh"></i>
-                                                    楽しい質問
-                                                </div>
-                                                <p>{{ icebreaker_data.lighthearted }}</p>
+                                {% if icebreakers and icebreakers.lighthearted and icebreakers.thoughtful %}
+                                    <div class="icebreaker-questions">
+                                        <div class="icebreaker-question lighthearted">
+                                            <div class="question-label">
+                                                <i class="fas fa-laugh"></i>
+                                                楽しい質問
                                             </div>
-                                            
-                                            <div class="icebreaker-question thoughtful">
-                                                <div class="question-label">
-                                                    <i class="fas fa-heart"></i>
-                                                    深い質問
-                                                </div>
-                                                <p>{{ icebreaker_data.thoughtful }}</p>
-                                            </div>
+                                            <p>{{ icebreakers.lighthearted }}</p>
                                         </div>
-                                    {% else %}
-                                        <p>{{ squad.icebreaker_text }}</p>
-                                    {% endif %}
+                                        
+                                        <div class="icebreaker-question thoughtful">
+                                            <div class="question-label">
+                                                <i class="fas fa-heart"></i>
+                                                深い質問
+                                            </div>
+                                            <p>{{ icebreakers.thoughtful }}</p>
+                                        </div>
+                                    </div>
+                                {% elif squad.icebreaker_text %}
+                                    <p>{{ squad.icebreaker_text }}</p>
                                 {% else %}
                                     <p>あなたのスクワッドミッションは先生によって生成されるとここに表示されます。</p>
                                 {% endif %}

@@ -238,11 +238,17 @@ def squad_hub(squad_id):
         # Fetch the squad with all its members
         squad = Squad.query.get_or_404(squad_id)
         
-        # Add icebreaker_text attribute if it doesn't exist (placeholder for future AI integration)
-        if not hasattr(squad, 'icebreaker_text'):
-            squad.icebreaker_text = None
+        # Parse the JSON icebreaker_text into a Python object
+        icebreakers = None
+        if squad.icebreaker_text:
+            try:
+                icebreakers = json.loads(squad.icebreaker_text)
+            except (json.JSONDecodeError, TypeError) as e:
+                logging.error(f"Error parsing icebreaker JSON for squad {squad_id}: {e}")
+                # If JSON parsing fails, treat as plain text
+                icebreakers = {"lighthearted": squad.icebreaker_text, "thoughtful": ""}
         
-        return render_template('squad_hub.html', squad=squad)
+        return render_template('squad_hub.html', squad=squad, icebreakers=icebreakers)
         
     except Exception as e:
         logging.error(f"Error accessing squad hub {squad_id}: {str(e)}")

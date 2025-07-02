@@ -216,6 +216,8 @@ This is a Flask-based web application designed to collect and store student info
 - July 02, 2025. Fixed "Create Vibe Squads" button conflict by removing duplicate AIスクワッド作成 button from teacher dashboard
 - July 02, 2025. Fixed foreign key constraint error in squad creation by unassigning students before deleting squads
 - July 02, 2025. Created test dataset with 8 students: 4 Chinese, 2 Vietnamese, 2 English speakers for squad creation testing
+- July 02, 2025. Fixed squad hub icebreaker display bug by parsing JSON icebreaker_text in squad_hub route before passing to template
+- July 02, 2025. Updated squad_hub.html template to properly display parsed icebreakers as formatted questions instead of raw JSON strings
 
 ## User Preferences
 
