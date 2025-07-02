@@ -97,6 +97,47 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
+        .icebreaker-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .icebreaker-question {
+            padding: 1.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .icebreaker-question.lighthearted {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .icebreaker-question.thoughtful {
+            background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);
+            border-left: 4px solid #8b5cf6;
+        }
+        
+        .question-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .icebreaker-question p {
+            margin: 0;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #1f2937;
+        }
+        
         .members-section {
             padding: 2rem;
         }
@@ -262,7 +303,7 @@
                                     <span class="stat-label">メンバー</span>
                                 </div>
                                 <div class="stat-item">
-                                    <span class="stat-number">{{ squad.created_at.strftime('%b %d') }}</span>
+                                    <span class="stat-number">{{ squad.created_at.strftime('%b %d') if squad.created_at else 'N/A' }}</span>
                                     <span class="stat-label">作成日</span>
                                 </div>
                             </div>
@@ -272,9 +313,34 @@
                     <!-- AI Icebreaker Section -->
                     <div class="hub-card">
                         <div class="icebreaker-section">
+                            <h2 class="icebreaker-title">
+                                <i class="fas fa-lightbulb"></i>
+                                スクワッドアイスブレーカー
+                            </h2>
                             <div class="icebreaker-content">
                                 {% if squad.icebreaker_text %}
-                                    {{ squad.icebreaker_text }}
+                                    {% set icebreaker_data = squad.icebreaker_text | from_json %}
+                                    {% if icebreaker_data and icebreaker_data.lighthearted and icebreaker_data.thoughtful %}
+                                        <div class="icebreaker-questions">
+                                            <div class="icebreaker-question lighthearted">
+                                                <div class="question-label">
+                                                    <i class="fas fa-laugh"></i>
+                                                    楽しい質問
+                                                </div>
+                                                <p>{{ icebreaker_data.lighthearted }}</p>
+                                            </div>
+                                            
+                                            <div class="icebreaker-question thoughtful">
+                                                <div class="question-label">
+                                                    <i class="fas fa-heart"></i>
+                                                    深い質問
+                                                </div>
+                                                <p>{{ icebreaker_data.thoughtful }}</p>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <p>{{ squad.icebreaker_text }}</p>
+                                    {% endif %}
                                 {% else %}
                                     <p>あなたのスクワッドミッションは先生によって生成されるとここに表示されます。</p>
                                 {% endif %}

@@ -90,21 +90,25 @@ def generate_squad_icebreaker(squad_members_data, squad_name):
             members_text += f"- Vibe: {member['question5']}\n"
             members_text += f"- Team quality: {member['question6']}\n"
         
-        prompt = f"""You are creating a fun, personalized icebreaker question for a squad called "{squad_name}".
+        prompt = f"""You are creating fun, personalized icebreaker questions for a squad called "{squad_name}".
 
 Squad members and their interests:
 {members_text}
 
-Create ONE unique, engaging icebreaker question that:
-1. References specific interests or answers from the squad members
-2. Encourages creative, fun responses
-3. Helps the squad bond over shared experiences or discover new things about each other
-4. Is playful and age-appropriate for students
-5. Sparks conversation and laughter
+Create TWO distinct, engaging icebreaker questions that:
+1. Reference specific interests or answers from the squad members
+2. Encourage creative, fun responses
+3. Help the squad bond over shared experiences or discover new things about each other
+4. Are playful and age-appropriate for students
+5. Spark conversation and laughter
 
-The icebreaker should feel personal to THIS specific group, not generic.
+The first question should be fun and lighthearted.
+The second question should be more thoughtful and meaningful.
+Both questions should feel personal to THIS specific group, not generic.
 
-Respond with just the icebreaker question text, nothing else."""
+The final output must be in Japanese.
+
+The response must be a JSON object containing a list of two distinct icebreaker questions. The required format is: {{"icebreakers": ["First Japanese question here", "Second Japanese question here"]}}."""
 
         response = client.chat.completions.create(
             model="gpt-4o",
@@ -112,19 +116,28 @@ Respond with just the icebreaker question text, nothing else."""
                 {"role": "system", "content": "You are creating fun, personalized icebreaker questions for student squads."},
                 {"role": "user", "content": prompt}
             ],
+            response_format={"type": "json_object"},
             temperature=0.9,
-            max_tokens=150,
+            max_tokens=300,
         )
 
         if response.choices[0].message.content:
-            return response.choices[0].message.content.strip()
+            icebreaker_data = json.loads(response.choices[0].message.content)
+            # Return the JSON string to store in database
+            return json.dumps(icebreaker_data, ensure_ascii=False)
         else:
             raise ValueError("Empty response from AI")
 
     except Exception as e:
         logging.error(f"Error generating icebreaker: {str(e)}")
-        # Return a fallback icebreaker
-        return "If your squad had to create a theme song using only sounds you can make with your body, what would it sound like?"
+        # Return a fallback icebreaker in JSON format
+        fallback_icebreakers = {
+            "icebreakers": [
+                "もしあなたたちのスクワッドが体だけで作る音でテーマソングを作るとしたら、どんな音になりそう？",
+                "今まで経験した中で一番「これは運命だった！」と思う出会いや発見について教えて。"
+            ]
+        }
+        return json.dumps(fallback_icebreakers, ensure_ascii=False)
 
 
 def translate_to_japanese(text):

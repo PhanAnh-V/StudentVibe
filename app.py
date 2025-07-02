@@ -1,4 +1,5 @@
 import os
+import json
 import logging
 
 from flask import Flask
@@ -28,6 +29,15 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 
 # Initialize the app with the extension
 db.init_app(app)
+
+# Add custom template filter for JSON parsing
+@app.template_filter('from_json')
+def from_json_filter(value):
+    """Parse JSON string in templates"""
+    try:
+        return json.loads(value) if value else None
+    except (json.JSONDecodeError, TypeError):
+        return None
 
 with app.app_context():
     # Import models to ensure tables are created
