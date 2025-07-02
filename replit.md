@@ -192,6 +192,11 @@ This is a Flask-based web application designed to collect and store student info
 - July 02, 2025. Migrated from Google Gemini API to OpenAI ChatGPT API (gpt-4o model) for improved reliability
 - July 02, 2025. Renamed gemini_integration.py to openai_integration.py and updated all API calls to use OpenAI format
 - July 02, 2025. Updated routes.py to use openai_integration module for both squad formation and icebreaker generation
+- July 02, 2025. Translated all static interface text in HTML templates from English to Japanese for consistent user experience
+- July 02, 2025. Redesigned profile.html with bilingual layout structure for displaying both original and Japanese versions of student answers
+- July 02, 2025. Fixed JavaScript error in teacher.html by adding null checks before accessing DOM elements with addEventListener
+- July 02, 2025. Updated key translations: "Character Attributes" → "キャラクター属性", "Core Abilities" → "コア能力", "Character Traits" → "キャラクター特性"
+- July 02, 2025. Enhanced teacher dashboard with Japanese text for all buttons, modals, and confirmation dialogs
 
 ## User Preferences
 

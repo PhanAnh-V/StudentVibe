@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if student %}{{ student.name }} - Character Profile{% else %}Profile Not Found{% endif %}</title>
+    <title>{% if student %}{{ student.name }} - キャラクタープロフィール{% else %}プロフィールが見つかりません{% endif %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -147,6 +147,46 @@
             font-size: 1rem;
             line-height: 1.6;
             font-weight: 400;
+        }
+        
+        .bilingual-answer {
+            margin-top: 1rem;
+        }
+        
+        .original-answer, .japanese-vibe {
+            margin-bottom: 1.5rem;
+        }
+        
+        .answer-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #3498db;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .answer-text {
+            background: rgba(52, 152, 219, 0.1);
+            border-left: 3px solid #3498db;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #ecf0f1;
+        }
+        
+        .japanese-text {
+            font-family: 'Noto Sans JP', sans-serif;
+            border-left-color: #2ecc71;
+        }
+        
+        .japanese-vibe .answer-label {
+            color: #2ecc71;
+        }
+        
+        .japanese-vibe .answer-text {
+            background: rgba(46, 204, 113, 0.1);
         }
         
         .character-abilities {
@@ -303,7 +343,7 @@
 <body>
     <div class="character-profile-container">
         <a href="javascript:history.back()" class="back-navigation">
-            <i class="fas fa-arrow-left me-2"></i>Back
+            <i class="fas fa-arrow-left me-2"></i>戻る
         </a>
         
         <div class="container">
@@ -315,8 +355,8 @@
                     <div class="character-sheet">
                         <div class="character-header text-center">
                             <i class="fas fa-exclamation-triangle fa-3x mb-3 text-warning"></i>
-                            <h2 class="text-white">Profile not found</h2>
-                            <p class="text-light">The student profile you're looking for doesn't exist or couldn't be loaded.</p>
+                            <h2 class="text-white">プロフィールが見つかりません</h2>
+                            <p class="text-light">お探しの学生プロフィールは存在しないか、読み込めませんでした。</p>
                         </div>
                     </div>
                     {% else %}
@@ -348,7 +388,7 @@
                         <div class="character-stats">
                             <h2 class="abilities-title">
                                 <i class="fas fa-scroll"></i>
-                                Character Attributes
+                                キャラクター属性
                             </h2>
                             <div class="stats-grid">
                                 {% for qa in student_answers %}
@@ -357,7 +397,20 @@
                                         <i class="fas fa-star"></i>
                                         {{ qa.question }}
                                     </div>
-                                    <div class="stat-value">{{ qa.answer }}</div>
+                                    <div class="bilingual-answer">
+                                        <div class="original-answer">
+                                            <h6 class="answer-label">
+                                                <i class="fas fa-comment me-2"></i>オリジナル回答
+                                            </h6>
+                                            <div class="answer-text">{{ qa.answer }}</div>
+                                        </div>
+                                        <div class="japanese-vibe">
+                                            <h6 class="answer-label">
+                                                <i class="fas fa-language me-2"></i>日本語バイブ
+                                            </h6>
+                                            <div class="answer-text japanese-text">{{ qa.answer }}</div>
+                                        </div>
+                                    </div>
                                 </div>
                                 {% endfor %}
                             </div>
@@ -367,13 +420,13 @@
                         <div class="character-abilities">
                             <h2 class="abilities-title">
                                 <i class="fas fa-magic"></i>
-                                Core Abilities
+                                コア能力
                             </h2>
                             <div class="abilities-grid">
                                 {% for spark in core_sparks %}
                                 <div class="ability-card">
                                     <div class="ability-name">{{ spark }}</div>
-                                    <div class="ability-description">A defining interest that shapes this character's unique perspective and skills.</div>
+                                    <div class="ability-description">このキャラクターの独特な視点とスキルを形作る決定的な興味。</div>
                                 </div>
                                 {% endfor %}
                             </div>
@@ -383,7 +436,7 @@
                         <div class="character-traits">
                             <h2 class="abilities-title">
                                 <i class="fas fa-gem"></i>
-                                Character Traits
+                                キャラクター特性
                             </h2>
                             <div class="traits-container">
                                 {% for interest in interests %}

@@ -167,7 +167,7 @@
                         <label class="form-label fw-bold">現在のセッションパスワード:</label>
                         <div class="password-container">
                             <span class="session-password-code">{{ session_password }}</span>
-                            <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyPassword()" title="Copy to clipboard">
+                            <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyPassword()" title="クリップボードにコピー">
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
@@ -178,7 +178,7 @@
                     <form action="{{ url_for('new_session_password') }}" method="POST" style="display: inline;">
                         <button type="submit" class="btn btn-warning" onclick="return confirm('Generate a new session password? Students will need the new password to access the form.')">
                             <i class="fas fa-sync-alt me-2"></i>
-                            Generate New Password
+                            新しいパスワードを生成
                         </button>
                     </form>
                 </div>
@@ -190,13 +190,13 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="section-title">
                     <i class="fas fa-users me-2"></i>
-                    Student Management
+                    学生管理
                 </h2>
                 <div class="squad-actions">
                     <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
                         <button type="submit" class="btn btn-success me-2">
                             <i class="fas fa-magic me-2"></i>
-                            Create AI Squads
+                            AIスクワッド作成
                         </button>
                     </form>
 
@@ -209,13 +209,13 @@
             <div class="students-section">
         <h2 class="section-title">
             <i class="fas fa-list me-2"></i>
-            All Student Submissions
+            全学生提出一覧
             </h2>
             <div class="squad-actions">
                 <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
                     <button type="submit" class="btn btn-success me-2">
                         <i class="fas fa-magic me-2"></i>
-                        Create Vibe Squads
+                        バイブスクワッド作成
                     </button>
                 </form>
 
@@ -250,13 +250,13 @@
                     <div class="squad-actions-bar">
                         <a href="{{ url_for('generate_icebreaker', squad_id=squad.id) }}" 
                            class="generate-icebreaker-btn"
-                           title="Generate AI-powered icebreaker for this squad">
+                           title="このスクワッドのためのAIアイスブレーカーを生成">
                             <i class="fas fa-lightbulb"></i>
                             アイスブレーカー生成
                         </a>
                         <a href="{{ url_for('delete_squad', squad_id=squad.id) }}" 
                            class="delete-squad-btn"
-                           onclick="return confirm('Are you sure you want to delete the entire {{ squad.name }} squad? This will move all members to ungrouped.')">
+                           onclick="return confirm('{{ squad.name }} スクワッド全体を削除してもよろしいですか？すべてのメンバーがグループ化されていない状態に移動します。')">
                             <i class="fas fa-trash-alt"></i>
                             スクワッド削除
                         </a>
@@ -288,7 +288,7 @@
                             <div class="member-actions">
                                 <a href="{{ url_for('delete_student', student_id=member.id) }}" 
                                    class="delete-student-btn" 
-                                   onclick="return confirm('Are you sure you want to delete {{ member.name }}?')">
+                                   onclick="return confirm('{{ member.name }}を削除してもよろしいですか？')">
                                     <i class="fas fa-trash-alt"></i>
                                 </a>
                             </div>
@@ -299,7 +299,7 @@
                     <div class="squad-footer">
                         <small class="text-muted">
                             <i class="fas fa-calendar me-1"></i>
-                            Created: {{ squad.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            作成日: {{ squad.created_at.strftime('%Y-%m-%d %H:%M') }}
                         </small>
                     </div>
                 </div>
