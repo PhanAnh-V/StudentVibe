@@ -95,7 +95,7 @@ def submit_form():
     """Handle questionnaire form submission"""
     if not session.get('session_authenticated'):
         flash('Please enter the session password first.', 'error')
-        return redirect(url_for('index'))
+        return redirect(url_for('session_password'))
     
     form = StudentForm()
     if form.validate_on_submit():
@@ -325,7 +325,7 @@ def teacher_login():
         password = form.password.data
         if password == "1234":  # Teacher password
             session['teacher_authenticated'] = True
-            flash('Welcome to the teacher dashboard!', 'success')
+            # No flash message here - redirect directly to avoid message carry-over
             return redirect(url_for('teacher'))
         else:
             flash('Invalid password. Please try again.', 'error')
@@ -574,7 +574,7 @@ def create_squads():
     """AI-powered squad formation - The Sorting Hat of the application"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
-        return redirect(url_for('teacher'))
+        return redirect(url_for('teacher_login'))
     
     try:
         # Step 1: Clean slate - Reset all existing squad assignments
@@ -749,7 +749,7 @@ def delete_student(student_id):
     """Delete a student record from the database"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
-        return redirect(url_for('teacher'))
+        return redirect(url_for('teacher_login'))
     
     try:
         student = Student.query.get_or_404(student_id)
@@ -870,7 +870,7 @@ def clear_squads():
     """Delete all records from students and squads tables"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
-        return redirect(url_for('teacher'))
+        return redirect(url_for('teacher_login'))
     
     try:
         # First, delete all records from the students table
@@ -910,7 +910,7 @@ def generate_icebreaker(squad_id):
     """Generate AI-powered icebreaker for a specific squad"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
-        return redirect(url_for('teacher'))
+        return redirect(url_for('teacher_login'))
     
     try:
         # Fetch the squad and its members
@@ -961,7 +961,7 @@ def get_ai_advice(student_id):
     """Generate AI advice for a solo student"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
-        return redirect(url_for('teacher'))
+        return redirect(url_for('teacher_login'))
     
     try:
         student = Student.query.get_or_404(student_id)
@@ -1330,7 +1330,7 @@ def teacher_ai_insights():
     """Teacher page with AI-powered insights about students and squad formation"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
-        return redirect(url_for('teacher'))
+        return redirect(url_for('teacher_login'))
     
     students = Student.query.all()
     

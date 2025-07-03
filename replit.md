@@ -219,6 +219,9 @@ This is a Flask-based web application designed to collect and store student info
 - July 02, 2025. Fixed squad hub icebreaker display bug by parsing JSON icebreaker_text in squad_hub route before passing to template
 - July 02, 2025. Updated squad_hub.html template to properly display parsed icebreakers as formatted questions instead of raw JSON strings
 - July 02, 2025. Removed 'Today's Submissions' and 'Latest Submission' stat boxes from teacher dashboard, keeping only 'Total Students' statistic
+- July 03, 2025. Fixed flash message routing issues to prevent messages appearing on incorrect pages
+- July 03, 2025. Removed success flash from teacher login to avoid message carry-over to login page when dashboard errors occur
+- July 03, 2025. Updated all teacher authentication redirects to go to teacher_login instead of teacher dashboard to prevent redirect loops
 
 ## User Preferences
 
