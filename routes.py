@@ -97,11 +97,16 @@ def submit_form():
     form = StudentForm()
     if form.validate_on_submit():
         try:
+            print('--- Starting form submission ---')
+            print(f'Form data received: name={form.name.data}, country={form.country.data}, gender={form.gender.data}')
+            
             # Combine all answers for the vibes field (for backward compatibility)
             combined_vibes = f"{form.question1.data} {form.question2.data} {form.question3.data} {form.question4.data} {form.question5.data} {form.question6.data}"
+            print(f'Combined vibes created: {len(combined_vibes)} characters')
             
             # Generate unique submission ID
             submission_id = Student.generate_submission_id()
+            print(f'Generated submission ID: {submission_id}')
             
             # Get original answers
             original_answers = [
@@ -112,9 +117,11 @@ def submit_form():
                 form.question5.data,
                 form.question6.data
             ]
+            print(f'Original answers collected: {len(original_answers)} answers')
             
             # Get student's chosen language from session
             student_language = session.get('language', 'en')
+            print(f'Student language detected: {student_language}')
             
             # Debug session data to understand language detection
             logging.info(f"Session data: {dict(session)}")
@@ -122,23 +129,31 @@ def submit_form():
             
             # Handle Japanese translations based on student's language choice
             japanese_translations = []
+            print('--- Starting translation process ---')
             
             for i, answer in enumerate(original_answers, 1):
                 if student_language == 'ja':
                     # Student chose Japanese - no translation needed, use original answer
                     japanese_translations.append(answer)
+                    print(f"Question {i}: Japanese detected, using original answer")
                     logging.info(f"Question {i}: Japanese detected, using original answer")
                 else:
                     # Student chose other language - translate to Japanese
                     try:
+                        print(f"Question {i}: Attempting translation from {student_language} to Japanese")
                         from openai_integration import translate_to_japanese
                         translation = translate_to_japanese(answer)
                         japanese_translations.append(translation)
+                        print(f"Question {i}: Translation successful")
+                        print(f"Original: {answer[:50]}...")
+                        print(f"Translated: {translation[:50]}...")
                         logging.info(f"Question {i} translated successfully from {student_language} to Japanese")
                     except Exception as e:
+                        print(f"Translation failed for question {i}: {str(e)}")
                         logging.error(f"Translation failed for question {i}: {str(e)}")
                         japanese_translations.append("")  # Save empty translation if it fails
             
+            print('--- Creating student record ---')
             # Create new student record with both original and translated answers
             student = Student()
             student.name = form.name.data
@@ -158,8 +173,10 @@ def submit_form():
             student.country = form.country.data
             student.gender = form.gender.data
             student.submission_id = submission_id
+            print('Student record created with basic info')
             
             # Generate AI-powered personality signature (includes archetype and insights)
+            print('--- Starting AI Personality Signature generation ---')
             try:
                 from openai_integration import generate_personality_signature
                 student_answers = {
@@ -171,23 +188,31 @@ def submit_form():
                     'question6': form.question6.data
                 }
                 
+                print('Calling generate_personality_signature...')
                 # Generate complete personality signature (archetype + 3 insights)
                 personality_signature = generate_personality_signature(student_answers)
+                print(f'AI Response received: {personality_signature}')
+                
                 student.archetype = personality_signature.get('archetype', '個性豊かな学生')
                 student.core_strength = personality_signature.get('core_strength', '創造的な思考力と独自の視点を持っています。')
                 student.hidden_potential = personality_signature.get('hidden_potential', 'リーダーシップの才能が眠っている可能性があります。')
                 student.conversation_catalyst = personality_signature.get('conversation_catalyst', '趣味や興味のあることについて話すと、とても輝いて見えます。')
+                print(f"Generated complete personality signature for student {student.name}: {student.archetype}")
                 logging.info(f"Generated complete personality signature for student {student.name}: {student.archetype}")
                 
             except Exception as e:
+                print(f"AN ERROR OCCURRED during AI personality generation: {e}")
                 logging.error(f"Failed to generate AI personality signature for {student.name}: {str(e)}")
                 student.archetype = "個性豊かな学生"  # Default fallback
                 student.core_strength = "創造的な思考力と独自の視点を持っています。"
                 student.hidden_potential = "リーダーシップの才能が眠っている可能性があります。"
                 student.conversation_catalyst = "趣味や興味のあることについて話すと、とても輝いて見えます。"
+                print('Using fallback personality signature values')
             
+            print('--- Data prepared, attempting to save to database ---')
             db.session.add(student)
             db.session.commit()
+            print('--- Database save successful ---')
             
             logging.info(f"New student registered: {student.name} (ID: {student.id}, Submission ID: {submission_id}) with Japanese translations")
             
@@ -198,10 +223,14 @@ def submit_form():
             # Clear session authentication so form can't be submitted again
             session.pop('session_authenticated', None)
             
+            print('--- Form submission completed successfully ---')
             return redirect(url_for('success'))
         except Exception as e:
+            print(f'AN ERROR OCCURRED: {e}')
             db.session.rollback()
             logging.error(f"Error saving student: {e}")
+            flash('エラーが発生しました。もう一度お試しください。', 'error')
+            return redirect(url_for('session_password'))
     
     # If form validation fails, render form with errors
     return render_template('questionnaire.html', form=form)
