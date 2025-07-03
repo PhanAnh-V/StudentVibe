@@ -159,6 +159,23 @@ def submit_form():
             student.gender = form.gender.data
             student.submission_id = submission_id
             
+            # Generate AI-powered archetype nickname
+            try:
+                from openai_integration import generate_archetype_nickname
+                student_answers = {
+                    'question1': form.question1.data,
+                    'question2': form.question2.data,
+                    'question3': form.question3.data,
+                    'question4': form.question4.data,
+                    'question5': form.question5.data,
+                    'question6': form.question6.data
+                }
+                student.archetype = generate_archetype_nickname(student_answers)
+                logging.info(f"Generated archetype '{student.archetype}' for student {student.name}")
+            except Exception as e:
+                logging.error(f"Failed to generate archetype for {student.name}: {str(e)}")
+                student.archetype = "個性豊かな学生"  # Default fallback
+            
             db.session.add(student)
             db.session.commit()
             

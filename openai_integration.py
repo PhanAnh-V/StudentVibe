@@ -188,3 +188,59 @@ def translate_to_japanese(text):
     except Exception as e:
         logging.error(f"Error translating text to Japanese: {str(e)}")
         return ""  # Return empty string if translation fails
+
+
+def generate_archetype_nickname(student_answers):
+    """
+    Generate a creative Japanese archetype nickname based on student's answers
+    """
+    try:
+        # Prepare the student answers text
+        answers_text = ""
+        for i in range(1, 7):
+            question_key = f'question{i}'
+            if question_key in student_answers:
+                answers_text += f"Question {i}: {student_answers[question_key]}\n"
+        
+        prompt = f"""You are a creative personality analyst who specializes in creating memorable Japanese nicknames.
+
+Analyze these student responses and create a single, creative archetype nickname in Japanese that captures their essence:
+
+{answers_text}
+
+Your task:
+- Create a unique Japanese nickname that reflects their personality
+- Examples: 好奇心旺盛な探検家 (Curious Explorer), 静かな語り部 (Calm Storyteller), 情熱的なクリエイター (Passionate Creator)
+- Make it feel personal and inspiring
+- Keep it 2-6 Japanese words
+- Focus on their core personality traits, interests, and energy
+
+IMPORTANT: Respond with ONLY the Japanese archetype nickname. No explanations, no extra text."""
+
+        # Create OpenAI client with timeout
+        timeout_client = OpenAI(
+            api_key=os.environ.get("OPENAI_API_KEY"),
+            timeout=20.0  # 20 second timeout for archetype generation
+        )
+        
+        response = timeout_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "You are a creative personality analyst who creates inspiring Japanese nicknames."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.8,
+            max_tokens=50,
+        )
+        
+        if response.choices[0].message.content:
+            archetype = response.choices[0].message.content.strip()
+            logging.info(f"Generated archetype: {archetype}")
+            return archetype
+        else:
+            logging.warning("Empty response from AI archetype generation")
+            return "個性豊かな学生"  # Default: "Unique Student"
+            
+    except Exception as e:
+        logging.error(f"Error generating archetype nickname: {str(e)}")
+        return "個性豊かな学生"  # Default: "Unique Student"

@@ -218,6 +218,11 @@
                                         {{ member.name }}
                                     </a>
                                 </h5>
+                                {% if member.archetype %}
+                                <div class="member-archetype text-muted small">
+                                    <i class="fas fa-star me-1"></i>{{ member.archetype }}
+                                </div>
+                                {% endif %}
                                 <div class="member-info-tags">
                                     <span class="info-tag country-tag">
                                         <i class="fas fa-globe me-1"></i>
@@ -284,6 +289,11 @@
                                 {{ student.name }}
                             </a>
                         </h5>
+                        {% if student.archetype %}
+                        <div class="member-archetype text-muted small">
+                            <i class="fas fa-star me-1"></i>{{ student.archetype }}
+                        </div>
+                        {% endif %}
                         <div class="member-info-tags">
                             <span class="info-tag country-tag">
                                 <i class="fas fa-globe me-1"></i>
@@ -339,6 +349,11 @@
                             <i class="fas fa-user me-2"></i>
                             {{ student.name }}
                         </h3>
+                        {% if student.archetype %}
+                        <div class="student-archetype text-muted">
+                            <i class="fas fa-star me-1"></i>{{ student.archetype }}
+                        </div>
+                        {% endif %}
                         <div class="student-meta">
                             <span class="meta-item">
                                 <i class="fas fa-globe me-1"></i>

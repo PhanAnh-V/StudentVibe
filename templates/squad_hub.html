@@ -370,6 +370,11 @@
                                                 {{ member.name }}
                                             </a>
                                         </h5>
+                                        {% if member.archetype %}
+                                        <div class="member-archetype" style="font-size: 0.85rem; color: #6b7280; margin-bottom: 0.25rem;">
+                                            <i class="fas fa-star" style="color: #fbbf24;"></i> {{ member.archetype }}
+                                        </div>
+                                        {% endif %}
                                         <div class="member-country">
                                             <i class="fas fa-globe"></i>
                                             {{ member.country }}

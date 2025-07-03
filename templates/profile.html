@@ -377,7 +377,7 @@
                             </div>
                             
                             <h1 class="character-name">{{ student.name }}</h1>
-                            <div class="character-archetype">{{ archetype['name'] }}</div>
+                            <div class="character-archetype">{{ student.archetype or "個性豊かな学生" }}</div>
                             <div class="character-location">
                                 <i class="fas fa-globe"></i>
                                 {{ student.country }}

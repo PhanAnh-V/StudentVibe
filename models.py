@@ -70,6 +70,7 @@ class Student(db.Model):
     gender = db.Column(db.String(50), nullable=False)
     submission_id = db.Column(db.String(7), unique=True, nullable=True)
     squad_id = db.Column(db.Integer, db.ForeignKey('squads.id'), nullable=True)
+    archetype = db.Column(db.String(100), nullable=True)  # AI-generated Japanese archetype nickname
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     
     def __repr__(self):
