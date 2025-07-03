@@ -13,17 +13,17 @@
         .character-profile-container {
             background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
             min-height: 100vh;
-            padding: 2rem 0;
+            padding: 1rem 0;
             font-family: 'Inter', sans-serif;
         }
         
         .character-sheet {
             background: #1e2a3a;
-            border-radius: 20px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
             overflow: hidden;
             position: relative;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         
         .character-sheet::before {
@@ -39,7 +39,7 @@
         .character-header {
             background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
             color: white;
-            padding: 2.5rem 2rem;
+            padding: 1.8rem 1.5rem;
             text-align: center;
             position: relative;
         }
@@ -359,26 +359,121 @@
         
         @media (max-width: 768px) {
             .character-profile-container {
-                padding: 1rem 0;
+                padding: 0.5rem 0;
+            }
+            
+            .character-sheet {
+                margin: 0.5rem;
+                border-radius: 12px;
+            }
+            
+            .character-header {
+                padding: 1.2rem 1rem;
             }
             
             .character-name {
-                font-size: 2rem;
+                font-size: 1.6rem;
+                line-height: 1.3;
+                margin-bottom: 0.5rem;
+            }
+            
+            .character-subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.8rem;
             }
             
             .stats-grid {
                 grid-template-columns: 1fr;
+                gap: 0.8rem;
+                padding: 1rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .stat-label {
+                font-size: 0.8rem;
+            }
+            
+            .stat-value {
+                font-size: 1.2rem;
             }
             
             .abilities-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .ability-card {
+                padding: 1rem;
+            }
+            
+            .ability-title {
+                font-size: 1.1rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .ability-description {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+            
+            .signature-section {
+                padding: 1rem;
+            }
+            
+            .signature-title {
+                font-size: 1.3rem;
+                margin-bottom: 1rem;
+            }
+            
+            .signature-cards {
+                gap: 0.8rem;
+            }
+            
+            .signature-card {
+                padding: 1rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            .signature-card h4 {
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .signature-card p {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+            
+            .answers-section {
+                padding: 1rem;
+            }
+            
+            .question-card {
+                padding: 1rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            .question-title {
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .answer-text {
+                font-size: 0.9rem;
+                line-height: 1.5;
             }
             
             .back-navigation {
                 position: relative;
                 top: auto;
                 left: auto;
-                margin: 1rem;
+                margin: 0.5rem;
+                padding: 0.6rem 0.8rem;
+                font-size: 0.9rem;
                 display: inline-block;
             }
             
@@ -386,10 +481,17 @@
                 position: relative;
                 top: auto;
                 right: auto;
-                margin: 1rem auto;
+                margin: 0.8rem auto;
                 display: block;
                 text-align: center;
                 width: fit-content;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            
+            .level-badge {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.8rem;
             }
         }
     </style>
