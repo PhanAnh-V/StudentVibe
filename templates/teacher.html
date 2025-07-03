@@ -791,6 +791,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     `;
     document.head.appendChild(style);
+    
+    // Add click handlers for Create Vibe Squads and Generate Icebreaker buttons
+    function addButtonClickHandlers() {
+        // Handle Create Vibe Squads button
+        const createSquadsBtn = document.querySelector('button[onclick*="create-squads"]');
+        if (createSquadsBtn) {
+            createSquadsBtn.addEventListener('click', function() {
+                this.disabled = true;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 作成中...';
+            });
+        }
+        
+        // Handle all Generate Icebreaker buttons
+        const icebreakerBtns = document.querySelectorAll('button[onclick*="generate-icebreaker"]');
+        icebreakerBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                this.disabled = true;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 処理中...';
+            });
+        });
+    }
+    
+    // Call the function after DOM is loaded
+    addButtonClickHandlers();
 });
 </script>
 {% endblock %}
