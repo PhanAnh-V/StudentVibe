@@ -88,66 +88,76 @@ Make each squad feel like a special club they'd be excited to join!"""
 
 def generate_squad_icebreaker(squad_members_data, squad_name):
     """
-    Generate a personalized icebreaker question for a specific squad
+    Generate personalized icebreaker questions using Connection Blueprint analysis
+    Acts as an expert social facilitator to find deep connections between squad members
     """
     try:
-        # Prepare member details
+        # Prepare detailed member profiles for Connection Blueprint analysis
         members_text = ""
         for member in squad_members_data:
             members_text += f"\n{member['name']}:\n"
-            members_text += f"- Adventure style: {member['question1']}\n"
-            members_text += f"- Passion: {member['question2']}\n"
-            members_text += f"- Humor: {member['question3']}\n"
-            members_text += f"- Superpower: {member['question4']}\n"
-            members_text += f"- Vibe: {member['question5']}\n"
-            members_text += f"- Team quality: {member['question6']}\n"
+            members_text += f"- Adventure Co-Pilot: {member['question1']}\n"
+            members_text += f"- Passion Deep-Dive: {member['question2']}\n"
+            members_text += f"- Laughter Test: {member['question3']}\n"
+            members_text += f"- Secret Superpower: {member['question4']}\n"
+            members_text += f"- Vibe Check: {member['question5']}\n"
+            members_text += f"- Ultimate Crew Quality: {member['question6']}\n"
         
-        prompt = f"""Create two distinct, engaging icebreaker questions in JAPANESE for a squad called "{squad_name}".
+        prompt = f"""You are an expert social facilitator creating Connection Blueprint icebreakers for squad "{squad_name}".
 
-Squad members and their interests:
+STEP 1: DEEP CONNECTION ANALYSIS
+Analyze these squad members to identify:
+- ONE SYNERGY POINT: A shared interest, value, or experience that connects them
+- ONE COMPLEMENTARITY POINT: Different but compatible strengths that would enhance their group dynamic
+
+Squad members:
 {members_text}
 
-Create two questions that reference the squad members' specific interests and help them bond. The questions should be:
-- Fun and age-appropriate for college students
-- Written in natural, friendly Japanese
-- Designed to encourage conversation and connection
-- Specific to this group's shared interests
+STEP 2: TARGETED ICEBREAKER CREATION
+Based on your analysis, create TWO Japanese icebreaker questions that:
+- Reference the specific SYNERGY you identified (shared connection)
+- Leverage the COMPLEMENTARITY you found (different strengths working together)
+- Feel natural and engaging for college students
+- Encourage deep, meaningful conversation beyond surface level
+- Are written in warm, friendly Japanese
 
-Return a JSON object with this format: {{"icebreakers": ["First Japanese question", "Second Japanese question"]}}
+RESPONSE FORMAT:
+Return a JSON object: {{"icebreakers": ["Question 1 in Japanese", "Question 2 in Japanese"]}}
 
-IMPORTANT: Both questions MUST be in Japanese. Make them warm, engaging, and tailored to this specific squad."""
+IMPORTANT: These questions should feel uniquely crafted for THIS specific group based on the deep connections you've discovered. Act like a social facilitator who truly understands what makes people connect."""
 
         # Create OpenAI client with timeout
         timeout_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY"),
-            timeout=25.0  # 25 second timeout for icebreakers
+            timeout=30.0  # 30 second timeout for deep analysis
         )
         
         response = timeout_client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": "You are creating fun, personalized icebreaker questions for student squads."},
+                {"role": "system", "content": "You are an expert social facilitator who finds deep, meaningful connections between people to create truly engaging conversation starters."},
                 {"role": "user", "content": prompt}
             ],
             response_format={"type": "json_object"},
-            temperature=0.9,
-            max_tokens=300,
+            temperature=0.8,  # Balanced creativity for meaningful connections
+            max_tokens=400,
         )
 
         if response.choices[0].message.content:
             icebreaker_data = json.loads(response.choices[0].message.content)
+            logging.info(f"Generated Connection Blueprint icebreakers for {squad_name}: {icebreaker_data}")
             # Return the JSON string to store in database
             return json.dumps(icebreaker_data, ensure_ascii=False)
         else:
             raise ValueError("Empty response from AI")
 
     except Exception as e:
-        logging.error(f"Error generating icebreaker: {str(e)}")
-        # Return a fallback icebreaker in JSON format
+        logging.error(f"Error generating Connection Blueprint icebreaker: {str(e)}")
+        # Return meaningful fallback icebreakers in JSON format
         fallback_icebreakers = {
             "icebreakers": [
-                "もしあなたたちのスクワッドが体だけで作る音でテーマソングを作るとしたら、どんな音になりそう？",
-                "今まで経験した中で一番「これは運命だった！」と思う出会いや発見について教えて。"
+                "チームの中で一番「これは私の隠れた才能だ！」と思うものを一つずつ紹介して、それをどう組み合わせたら面白いプロジェクトができそうか話し合ってみよう。",
+                "みんなの答えを見ていて、この中で一番「運命的な出会い」だと思う組み合わせはどれ？その理由も含めて教えて。"
             ]
         }
         return json.dumps(fallback_icebreakers, ensure_ascii=False)
