@@ -309,13 +309,63 @@
 
         .question-input {
             min-height: 120px;
+            max-height: 400px;
+            padding: 1.25rem 1.5rem;
+            line-height: 1.6;
+            font-family: 'Noto Sans JP', sans-serif;
+            overflow-y: auto;
+            transition: all 0.3s ease, height 0.2s ease;
         }
 
         .form-input:focus, .question-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #4f46e5;
             background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            transform: scale(1.01);
+        }
+
+        .question-input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+        }
+
+        /* Enhanced textarea styling for modern note-taking feel */
+        .question-input {
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            background: #fafbfc;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+        }
+
+        .question-input:hover {
+            border-color: #d1d5db;
+            background: #ffffff;
+        }
+
+        .question-input::placeholder {
+            color: #9ca3af;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        /* Smooth scrollbar for textareas */
+        .question-input::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .question-input::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .question-input::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+
+        .question-input::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
         }
 
         .form-select {
@@ -522,9 +572,61 @@
                 });
             }
             
-            // Add smooth focus animations for inputs
-            const inputs = document.querySelectorAll('.form-input, .question-input, .form-select');
-            inputs.forEach(input => {
+            // Smart Textarea Functionality
+            const questionTextareas = document.querySelectorAll('.question-input');
+            
+            // Auto-expand functionality
+            function autoExpand(textarea) {
+                textarea.style.height = 'auto';
+                const newHeight = Math.max(120, Math.min(400, textarea.scrollHeight));
+                textarea.style.height = newHeight + 'px';
+            }
+            
+            // Initialize and add event listeners for question textareas
+            questionTextareas.forEach(textarea => {
+                // Set initial height
+                autoExpand(textarea);
+                
+                // Auto-expand on input
+                textarea.addEventListener('input', function() {
+                    autoExpand(this);
+                });
+                
+                // Prevent accidental form submission on Enter (allow Shift+Enter for new lines)
+                textarea.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        
+                        // Insert a new line manually
+                        const start = this.selectionStart;
+                        const end = this.selectionEnd;
+                        const value = this.value;
+                        
+                        this.value = value.substring(0, start) + '\n' + value.substring(end);
+                        this.selectionStart = this.selectionEnd = start + 1;
+                        
+                        // Trigger auto-expand
+                        autoExpand(this);
+                        
+                        // Trigger input event for other listeners
+                        this.dispatchEvent(new Event('input'));
+                    }
+                });
+                
+                // Smooth focus animation
+                textarea.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.01)';
+                    this.parentElement.style.transition = 'transform 0.2s ease';
+                });
+                
+                textarea.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
+            });
+            
+            // Add smooth focus animations for other inputs
+            const otherInputs = document.querySelectorAll('.form-input, .form-select');
+            otherInputs.forEach(input => {
                 input.addEventListener('focus', function() {
                     this.parentElement.style.transform = 'scale(1.02)';
                     this.parentElement.style.transition = 'transform 0.2s ease';
@@ -535,32 +637,49 @@
                 });
             });
             
-            // Add progress indicator
-            const questionInputs = document.querySelectorAll('.question-input');
+            // Add progress indicator with enhanced functionality
+            const allQuestionInputs = document.querySelectorAll('.question-input');
             let completedQuestions = 0;
             
             function updateProgress() {
                 completedQuestions = 0;
-                questionInputs.forEach(input => {
+                allQuestionInputs.forEach(input => {
                     if (input.value.trim().length > 10) {
                         completedQuestions++;
                     }
                 });
                 
                 // Update submit button state based on progress
-                if (completedQuestions >= 3) {
-                    submitBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-                } else {
-                    submitBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                if (submitBtn) {
+                    if (completedQuestions >= 3) {
+                        submitBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                    } else {
+                        submitBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    }
                 }
             }
             
-            questionInputs.forEach(input => {
+            allQuestionInputs.forEach(input => {
                 input.addEventListener('input', updateProgress);
             });
             
             // Initialize progress check
             updateProgress();
+            
+            // Add helpful hint for users about Enter key behavior
+            const firstTextarea = document.querySelector('.question-input');
+            if (firstTextarea) {
+                firstTextarea.addEventListener('focus', function() {
+                    if (!this.dataset.hintShown) {
+                        this.placeholder = 'あなたの答えをここに書いてください... (Enterで改行、Shift+Enterでも改行できます)';
+                        this.dataset.hintShown = 'true';
+                        
+                        setTimeout(() => {
+                            this.placeholder = 'あなたの答えをここに書いてください...';
+                        }, 3000);
+                    }
+                }, { once: true });
+            }
         });
     </script>
 </body>
