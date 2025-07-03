@@ -663,6 +663,113 @@
             }
         });
     </script>
+
+    <!-- Magic Auto-Save Feature -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Magic draft auto-save system
+            const DRAFT_PREFIX = 'mystery_generator_draft_';
+            
+            // Get all question textareas
+            const questionTextareas = document.querySelectorAll('textarea[name^="question"]');
+            
+            console.log('🎯 Auto-save initialized for', questionTextareas.length, 'questions');
+            
+            // Magic Loading: Restore any saved drafts when page loads
+            questionTextareas.forEach((textarea, index) => {
+                const questionNumber = index + 1;
+                const draftKey = DRAFT_PREFIX + questionNumber;
+                const savedDraft = localStorage.getItem(draftKey);
+                
+                if (savedDraft && savedDraft.trim() !== '') {
+                    textarea.value = savedDraft;
+                    console.log('✨ Restored draft for question', questionNumber);
+                    
+                    // Visual feedback: subtle highlight to show restoration
+                    textarea.style.background = 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)';
+                    setTimeout(() => {
+                        textarea.style.background = '';
+                    }, 2000);
+                }
+            });
+            
+            // Magic Saving: Auto-save on every keystroke
+            questionTextareas.forEach((textarea, index) => {
+                const questionNumber = index + 1;
+                const draftKey = DRAFT_PREFIX + questionNumber;
+                
+                // Save on input (real-time auto-save)
+                textarea.addEventListener('input', function() {
+                    const content = this.value;
+                    
+                    if (content.trim() === '') {
+                        // Remove empty drafts
+                        localStorage.removeItem(draftKey);
+                    } else {
+                        // Save the draft
+                        localStorage.setItem(draftKey, content);
+                        console.log('💾 Auto-saved question', questionNumber);
+                    }
+                });
+                
+                // Additional save on blur (when user moves away)
+                textarea.addEventListener('blur', function() {
+                    const content = this.value;
+                    if (content.trim() !== '') {
+                        localStorage.setItem(draftKey, content);
+                    }
+                });
+            });
+            
+            // Magic Clearing: Clean up drafts after successful form submission
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Only clear drafts after form validation passes
+                    setTimeout(() => {
+                        // Clear all drafts
+                        for (let i = 1; i <= 6; i++) {
+                            localStorage.removeItem(DRAFT_PREFIX + i);
+                        }
+                        console.log('🧹 Cleared all drafts after successful submission');
+                    }, 1000); // Small delay to ensure form submission is processed
+                });
+            }
+            
+            // Bonus: Show draft indicator for user awareness
+            function updateDraftIndicators() {
+                questionTextareas.forEach((textarea, index) => {
+                    const questionNumber = index + 1;
+                    const draftKey = DRAFT_PREFIX + questionNumber;
+                    const hasDraft = localStorage.getItem(draftKey);
+                    
+                    // Find the question card container
+                    const questionCard = textarea.closest('.question-card');
+                    if (questionCard && hasDraft) {
+                        // Add subtle indicator that draft exists
+                        if (!questionCard.querySelector('.draft-indicator')) {
+                            const indicator = document.createElement('div');
+                            indicator.className = 'draft-indicator';
+                            indicator.innerHTML = '💾';
+                            indicator.style.cssText = `
+                                position: absolute;
+                                top: 10px;
+                                right: 10px;
+                                opacity: 0.6;
+                                font-size: 12px;
+                                pointer-events: none;
+                            `;
+                            questionCard.style.position = 'relative';
+                            questionCard.appendChild(indicator);
+                        }
+                    }
+                });
+            }
+            
+            // Update indicators on page load
+            setTimeout(updateDraftIndicators, 500);
+        });
+    </script>
     
     <!-- Enhanced form validation -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
