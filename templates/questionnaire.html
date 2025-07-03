@@ -91,7 +91,7 @@
                                             <div class="question-content">
                                                 <h4 class="question-title">{{ question_data.title }}</h4>
                                                 <p class="question-description">{{ question_data.description }}</p>
-                                                {{ form[question_field](class="question-input", placeholder="あなたの答えをここに書いてください...") }}
+                                                {{ form[question_field](class="question-input", maxlength="500", placeholder="あなたの答えをここに書いてください...") }}
                                                 {% if form[question_field].errors %}
                                                     <div class="error-message">
                                                         {% for error in form[question_field].errors %}
@@ -108,7 +108,7 @@
                                         <div class="question-number">1</div>
                                         <div class="question-content">
                                             {{ form.question1.label(class="question-title") }}
-                                            {{ form.question1(class="question-input") }}
+                                            {{ form.question1(class="question-input", maxlength="500", placeholder="あなたの答えをここに書いてください...") }}
                                             {% if form.question1.errors %}
                                                 <div class="error-message">
                                                     {% for error in form.question1.errors %}
@@ -123,7 +123,7 @@
                                         <div class="question-number">2</div>
                                         <div class="question-content">
                                             {{ form.question2.label(class="question-title") }}
-                                            {{ form.question2(class="question-input") }}
+                                            {{ form.question2(class="question-input", maxlength="500", placeholder="あなたの答えをここに書いてください...") }}
                                             {% if form.question2.errors %}
                                                 <div class="error-message">
                                                     {% for error in form.question2.errors %}

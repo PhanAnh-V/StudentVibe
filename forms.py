@@ -21,7 +21,7 @@ class StudentForm(FlaskForm):
         'What\'s your go-to activity when you have absolutely nothing planned?',
         validators=[
             DataRequired(message='This question is required'),
-            Length(min=3, max=200, message='Please write between 3 and 200 characters')
+            Length(min=3, max=500, message='Please write between 3 and 500 characters')
         ],
         render_kw={
             'class': 'form-control'
@@ -32,7 +32,7 @@ class StudentForm(FlaskForm):
         'If you could master any skill instantly, what would it be?',
         validators=[
             DataRequired(message='This question is required'),
-            Length(min=3, max=200, message='Please write between 3 and 200 characters')
+            Length(min=3, max=500, message='Please write between 3 and 500 characters')
         ],
         render_kw={
             'class': 'form-control'
@@ -43,7 +43,7 @@ class StudentForm(FlaskForm):
         'What\'s something you could talk about for hours without getting bored?',
         validators=[
             DataRequired(message='This question is required'),
-            Length(min=3, max=200, message='Please write between 3 and 200 characters')
+            Length(min=3, max=500, message='Please write between 3 and 500 characters')
         ],
         render_kw={
             'class': 'form-control'
@@ -54,7 +54,7 @@ class StudentForm(FlaskForm):
         'Describe your ideal Friday night in 5 words or less.',
         validators=[
             DataRequired(message='This question is required'),
-            Length(min=3, max=100, message='Please write between 3 and 100 characters')
+            Length(min=3, max=500, message='Please write between 3 and 500 characters')
         ],
         render_kw={
             'class': 'form-control'
@@ -65,7 +65,7 @@ class StudentForm(FlaskForm):
         'What\'s the weirdest thing you\'ve ever been obsessed with?',
         validators=[
             DataRequired(message='This question is required'),
-            Length(min=3, max=200, message='Please write between 3 and 200 characters')
+            Length(min=3, max=500, message='Please write between 3 and 500 characters')
         ],
         render_kw={
             'class': 'form-control'
@@ -76,7 +76,7 @@ class StudentForm(FlaskForm):
         'If your energy had a soundtrack, what genre would it be?',
         validators=[
             DataRequired(message='This question is required'),
-            Length(min=3, max=100, message='Please write between 3 and 100 characters')
+            Length(min=3, max=500, message='Please write between 3 and 500 characters')
         ],
         render_kw={
             'class': 'form-control'
