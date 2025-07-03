@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, PasswordField, SubmitField, IntegerField
+from wtforms import StringField, TextAreaField, SelectField, PasswordField, SubmitField, IntegerField
 from wtforms.validators import DataRequired, Length, NumberRange
 
 class StudentForm(FlaskForm):
@@ -17,7 +17,7 @@ class StudentForm(FlaskForm):
     )
     
     # Mystery Generator Questions
-    question1 = StringField(
+    question1 = TextAreaField(
         'What\'s your go-to activity when you have absolutely nothing planned?',
         validators=[
             DataRequired(message='This question is required'),
@@ -28,7 +28,7 @@ class StudentForm(FlaskForm):
         }
     )
     
-    question2 = StringField(
+    question2 = TextAreaField(
         'If you could master any skill instantly, what would it be?',
         validators=[
             DataRequired(message='This question is required'),
@@ -39,7 +39,7 @@ class StudentForm(FlaskForm):
         }
     )
     
-    question3 = StringField(
+    question3 = TextAreaField(
         'What\'s something you could talk about for hours without getting bored?',
         validators=[
             DataRequired(message='This question is required'),
@@ -50,7 +50,7 @@ class StudentForm(FlaskForm):
         }
     )
     
-    question4 = StringField(
+    question4 = TextAreaField(
         'Describe your ideal Friday night in 5 words or less.',
         validators=[
             DataRequired(message='This question is required'),
@@ -61,7 +61,7 @@ class StudentForm(FlaskForm):
         }
     )
     
-    question5 = StringField(
+    question5 = TextAreaField(
         'What\'s the weirdest thing you\'ve ever been obsessed with?',
         validators=[
             DataRequired(message='This question is required'),
@@ -72,7 +72,7 @@ class StudentForm(FlaskForm):
         }
     )
     
-    question6 = StringField(
+    question6 = TextAreaField(
         'If your energy had a soundtrack, what genre would it be?',
         validators=[
             DataRequired(message='This question is required'),
