@@ -402,7 +402,7 @@
                             </h2>
                             <p class="mission-subtitle">2つのミッションオプションから1つを選んで会話を始めよう！</p>
                             
-                            {% if icebreakers and icebreakers.lighthearted and icebreakers.thoughtful %}
+                            {% if icebreakers and icebreakers.icebreakers and icebreakers.icebreakers|length >= 2 %}
                                 <div class="row mission-options">
                                     <!-- Mission Option 1 -->
                                     <div class="col-md-6 mb-3">
@@ -413,7 +413,7 @@
                                                 <span class="mission-type">楽しい質問</span>
                                             </div>
                                             <div class="mission-content">
-                                                <p>{{ icebreakers.lighthearted }}</p>
+                                                <p>{{ icebreakers.icebreakers[0] }}</p>
                                             </div>
                                             <div class="mission-action">
                                                 <span class="action-text">このミッションを選択</span>
@@ -430,7 +430,7 @@
                                                 <span class="mission-type">深い質問</span>
                                             </div>
                                             <div class="mission-content">
-                                                <p>{{ icebreakers.thoughtful }}</p>
+                                                <p>{{ icebreakers.icebreakers[1] }}</p>
                                             </div>
                                             <div class="mission-action">
                                                 <span class="action-text">このミッションを選択</span>
