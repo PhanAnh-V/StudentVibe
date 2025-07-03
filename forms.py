@@ -88,11 +88,11 @@ class StudentForm(FlaskForm):
     country = SelectField(
         'Country',
         choices=[
-            ('', 'Select your country'),
-            ('China', 'China'),
-            ('Vietnam', 'Vietnam'),
-            ('Japan', 'Japan'),
-            ('Other', 'Other')
+            ('', 'あなたの国を選択してください'),
+            ('China', '中国'),
+            ('Vietnam', 'ベトナム'),
+            ('Japan', '日本'),
+            ('Other', 'その他')
         ],
         validators=[
             DataRequired(message='Please select your country')
@@ -103,10 +103,10 @@ class StudentForm(FlaskForm):
     gender = SelectField(
         'Gender',
         choices=[
-            ('', 'Select your gender'),
-            ('Male', 'Male'),
-            ('Female', 'Female'),
-            ('Prefer not to say', 'Prefer not to say')
+            ('', 'あなたの性別を選択してください'),
+            ('Male', '男性'),
+            ('Female', '女性'),
+            ('Prefer not to say', '回答しない')
         ],
         validators=[
             DataRequired(message='Please select your gender')
@@ -115,7 +115,7 @@ class StudentForm(FlaskForm):
     )
     
     submit = SubmitField(
-        'Submit',
+        '送信',
         render_kw={'class': 'btn btn-primary btn-lg'}
     )
 
