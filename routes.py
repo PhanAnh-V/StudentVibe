@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash, session, jsonify
+from flask import render_template, request, redirect, url_for, session, jsonify
 from app import app, db
 from models import Student, SessionSettings, Squad
 from forms import StudentForm, TeacherLoginForm, StudentLoginForm
@@ -49,7 +49,7 @@ def session_password():
         # Load questionnaire data
         questionnaire_data = load_questionnaire_data()
         if not questionnaire_data:
-            flash('Error loading questionnaire data', 'error')
+
             return render_template('session_password.html')
         
         # Get selected language from session, default to English
@@ -84,17 +84,14 @@ def session_auth():
     
     if entered_password == current_password:
         session['session_authenticated'] = True
-        flash('Welcome! You can now fill out the questionnaire.', 'success')
         return redirect(url_for('session_password'))
     else:
-        flash('Incorrect session password. Please try again.', 'error')
         return redirect(url_for('session_password'))
 
 @app.route('/submit-form', methods=['POST'])
 def submit_form():
     """Handle questionnaire form submission"""
     if not session.get('session_authenticated'):
-        flash('Please enter the session password first.', 'error')
         return redirect(url_for('session_password'))
     
     form = StudentForm()
@@ -178,13 +175,8 @@ def submit_form():
         except Exception as e:
             db.session.rollback()
             logging.error(f"Error saving student: {e}")
-            flash('An error occurred while saving your responses. Please try again.', 'error')
     
-    # If form validation fails, show errors
-    for field, errors in form.errors.items():
-        for error in errors:
-            flash(f'{field}: {error}', 'error')
-    
+    # If form validation fails, render form with errors
     return render_template('questionnaire.html', form=form)
 
 @app.route('/success')
@@ -208,14 +200,12 @@ def find_squad():
         submission_id = request.form.get('submission_id', '').strip().upper()
         
         if not submission_id:
-            flash('Please enter your submission ID.', 'error')
             return render_template('find_squad.html')
         
         # Find student by submission ID
         student = Student.query.filter_by(submission_id=submission_id).first()
         
         if not student:
-            flash('ID not found, or your squad has not been created yet. Please check your ID or wait for your teacher to create the squads.', 'error')
             return render_template('find_squad.html')
         
         # Check if student has been assigned to a squad
@@ -224,7 +214,6 @@ def find_squad():
             return redirect(url_for('squad_hub', squad_id=student.squad_id))
         else:
             # No squad assigned yet
-            flash('Your squad has not been created yet. Please wait for your teacher to create the squads.', 'error')
             return render_template('find_squad.html')
     
     # GET request - show the form
@@ -251,7 +240,6 @@ def squad_hub(squad_id):
         
     except Exception as e:
         logging.error(f"Error accessing squad hub {squad_id}: {str(e)}")
-        flash('Squad not found or unable to access squad details.', 'error')
         return redirect(url_for('find_squad'))
 
 @app.route('/profile/<int:student_id>')
@@ -329,7 +317,7 @@ def teacher_login():
             # No flash message here - redirect directly to avoid message carry-over
             return redirect(url_for('teacher'))
         else:
-            flash('Invalid password. Please try again.', 'error')
+            pass  # Invalid password, form will show validation errors
     
     return render_template('teacher_login.html', form=form)
 
@@ -348,7 +336,6 @@ def teacher():
     """Teacher dashboard with authentication required"""
     # Check if teacher is authenticated
     if not session.get('teacher_authenticated'):
-        flash('Please login to access the teacher dashboard.', 'error')
         return redirect(url_for('teacher_login'))
     
     # Fetch all students from database
@@ -395,11 +382,9 @@ def teacher():
 def new_session_password():
     """Generate new session password for teacher"""
     if not session.get('teacher_authenticated'):
-        flash('Please login to access this feature.', 'error')
         return redirect(url_for('teacher_login'))
     
     new_password = SessionSettings.update_password()
-    flash(f'New session password generated: {new_password}', 'success')
     logging.info(f"Teacher generated new session password: {new_password}")
     
     return redirect(url_for('teacher'))
@@ -408,7 +393,6 @@ def new_session_password():
 def teacher_logout():
     """Log out teacher and clear session"""
     session.pop('teacher_authenticated', None)
-    flash('You have been logged out.', 'info')
     return redirect(url_for('teacher'))
 
 
@@ -479,7 +463,6 @@ def create_squads():
     
     if not teacher_auth:
         logging.warning("Authentication failed in create_squads route")
-        flash('Access denied. Please log in first.', 'error')
         return redirect(url_for('teacher_login'))
     
     try:
@@ -494,7 +477,6 @@ def create_squads():
         unassigned_students = Student.query.filter_by(squad_id=None).all()
         
         if len(unassigned_students) < 3:
-            flash('Need at least 3 students to create squads.', 'warning')
             return redirect(url_for('teacher'))
         
         # Step 3: Prepare student data with their 6 question responses for AI analysis
@@ -577,16 +559,13 @@ def create_squads():
         logging.info("✅ Database commit successful!")
         
         if squads_created > 0:
-            flash(f'Successfully created {squads_created} AI-powered squads! Students have been intelligently grouped based on shared interests.', 'success')
             logging.info(f"🎉 Squad formation complete: {squads_created} squads created")
         else:
-            flash('No squads were created. Please try again or check the student data.', 'warning')
             logging.warning("⚠️ No squads were created!")
         
     except Exception as e:
         db.session.rollback()
         logging.error(f"Error during squad formation: {str(e)}")
-        flash('Squad formation failed. Please try again.', 'error')
     
     return redirect(url_for('teacher'))
 
@@ -626,7 +605,6 @@ def get_fallback_icebreaker():
 def delete_student(student_id):
     """Delete a student record from the database"""
     if not session.get('teacher_authenticated'):
-        flash('Access denied. Please log in first.', 'error')
         return redirect(url_for('teacher_login'))
     
     try:
@@ -637,7 +615,6 @@ def delete_student(student_id):
         db.session.delete(student)
         db.session.commit()
         
-        flash(f'Successfully deleted student: {student_name}', 'success')
         logging.info(f"Deleted student: {student_name} (ID: {student_id})")
         
         # Clear current squads since student composition has changed
@@ -647,7 +624,6 @@ def delete_student(student_id):
     except Exception as e:
         db.session.rollback()
         logging.error(f"Error deleting student {student_id}: {str(e)}")
-        flash('There was an error deleting the student. Please try again.', 'error')
     
     return redirect(url_for('teacher'))
 
@@ -733,12 +709,10 @@ def delete_squad(squad_id):
         db.session.delete(squad)
         db.session.commit()
         
-        flash(f'Squad "{squad_name}" has been cleanly deleted. {member_count} students are now available for new squads.', 'success')
         logging.info(f"Squad {squad_name} (ID: {squad_id}) deleted successfully, {member_count} students unassigned")
         
     except Exception as e:
         db.session.rollback()
-        flash(f'Error deleting squad: {str(e)}', 'error')
         logging.error(f"Failed to delete squad {squad_id}: {str(e)}")
     
     return redirect(url_for('teacher'))
@@ -747,7 +721,6 @@ def delete_squad(squad_id):
 def clear_squads():
     """Reset all squad assignments by setting squad_id to null and deleting all squads"""
     if not session.get('teacher_authenticated'):
-        flash('Access denied. Please log in first.', 'error')
         return redirect(url_for('teacher_login'))
     
     try:
@@ -763,12 +736,10 @@ def clear_squads():
         # Commit all changes
         db.session.commit()
         
-        flash(f'スクワッドが正常にリセットされました。{students_updated}人の学生が未割り当てになり、{squads_deleted}つのスクワッドが削除されました。', 'success')
         logging.info(f"Squad assignments cleared successfully: {squads_deleted} squads deleted, {students_updated} students unassigned")
         
     except Exception as e:
         db.session.rollback()
-        flash(f'スクワッドリセット中にエラーが発生しました: {str(e)}', 'error')
         logging.error(f"Failed to clear squad assignments: {str(e)}")
     
     return redirect(url_for('teacher'))
@@ -777,7 +748,6 @@ def clear_squads():
 def generate_icebreaker(squad_id):
     """Generate AI-powered icebreaker for a specific squad"""
     if not session.get('teacher_authenticated'):
-        flash('Access denied. Please log in first.', 'error')
         return redirect(url_for('teacher_login'))
     
     try:
@@ -786,7 +756,6 @@ def generate_icebreaker(squad_id):
         members = squad.members
         
         if not members:
-            flash(f'No members found in squad "{squad.name}".', 'error')
             return redirect(url_for('teacher'))
         
         # Prepare member data for AI analysis
@@ -812,12 +781,10 @@ def generate_icebreaker(squad_id):
         squad.icebreaker_text = icebreaker_text
         db.session.commit()
         
-        flash(f'Icebreaker generated for squad "{squad.name}"!', 'success')
         logging.info(f"Generated icebreaker for squad {squad.name} (ID: {squad_id})")
         
     except Exception as e:
         db.session.rollback()
-        flash(f'Error generating icebreaker: {str(e)}', 'error')
         logging.error(f"Failed to generate icebreaker for squad {squad_id}: {str(e)}")
     
     return redirect(url_for('teacher'))
@@ -826,7 +793,6 @@ def generate_icebreaker(squad_id):
 def get_ai_advice(student_id):
     """Generate AI advice for a solo student"""
     if not session.get('teacher_authenticated'):
-        flash('Access denied. Please log in first.', 'error')
         return redirect(url_for('teacher_login'))
     
     try:
@@ -850,11 +816,9 @@ def get_ai_advice(student_id):
         
         # Store advice in session for display
         session[f'ai_advice_{student_id}'] = advice
-        flash(f'AI advice generated for {student.name}', 'success')
         
     except Exception as e:
         logging.error(f"Error generating AI advice for student {student_id}: {str(e)}")
-        flash('Unable to generate AI advice at this time.', 'error')
     
     return redirect(url_for('teacher'))
 
@@ -1195,13 +1159,11 @@ def student_recommendations(student_id):
 def teacher_ai_insights():
     """Teacher page with AI-powered insights about students and squad formation"""
     if not session.get('teacher_authenticated'):
-        flash('Access denied. Please log in first.', 'error')
         return redirect(url_for('teacher_login'))
     
     students = Student.query.all()
     
     if len(students) < 2:
-        flash('Need at least 2 students to generate AI insights.', 'info')
         return redirect(url_for('teacher'))
     
     # Generate profiles for all students using fallback to avoid API timeouts
@@ -1281,12 +1243,10 @@ def reset_database():
         # Commit the changes
         db.session.commit()
         
-        flash('Database has been reset!', 'success')
         logging.info("Database reset completed successfully")
         
     except Exception as e:
         db.session.rollback()
-        flash(f'Error resetting database: {str(e)}', 'error')
         logging.error(f"Database reset failed: {str(e)}")
     
     return redirect(url_for('teacher_login'))
@@ -1437,12 +1397,10 @@ def seed_database():
         # Commit all changes
         db.session.commit()
         
-        flash('8 fake students and 2 squads have been created!', 'success')
         logging.info("Database seeded successfully with 8 students and 2 squads")
         
     except Exception as e:
         db.session.rollback()
-        flash(f'Error seeding database: {str(e)}', 'error')
         logging.error(f"Database seeding failed: {str(e)}")
     
     return redirect(url_for('teacher'))
@@ -1459,5 +1417,4 @@ def not_found_error(error):
 def internal_error(error):
     """Handle 500 errors"""
     db.session.rollback()
-    flash('An internal error occurred. Please try again.', 'error')
     return render_template('session_password.html'), 500
