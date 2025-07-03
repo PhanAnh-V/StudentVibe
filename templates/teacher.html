@@ -134,6 +134,7 @@
                     </button>
                 </div>
                 <form action="{{ url_for('new_session_password') }}" method="POST" class="d-inline">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <button type="submit" class="btn btn-warning" onclick="return confirm('新しいパスワードを生成しますか？')">
                         新しいパスワードを生成
                     </button>
@@ -399,6 +400,7 @@
                     </div>
                     {% else %}
                     <form method="POST" action="{{ url_for('get_ai_advice', student_id=student.id) }}" class="ai-advice-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <button type="submit" class="btn btn-outline-primary btn-sm">
                             <i class="fas fa-robot me-2"></i>
                             Generate AI Advice
