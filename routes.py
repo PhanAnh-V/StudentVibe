@@ -466,13 +466,22 @@ def create_simple_japanese_squads(students_data):
     return {'squads': squads}
 
 
+@app.route('/teacher/test-button', methods=['POST'])
+def test_button():
+    """Test route to verify button functionality"""
+    logging.info("🔥 TEST BUTTON ROUTE CALLED! This proves the button works!")
+    flash('Button test successful! 🎉', 'success')
+    return redirect(url_for('teacher'))
+
 @app.route('/teacher/create-squads', methods=['POST'])
 def create_squads():
     """AI-powered squad formation - The Sorting Hat of the application"""
     
     # Debug session authentication
     teacher_auth = session.get('teacher_authenticated')
-    logging.info(f"Create squads called. Teacher authenticated: {teacher_auth}")
+    logging.info(f"🎯 CREATE SQUADS ROUTE CALLED! Teacher authenticated: {teacher_auth}")
+    logging.info(f"Request method: {request.method}")
+    logging.info(f"Form data: {dict(request.form)}")
     logging.info(f"Session contents: {dict(session)}")
     
     if not teacher_auth:
