@@ -577,14 +577,16 @@ def create_squads():
         logging.info("✅ Database commit successful!")
         
         if squads_created > 0:
-            logging.info(f"🎉 Squad formation complete: {squads_created} squads created successfully")
+            flash(f'Successfully created {squads_created} AI-powered squads! Students have been intelligently grouped based on shared interests.', 'success')
+            logging.info(f"🎉 Squad formation complete: {squads_created} squads created")
         else:
+            flash('No squads were created. Please try again or check the student data.', 'warning')
             logging.warning("⚠️ No squads were created!")
         
     except Exception as e:
         db.session.rollback()
         logging.error(f"Error during squad formation: {str(e)}")
-        logging.error("❌ Squad formation failed")
+        flash('Squad formation failed. Please try again.', 'error')
     
     return redirect(url_for('teacher'))
 
