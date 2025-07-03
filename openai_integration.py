@@ -36,7 +36,7 @@ Below are student responses to 6 questions about their interests, passions, and 
 
 Your mission:
 1. Group these students into squads of 3-4 members each
-2. Create fun, memorable squad names that reflect their collective identity
+2. Create fun, memorable squad names in JAPANESE that reflect their collective identity
 3. Find the common threads that will bond each group together
 4. Balance shared interests with complementary strengths
 5. Think like a camp counselor - make it exciting and meaningful!
@@ -45,17 +45,18 @@ Respond with a JSON object in this exact format:
 {{
     "squads": [
         {{
-            "squad_name": "Fun, creative English name (like 'Adventure Seekers' or 'Creative Spirits')",
+            "squad_name": "Creative Japanese name (like 'アドベンチャーチーム' or 'クリエイティブスピリッツ')",
             "member_ids": [list of student IDs],
-            "shared_interests": "Brief, inspiring summary of what bonds this group together"
+            "shared_interests": "Brief, inspiring summary in Japanese of what bonds this group together"
         }}
     ]
 }}
 
 Requirements:
 - Every student must be assigned to exactly one squad
-- Squad names should be engaging and reflect the group's collective vibe
-- Shared interests should show why these students belong together
+- Squad names MUST be in Japanese and engaging
+- Shared interests MUST be in Japanese and show why these students belong together
+- Use natural, exciting Japanese that students would be proud to be part of
 
 Make each squad feel like a special club they'd be excited to join!"""
 
@@ -95,14 +96,20 @@ def generate_squad_icebreaker(squad_members_data, squad_name):
             members_text += f"- Vibe: {member['question5']}\n"
             members_text += f"- Team quality: {member['question6']}\n"
         
-        prompt = f"""Create two distinct, engaging icebreaker questions in Japanese for a squad called "{squad_name}".
+        prompt = f"""Create two distinct, engaging icebreaker questions in JAPANESE for a squad called "{squad_name}".
 
 Squad members and their interests:
 {members_text}
 
-Create two questions that reference the squad members' specific interests and help them bond. The questions should be fun, age-appropriate for college students, and encourage conversation.
+Create two questions that reference the squad members' specific interests and help them bond. The questions should be:
+- Fun and age-appropriate for college students
+- Written in natural, friendly Japanese
+- Designed to encourage conversation and connection
+- Specific to this group's shared interests
 
-Return a JSON object with this format: {{"icebreakers": ["First Japanese question", "Second Japanese question"]}}"""
+Return a JSON object with this format: {{"icebreakers": ["First Japanese question", "Second Japanese question"]}}
+
+IMPORTANT: Both questions MUST be in Japanese. Make them warm, engaging, and tailored to this specific squad."""
 
         response = client.chat.completions.create(
             model="gpt-4o",

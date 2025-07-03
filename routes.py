@@ -410,164 +410,7 @@ def teacher_logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('teacher'))
 
-def create_vibe_squads():
-    """Group students into squads based on their answer to 'The Ultimate Crew' question"""
-    # Get all unassigned students from database
-    students = Student.query.filter_by(squad_id=None).all()
-    
-    if len(students) < 4:
-        return {
-            'squads': [],
-            'solo_students': students
-        }
-    
-    # Define quality-based groupings based on Ultimate Crew question (question6)
-    quality_groups = {
-        'humor_team': {
-            'keywords': ['funny', 'humor', 'laugh', 'joke', 'comedy', 'witty', 'hilarious', 'fun', 'entertaining', 'cheerful', 'upbeat'],
-            'name': 'The Comedy Crew',
-            'description': 'Masters of Fun & Laughter'
-        },
-        'leadership_team': {
-            'keywords': ['leader', 'leadership', 'organize', 'organized', 'planner', 'responsible', 'reliable', 'dependable', 'take charge', 'motivate'],
-            'name': 'The Leadership Squad',
-            'description': 'Natural Born Leaders'
-        },
-        'creative_team': {
-            'keywords': ['creative', 'imagination', 'artistic', 'innovative', 'original', 'unique', 'inventive', 'design', 'ideas', 'thinking outside'],
-            'name': 'The Creative Collective',
-            'description': 'Innovation & Imagination'
-        },
-        'analytical_team': {
-            'keywords': ['smart', 'intelligent', 'analytical', 'logical', 'strategic', 'problem-solving', 'think', 'plan', 'strategy', 'clever'],
-            'name': 'The Think Tank',
-            'description': 'Strategic Problem Solvers'
-        },
-        'supportive_team': {
-            'keywords': ['supportive', 'kind', 'caring', 'empathetic', 'understanding', 'helpful', 'team player', 'collaborative', 'encouraging', 'positive'],
-            'name': 'The Support Squad',
-            'description': 'Champions of Teamwork'
-        },
-        'energetic_team': {
-            'keywords': ['energetic', 'enthusiastic', 'passionate', 'motivated', 'driven', 'active', 'dynamic', 'spirited', 'ambitious', 'determined'],
-            'name': 'The Energy Force',
-            'description': 'Pure Power & Enthusiasm'
-        }
-    }
-    
-    # Analyze each student's Ultimate Crew answer and assign to quality groups
-    student_assignments = {}
-    group_members = {group: [] for group in quality_groups.keys()}
-    
-    for student in students:
-        ultimate_crew_answer = (student.question6 or "").lower()
-        best_group = None
-        max_matches = 0
-        
-        # Find the quality group with most keyword matches
-        for group_name, group_info in quality_groups.items():
-            match_count = sum(1 for keyword in group_info['keywords'] 
-                            if keyword in ultimate_crew_answer)
-            
-            if match_count > max_matches:
-                max_matches = match_count
-                best_group = group_name
-        
-        # If no keywords match, categorize based on general sentiment
-        if best_group is None:
-            # Look for general positive team qualities
-            if any(word in ultimate_crew_answer for word in ['team', 'together', 'help', 'work', 'support']):
-                best_group = 'supportive_team'
-            elif any(word in ultimate_crew_answer for word in ['smart', 'think', 'solve', 'plan']):
-                best_group = 'analytical_team'
-            elif any(word in ultimate_crew_answer for word in ['fun', 'enjoy', 'happy', 'good']):
-                best_group = 'humor_team'
-            else:
-                best_group = 'creative_team'  # Default fallback
-        
-        student_assignments[student.id] = best_group
-        group_members[best_group].append(student)
-    
-    # Create balanced squads from quality groups
-    squads = []
-    processed_students = set()
-    
-    # Sort groups by size (largest first) to ensure good distribution
-    sorted_groups = sorted(group_members.items(), key=lambda x: len(x[1]), reverse=True)
-    
-    while len(students) - len(processed_students) >= 4:
-        current_squad = []
-        squad_qualities = []
-        
-        # Try to get one student from each quality group for diversity
-        for group_name, members in sorted_groups:
-            available_members = [s for s in members if s.id not in processed_students]
-            if available_members and len(current_squad) < 4:
-                selected_student = available_members[0]
-                current_squad.append(selected_student)
-                processed_students.add(selected_student.id)
-                squad_qualities.append(quality_groups[group_name]['description'])
-        
-        # Fill remaining spots if squad has less than 4 members
-        while len(current_squad) < 4:
-            available_students = [s for s in students if s.id not in processed_students]
-            if not available_students:
-                break
-            
-            # Prioritize students from groups not yet represented in this squad
-            represented_groups = {student_assignments[s.id] for s in current_squad}
-            
-            next_student = None
-            for group_name, members in sorted_groups:
-                if group_name not in represented_groups:
-                    available_from_group = [s for s in members if s.id not in processed_students]
-                    if available_from_group:
-                        next_student = available_from_group[0]
-                        squad_qualities.append(quality_groups[group_name]['description'])
-                        break
-            
-            # If no unrepresented groups, take any available student
-            if next_student is None and available_students:
-                next_student = available_students[0]
-                group = student_assignments[next_student.id]
-                squad_qualities.append(quality_groups[group]['description'])
-            
-            if next_student:
-                current_squad.append(next_student)
-                processed_students.add(next_student.id)
-            else:
-                break
-        
-        # Add one more member if possible (max 5 per squad)
-        if len(current_squad) == 4:
-            remaining_count = len(students) - len(processed_students)
-            if remaining_count >= 4:  # Only add 5th if it won't prevent another squad
-                available_students = [s for s in students if s.id not in processed_students]
-                if available_students:
-                    fifth_member = available_students[0]
-                    current_squad.append(fifth_member)
-                    processed_students.add(fifth_member.id)
-                    group = student_assignments[fifth_member.id]
-                    squad_qualities.append(quality_groups[group]['description'])
-        
-        # Create squad if it has enough members
-        if len(current_squad) >= 4:
-            # Create a meaningful shared interests description
-            unique_qualities = list(set(squad_qualities))
-            shared_interests = ', '.join(unique_qualities[:3])  # Show top 3 qualities
-            
-            squads.append({
-                'members': current_squad,
-                'shared_interests': shared_interests
-            })
-    
-    # Students who couldn't be placed in squads become solo students
-    solo_students = [s for s in students if s.id not in processed_students]
-    
-    return {
-        'squads': squads,
-        'solo_students': solo_students
-    }
+
 
 @app.route('/teacher/create-squads', methods=['POST'])
 def create_squads():
@@ -611,8 +454,9 @@ def create_squads():
         
         logging.info(f"Sending {len(students_data)} students to AI for intelligent grouping")
         
-        # Step 4: Send to AI as a social dynamics expert for squad formation
-        ai_response = analyze_students_and_create_squads(students_data)
+        # Step 4: Send to AI for intelligent squad formation with Japanese names
+        from openai_integration import group_students_into_squads
+        ai_response = group_students_into_squads(students_data)
         
         # Step 5: Parse AI response and validate structure
         if not isinstance(ai_response, dict) or 'squads' not in ai_response:
@@ -671,52 +515,10 @@ def create_squads():
     return redirect(url_for('teacher'))
 
 
-def create_fallback_squads(students_data):
-    """
-    Fallback squad creation when AI is unavailable
-    Creates simple squads of 3-4 students sequentially
-    """
-    squads = []
-    current_squad = []
-    squad_number = 1
-    
-    for student in students_data:
-        current_squad.append(student['id'])
-        
-        # Create squad when we have 4 members or when we're at the end
-        if len(current_squad) == 4 or student == students_data[-1]:
-            # Don't create squads with less than 3 members unless it's the only option
-            if len(current_squad) >= 3 or len(squads) == 0:
-                squads.append({
-                    'name': f'Squad {squad_number}',
-                    'shared_interests': 'Mixed interests and personalities',
-                    'member_ids': current_squad.copy()
-                })
-                squad_number += 1
-            else:
-                # Add remaining students to the last squad
-                if squads:
-                    squads[-1]['member_ids'].extend(current_squad)
-            
-            current_squad = []
-    
-    return {'squads': squads}
 
 
-def analyze_students_and_create_squads(students_data):
-    """
-    Send student data to AI (OpenAI) acting as social dynamics expert
-    Returns JSON with intelligent squad groupings based on shared interests
-    """
-    try:
-        from openai_integration import group_students_into_squads
-        return group_students_into_squads(students_data)
-    except ImportError:
-        logging.error("OpenAI integration not available")
-        return create_fallback_squads(students_data)
-    except Exception as e:
-        logging.error(f"Error in AI squad formation: {str(e)}")
-        return create_fallback_squads(students_data)
+
+
 
 
 def generate_squad_icebreaker_with_ai(member_data, squad_name):
@@ -867,41 +669,31 @@ def delete_squad(squad_id):
 
 @app.route('/clear-squads', methods=['POST'])
 def clear_squads():
-    """Delete all records from students and squads tables"""
+    """Reset all squad assignments by setting squad_id to null and deleting all squads"""
     if not session.get('teacher_authenticated'):
         flash('Access denied. Please log in first.', 'error')
         return redirect(url_for('teacher_login'))
     
     try:
-        # First, delete all records from the students table
-        all_students = Student.query.all()
-        total_students = len(all_students)
+        # Step 1: Unassign all students from squads (set squad_id to null)
+        students_updated = db.session.execute(
+            db.text("UPDATE students SET squad_id = NULL WHERE squad_id IS NOT NULL")
+        ).rowcount
         
-        for student in all_students:
-            logging.info(f"Deleting student {student.name} (ID: {student.id})")
-            db.session.delete(student)
-        
-        # Flush the student deletions
-        db.session.flush()
-        
-        # Second, delete all records from the squads table
-        all_squads = Squad.query.all()
-        total_squads = len(all_squads)
-        
-        for squad in all_squads:
-            logging.info(f"Deleting squad {squad.name} (ID: {squad.id})")
-            db.session.delete(squad)
+        # Step 2: Delete all squad records
+        squads_deleted = Squad.query.count()
+        Squad.query.delete()
         
         # Commit all changes
         db.session.commit()
         
-        flash(f'すべてのデータが削除されました。{total_students}人の学生と{total_squads}つのスクワッドが削除されました。', 'success')
-        logging.info(f"All squads cleared successfully: {total_squads} squads deleted, {total_students} students unassigned")
+        flash(f'スクワッドが正常にリセットされました。{students_updated}人の学生が未割り当てになり、{squads_deleted}つのスクワッドが削除されました。', 'success')
+        logging.info(f"Squad assignments cleared successfully: {squads_deleted} squads deleted, {students_updated} students unassigned")
         
     except Exception as e:
         db.session.rollback()
-        flash(f'スクワッドクリア中にエラーが発生しました: {str(e)}', 'error')
-        logging.error(f"Failed to clear all squads: {str(e)}")
+        flash(f'スクワッドリセット中にエラーが発生しました: {str(e)}', 'error')
+        logging.error(f"Failed to clear squad assignments: {str(e)}")
     
     return redirect(url_for('teacher'))
 
