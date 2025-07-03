@@ -799,9 +799,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Handle Create Vibe Squads button using ID
         const createSquadsBtn = document.getElementById('create-squads-btn');
         if (createSquadsBtn) {
-            createSquadsBtn.addEventListener('click', function() {
-                this.disabled = true;
+            createSquadsBtn.addEventListener('click', function(e) {
+                // Don't disable immediately - let the form submit first
                 this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 作成中...';
+                
+                // Disable after a short delay to allow form submission
+                setTimeout(() => {
+                    this.disabled = true;
+                }, 100);
             });
         }
         
