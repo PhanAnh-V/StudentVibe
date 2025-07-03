@@ -1,218 +1,567 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Questionnaire - Vibe Check</title>
+    <title>ミステリージェネレーター - Vibe Check</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Noto Sans JP', sans-serif;
-        }
-        .question-title {
-            font-weight: 700;
-            color: #2d3748;
-            font-size: 1.25rem;
-            line-height: 1.3;
-        }
-
-        .question-label {
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 0.5rem;
-        }
-        .form-control {
-            border-radius: 10px;
-            min-height: 100px;
-            resize: vertical;
-        }
-        .questions-section {
-            margin-bottom: 2rem;
-        }
-
-    </style>
 </head>
 <body>
-    <div class="container">
+    <div class="questionnaire-page">
         <!-- Navigation -->
-        <nav class="navbar navbar-expand-lg navbar-light mb-4">
-            <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg mb-4">
+            <div class="container">
                 <a class="navbar-brand" href="{{ url_for('index') }}">
                     <i class="fas fa-bolt me-2"></i>Vibe Check
                 </a>
                 <div class="navbar-nav ms-auto">
                     <a class="nav-link" href="{{ url_for('find_squad') }}">
-                        <i class="fas fa-search me-1"></i>Find My Squad
+                        <i class="fas fa-search me-1"></i>マイスクワッドを探す
                     </a>
-
                     <a class="nav-link" href="{{ url_for('index') }}">
-                        <i class="fas fa-key me-1"></i>New Session
+                        <i class="fas fa-key me-1"></i>新しいセッション
                     </a>
                 </div>
             </div>
         </nav>
 
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-7">
-                <div class="form-container">
-                    <div class="text-center mb-4">
-                        <i class="fas fa-user-circle fa-3x text-primary mb-3"></i>
-                        <h2 class="form-title">Mystery Generator</h2>
-                        <p class="text-muted">Answer 6 questions to discover your creative archetype and connect with your vibe squad!</p>
-                    </div>
-
-                    <!-- Flash Messages -->
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            {% for category, message in messages %}
-                                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
-
-                    <form id="questionnaire-form" action="{{ url_for('submit_form') }}" method="POST" novalidate>
-                        {{ form.hidden_tag() }}
-                        
-                        <!-- Name Field -->
-                        <div class="form-group mb-4">
-                            {{ form.name.label(class="form-label") }}
-                            {{ form.name(class="form-control") }}
-                            {% if form.name.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.name.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-xl-6">
+                    <div class="questionnaire-card">
+                        <div class="questionnaire-header">
+                            <div class="header-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <h1 class="questionnaire-title">ミステリージェネレーター</h1>
+                            <p class="questionnaire-subtitle">
+                                6つの質問に答えてあなたのクリエイティブタイプを発見し、<br>
+                                最高のバイブスクワッドとつながろう！
+                            </p>
                         </div>
 
-                        <!-- Mystery Generator Questions -->
-                        <div class="questions-section">
-                            <h4 class="section-title mb-4">
-                                <i class="fas fa-magic me-2"></i>
-                                Mystery Generator Questions
-                            </h4>
-                            
-                            {% if questions %}
-                                {% for i in range(6) %}
-                                    {% set question_field = 'question' + (i + 1)|string %}
-                                    {% set question_data = questions[i] if i < questions|length else {'title': 'Question ' + (i + 1)|string, 'description': 'Please answer this question.'} %}
-                                    
-                                    <div class="form-group mb-5">
-                                        <h4 class="question-title mb-3">{{ question_data.title }}</h4>
-                                        <div>{{ question_data.description }}</div>
-                                        {{ form[question_field](class="form-control") }}
-                                        {% if form[question_field].errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {% for error in form[question_field].errors %}
-                                                    {{ error }}
-                                                {% endfor %}
-                                            </div>
-                                        {% endif %}
+                        <!-- Flash Messages -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                                     </div>
                                 {% endfor %}
-                            {% else %}
-                                <!-- Fallback to original form structure -->
-                                <div class="form-group mb-4">
-                                    {{ form.question1.label(class="form-label question-label") }}
-                                    {{ form.question1(class="form-control") }}
-                                    {% if form.question1.errors %}
-                                        <div class="invalid-feedback d-block">
-                                            {% for error in form.question1.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-
-                                <div class="form-group mb-4">
-                                    {{ form.question2.label(class="form-label question-label") }}
-                                    {{ form.question2(class="form-control") }}
-                                    {% if form.question2.errors %}
-                                        <div class="invalid-feedback d-block">
-                                            {% for error in form.question2.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
                             {% endif %}
+                        {% endwith %}
 
-
-                        </div>
-
-                        <!-- Additional Information -->
-                        <div class="additional-info-section">
-                            <h4 class="section-title mb-4">
-                                <i class="fas fa-info-circle me-2"></i>
-                                Additional Information
-                            </h4>
+                        <form id="questionnaire-form" action="{{ url_for('submit_form') }}" method="POST" novalidate>
+                            {{ form.hidden_tag() }}
                             
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group mb-4">
-                                        {{ form.country.label(class="form-label") }}
-                                        {{ form.country(class="form-control") }}
-                                        {% if form.country.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {% for error in form.country.errors %}
-                                                    {{ error }}
-                                                {% endfor %}
+                            <!-- Name Field -->
+                            <div class="form-section">
+                                <div class="input-group">
+                                    <label class="input-label">お名前</label>
+                                    {{ form.name(class="form-input", placeholder="フルネームを入力してください") }}
+                                    {% if form.name.errors %}
+                                        <div class="error-message">
+                                            {% for error in form.name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Mystery Generator Questions -->
+                            <div class="questions-section">
+                                <div class="section-header">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-magic me-2"></i>
+                                        ミステリージェネレーター質問
+                                    </h3>
+                                </div>
+                            
+                                {% if questions %}
+                                    {% for i in range(6) %}
+                                        {% set question_field = 'question' + (i + 1)|string %}
+                                        {% set question_data = questions[i] if i < questions|length else {'title': 'Question ' + (i + 1)|string, 'description': 'Please answer this question.'} %}
+                                        
+                                        <div class="question-card">
+                                            <div class="question-number">{{ i + 1 }}</div>
+                                            <div class="question-content">
+                                                <h4 class="question-title">{{ question_data.title }}</h4>
+                                                <p class="question-description">{{ question_data.description }}</p>
+                                                {{ form[question_field](class="question-input", placeholder="あなたの答えをここに書いてください...") }}
+                                                {% if form[question_field].errors %}
+                                                    <div class="error-message">
+                                                        {% for error in form[question_field].errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
                                             </div>
-                                        {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <!-- Fallback to original form structure -->
+                                    <div class="question-card">
+                                        <div class="question-number">1</div>
+                                        <div class="question-content">
+                                            {{ form.question1.label(class="question-title") }}
+                                            {{ form.question1(class="question-input") }}
+                                            {% if form.question1.errors %}
+                                                <div class="error-message">
+                                                    {% for error in form.question1.errors %}
+                                                        {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
                                     </div>
+
+                                    <div class="question-card">
+                                        <div class="question-number">2</div>
+                                        <div class="question-content">
+                                            {{ form.question2.label(class="question-title") }}
+                                            {{ form.question2(class="question-input") }}
+                                            {% if form.question2.errors %}
+                                                <div class="error-message">
+                                                    {% for error in form.question2.errors %}
+                                                        {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+
+                            </div>
+
+                            <!-- Additional Information -->
+                            <div class="additional-info-section">
+                                <div class="section-header">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        追加情報
+                                    </h3>
                                 </div>
                                 
-                                <div class="col-md-6">
-                                    <div class="form-group mb-4">
-                                        {{ form.gender.label(class="form-label") }}
-                                        {{ form.gender(class="form-control") }}
-                                        {% if form.gender.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {% for error in form.gender.errors %}
-                                                    {{ error }}
-                                                {% endfor %}
-                                            </div>
-                                        {% endif %}
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <label class="input-label">国</label>
+                                            {{ form.country(class="form-select") }}
+                                            {% if form.country.errors %}
+                                                <div class="error-message">
+                                                    {% for error in form.country.errors %}
+                                                        {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <label class="input-label">性別</label>
+                                            {{ form.gender(class="form-select") }}
+                                            {% if form.gender.errors %}
+                                                <div class="error-message">
+                                                    {% for error in form.gender.errors %}
+                                                        {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="d-grid">
-                            {{ form.submit(id="submit-btn", class="btn btn-primary btn-lg") }}
-                        </div>
-                    </form>
+                            <div class="submit-section">
+                                {{ form.submit(id="submit-btn", class="submit-button") }}
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <style>
+        .questionnaire-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Noto Sans JP', sans-serif;
+            padding: 0;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: #667eea !important;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: #64748b !important;
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea !important;
+        }
+
+        .questionnaire-card {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            margin: 2rem 0;
+        }
+
+        .questionnaire-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header-icon {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 1.5rem;
+        }
+
+        .questionnaire-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .questionnaire-subtitle {
+            font-size: 1.1rem;
+            color: #6b7280;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-title i {
+            color: #667eea;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input, .question-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            min-height: 50px;
+            resize: vertical;
+        }
+
+        .question-input {
+            min-height: 120px;
+        }
+
+        .form-input:focus, .question-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .questions-section {
+            margin: 3rem 0;
+        }
+
+        .question-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            gap: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .question-number {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .question-content {
+            flex: 1;
+        }
+
+        .question-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .question-description {
+            font-size: 1rem;
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+        }
+
+        .additional-info-section {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2.5rem 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            min-width: 200px;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+            margin-bottom: 2rem;
+        }
+
+        .alert-danger {
+            background: #fef2f2;
+            color: #991b1b;
+            border-left: 4px solid #dc2626;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .questionnaire-card {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+                border-radius: 20px;
+            }
+
+            .questionnaire-title {
+                font-size: 2rem;
+            }
+
+            .questionnaire-subtitle {
+                font-size: 1rem;
+            }
+
+            .question-card {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1.5rem;
+            }
+
+            .question-number {
+                align-self: flex-start;
+            }
+
+            .submit-button {
+                width: 100%;
+                padding: 1rem 2rem;
+            }
+        }
+
+        /* Animation for form load */
+        .questionnaire-card {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Prevent double form submission and show loading state
-        const form = document.getElementById('questionnaire-form');
-        const submitBtn = document.getElementById('submit-btn');
-        
-        if (form && submitBtn) {
-            form.addEventListener('submit', function() {
-                // Disable the submit button to prevent double submission
-                submitBtn.disabled = true;
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('questionnaire-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const originalText = '送信';
+            
+            // Set Japanese text for submit button
+            if (submitBtn) {
+                submitBtn.textContent = originalText;
+            }
+            
+            // Enhanced form submission with loading state
+            if (form && submitBtn) {
+                form.addEventListener('submit', function(e) {
+                    // Prevent double submission
+                    if (submitBtn.disabled) {
+                        e.preventDefault();
+                        return;
+                    }
+                    
+                    // Show loading state
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>送信中...';
+                    submitBtn.style.opacity = '0.7';
+                });
+            }
+            
+            // Add smooth focus animations for inputs
+            const inputs = document.querySelectorAll('.form-input, .question-input, .form-select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.02)';
+                    this.parentElement.style.transition = 'transform 0.2s ease';
+                });
                 
-                // Change button text to loading state
-                submitBtn.textContent = '送信中...';
-                
-                // Optional: Add a loading spinner
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>送信中...';
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
             });
-        }
+            
+            // Add progress indicator
+            const questionInputs = document.querySelectorAll('.question-input');
+            let completedQuestions = 0;
+            
+            function updateProgress() {
+                completedQuestions = 0;
+                questionInputs.forEach(input => {
+                    if (input.value.trim().length > 10) {
+                        completedQuestions++;
+                    }
+                });
+                
+                // Update submit button state based on progress
+                if (completedQuestions >= 3) {
+                    submitBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                } else {
+                    submitBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                }
+            }
+            
+            questionInputs.forEach(input => {
+                input.addEventListener('input', updateProgress);
+            });
+            
+            // Initialize progress check
+            updateProgress();
+        });
     </script>
 </body>
 </html>
