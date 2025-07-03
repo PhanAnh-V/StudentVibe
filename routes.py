@@ -928,14 +928,12 @@ def generate_icebreaker(squad_id):
                 'name': member.name,
                 'country': member.country,
                 'gender': member.gender,
-                'answers': {
-                    'go_to_activity': member.question1,
-                    'skill_to_master': member.question2,
-                    'talk_about_for_hours': member.question3,
-                    'ideal_friday_night': member.question4,
-                    'weirdest_obsession': member.question5,
-                    'energy_soundtrack': member.question6
-                }
+                'question1': member.question1,
+                'question2': member.question2,
+                'question3': member.question3,
+                'question4': member.question4,
+                'question5': member.question5,
+                'question6': member.question6
             }
             member_data.append(member_info)
         

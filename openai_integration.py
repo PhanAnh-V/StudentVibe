@@ -90,25 +90,14 @@ def generate_squad_icebreaker(squad_members_data, squad_name):
             members_text += f"- Vibe: {member['question5']}\n"
             members_text += f"- Team quality: {member['question6']}\n"
         
-        prompt = f"""You are creating fun, personalized icebreaker questions for a squad called "{squad_name}".
+        prompt = f"""Create two distinct, engaging icebreaker questions in Japanese for a squad called "{squad_name}".
 
 Squad members and their interests:
 {members_text}
 
-Create TWO distinct, engaging icebreaker questions that:
-1. Reference specific interests or answers from the squad members
-2. Encourage creative, fun responses
-3. Help the squad bond over shared experiences or discover new things about each other
-4. Are playful and age-appropriate for students (18-23 years old, college age)
-5. Spark conversation and laughter
+Create two questions that reference the squad members' specific interests and help them bond. The questions should be fun, age-appropriate for college students, and encourage conversation.
 
-The first question should be fun and lighthearted.
-The second question should be more thoughtful and meaningful.
-Both questions should feel personal to THIS specific group, not generic.
-
-The final output must be in Japanese.
-
-The response must be a JSON object containing a list of two distinct icebreaker questions. The required format is: {{"icebreakers": ["First Japanese question here", "Second Japanese question here"]}}."""
+Return a JSON object with this format: {{"icebreakers": ["First Japanese question", "Second Japanese question"]}}"""
 
         response = client.chat.completions.create(
             model="gpt-4o",
