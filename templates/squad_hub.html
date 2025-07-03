@@ -97,45 +97,128 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
-        .icebreaker-questions {
-            display: flex;
-            flex-direction: column;
+        .mission-subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+        
+        .mission-options {
             gap: 1.5rem;
         }
         
-        .icebreaker-question {
-            padding: 1.5rem;
-            border-radius: 12px;
+        .mission-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
-        }
-        
-        .icebreaker-question.lighthearted {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            border-left: 4px solid #f59e0b;
-        }
-        
-        .icebreaker-question.thoughtful {
-            background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);
-            border-left: 4px solid #8b5cf6;
-        }
-        
-        .question-label {
+            cursor: pointer;
+            height: 100%;
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            flex-direction: column;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+        
+        .mission-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .mission-card.lighthearted {
+            border-top: 4px solid #f59e0b;
+        }
+        
+        .mission-card.lighthearted:hover {
+            border-color: #f59e0b;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        }
+        
+        .mission-card.thoughtful {
+            border-top: 4px solid #8b5cf6;
+        }
+        
+        .mission-card.thoughtful:hover {
+            border-color: #8b5cf6;
+            background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);
+        }
+        
+        .mission-header {
+            padding: 1.5rem 1.5rem 1rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .mission-header i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .mission-card.lighthearted .mission-header i {
+            color: #f59e0b;
+        }
+        
+        .mission-card.thoughtful .mission-header i {
+            color: #8b5cf6;
+        }
+        
+        .mission-header h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0.5rem 0;
+        }
+        
+        .mission-type {
+            background: rgba(0, 0, 0, 0.1);
+            color: #4b5563;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
             font-weight: 600;
-            color: #374151;
-            margin-bottom: 0.75rem;
-            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         
-        .icebreaker-question p {
+        .mission-content {
+            padding: 0 1.5rem;
+            flex-grow: 1;
+        }
+        
+        .mission-content p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #374151;
             margin: 0;
-            font-size: 1.1rem;
-            line-height: 1.5;
-            color: #1f2937;
+        }
+        
+        .mission-action {
+            padding: 1rem 1.5rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.03);
+            margin-top: auto;
+        }
+        
+        .action-text {
+            color: #6b7280;
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mission-card:hover .action-text {
+            opacity: 1;
+        }
+        
+        .fallback-mission, .no-mission {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+            font-style: italic;
         }
         
         .members-section {
@@ -314,34 +397,56 @@
                     <div class="hub-card">
                         <div class="icebreaker-section">
                             <h2 class="icebreaker-title">
-                                <i class="fas fa-lightbulb"></i>
-                                スクワッドアイスブレーカー
+                                <i class="fas fa-rocket"></i>
+                                スクワッドミッション
                             </h2>
-                            <div class="icebreaker-content">
-                                {% if icebreakers and icebreakers.lighthearted and icebreakers.thoughtful %}
-                                    <div class="icebreaker-questions">
-                                        <div class="icebreaker-question lighthearted">
-                                            <div class="question-label">
+                            <p class="mission-subtitle">2つのミッションオプションから1つを選んで会話を始めよう！</p>
+                            
+                            {% if icebreakers and icebreakers.lighthearted and icebreakers.thoughtful %}
+                                <div class="row mission-options">
+                                    <!-- Mission Option 1 -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="mission-card lighthearted">
+                                            <div class="mission-header">
                                                 <i class="fas fa-laugh"></i>
-                                                楽しい質問
+                                                <h3>ミッション A</h3>
+                                                <span class="mission-type">楽しい質問</span>
                                             </div>
-                                            <p>{{ icebreakers.lighthearted }}</p>
-                                        </div>
-                                        
-                                        <div class="icebreaker-question thoughtful">
-                                            <div class="question-label">
-                                                <i class="fas fa-heart"></i>
-                                                深い質問
+                                            <div class="mission-content">
+                                                <p>{{ icebreakers.lighthearted }}</p>
                                             </div>
-                                            <p>{{ icebreakers.thoughtful }}</p>
+                                            <div class="mission-action">
+                                                <span class="action-text">このミッションを選択</span>
+                                            </div>
                                         </div>
                                     </div>
-                                {% elif squad.icebreaker_text %}
+                                    
+                                    <!-- Mission Option 2 -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="mission-card thoughtful">
+                                            <div class="mission-header">
+                                                <i class="fas fa-heart"></i>
+                                                <h3>ミッション B</h3>
+                                                <span class="mission-type">深い質問</span>
+                                            </div>
+                                            <div class="mission-content">
+                                                <p>{{ icebreakers.thoughtful }}</p>
+                                            </div>
+                                            <div class="mission-action">
+                                                <span class="action-text">このミッションを選択</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% elif squad.icebreaker_text %}
+                                <div class="fallback-mission">
                                     <p>{{ squad.icebreaker_text }}</p>
-                                {% else %}
+                                </div>
+                            {% else %}
+                                <div class="no-mission">
                                     <p>あなたのスクワッドミッションは先生によって生成されるとここに表示されます。</p>
-                                {% endif %}
-                            </div>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                     
