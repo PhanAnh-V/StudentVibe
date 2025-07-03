@@ -324,6 +324,8 @@ def teacher_login():
         password = form.password.data
         if password == "1234":  # Teacher password
             session['teacher_authenticated'] = True
+            session.permanent = True  # Make session permanent
+            logging.info(f"Teacher login successful. Session set: {session.get('teacher_authenticated')}")
             # No flash message here - redirect directly to avoid message carry-over
             return redirect(url_for('teacher'))
         else:
@@ -467,7 +469,14 @@ def create_simple_japanese_squads(students_data):
 @app.route('/teacher/create-squads', methods=['POST'])
 def create_squads():
     """AI-powered squad formation - The Sorting Hat of the application"""
-    if not session.get('teacher_authenticated'):
+    
+    # Debug session authentication
+    teacher_auth = session.get('teacher_authenticated')
+    logging.info(f"Create squads called. Teacher authenticated: {teacher_auth}")
+    logging.info(f"Session contents: {dict(session)}")
+    
+    if not teacher_auth:
+        logging.warning("Authentication failed in create_squads route")
         flash('Access denied. Please log in first.', 'error')
         return redirect(url_for('teacher_login'))
     
