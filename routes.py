@@ -1427,95 +1427,97 @@ def reset_database():
 def seed_database():
     """Temporary route to seed database with fake student data for testing"""
     try:
-        # Test student data: 4 Chinese, 2 Vietnamese, 2 English speakers
+        # Test student data: 4 Vietnamese and 4 Chinese students
         fake_students_data = [
+            # Vietnamese students
             {
-                'name': '李小明',
-                'country': 'China',
-                'gender': 'Male',
-                'question1': '和朋友一起打游戏',
-                'question2': '学习编程和人工智能',
-                'question3': '科技趋势和游戏策略',
-                'question4': '在线游戏聚会',
-                'question5': '收集稀有游戏卡片',
-                'question6': '电子舞曲音乐'
-            },
-            {
-                'name': '王小华',
-                'country': 'China',  
-                'gender': 'Female',
-                'question1': '在咖啡厅看小说',
-                'question2': '数字艺术和插画设计',
-                'question3': '书籍、电影和创意故事',
-                'question4': '看电影吃爆米花',
-                'question5': '收集古董书籍',
-                'question6': 'Lo-fi和独立音乐'
-            },
-            {
-                'name': '张伟',
-                'country': 'China',
-                'gender': 'Male',
-                'question1': '打篮球和户外运动',
-                'question2': '体育训练和健身',
-                'question3': '运动统计和健身方法',
-                'question4': '和朋友打篮球',
-                'question5': '收集运动鞋',
-                'question6': '嘻哈和说唱音乐'
-            },
-            {
-                'name': '刘美丽',
-                'country': 'China',
-                'gender': 'Female',
-                'question1': '画画和做手工艺品',
-                'question2': '传统艺术和书法',
-                'question3': '艺术文化和传统工艺',
-                'question4': '艺术创作之夜',
-                'question5': '收集艺术用品',
-                'question6': '古典音乐和民族音乐'
-            },
-            {
-                'name': 'Nguyễn Thị Lan',
+                'name': 'Nguyễn Thị Mai',
                 'country': 'Vietnam',
                 'gender': 'Female',
-                'question1': 'Nấu các món ăn truyền thống Việt Nam',
-                'question2': 'Nghệ thuật ẩm thực và chụp ảnh món ăn',
-                'question3': 'Văn hóa ẩm thực và kỹ thuật nấu nướng',
-                'question4': 'Nấu bữa tối cho gia đình',
-                'question5': 'Sưu tập sách nấu ăn cổ',
-                'question6': 'Nhạc dân ca Việt Nam'
+                'question1': 'Go on a motorbike adventure through the mountains of Sapa with traditional music playing.',
+                'question2': 'Traditional Vietnamese cooking - the way flavors tell stories of our heritage.',
+                'question3': 'When we tried to make bánh mì at home and the bread exploded in the oven.',
+                'question4': 'Remembering everyone\'s coffee preferences and surprising them with their favorite drink.',
+                'question5': 'A nostalgic Vietnamese ballad, a family drama about tradition, and a collection of old photos.',
+                'question6': 'Someone who keeps our cultural traditions alive while embracing new experiences.'
             },
             {
-                'name': 'Trần Văn Minh',
+                'name': 'Trần Văn Hùng',
                 'country': 'Vietnam',
                 'gender': 'Male',
-                'question1': 'Chụp ảnh và khám phá các con phố thành phố',
-                'question2': 'Nhiếp ảnh và kể chuyện bằng hình ảnh',
-                'question3': 'Nghệ thuật, nhiếp ảnh và văn hóa đô thị',
-                'question4': 'Đi dạo chụp ảnh quanh thành phố',
-                'question5': 'Sưu tập máy ảnh vintage',
-                'question6': 'Nhạc rock độc lập và alternative'
+                'question1': 'Take a boat trip through Ha Long Bay and discover hidden caves.',
+                'question2': 'Football (soccer) - it unites people across all social and economic backgrounds.',
+                'question3': 'Playing football in the rain and slipping into a mud puddle during the winning goal.',
+                'question4': 'Organizing group activities that everyone actually wants to participate in.',
+                'question5': 'An energetic pop song, an inspiring sports movie, and a football signed by my favorite player.',
+                'question6': 'Someone who brings competitive spirit but keeps it fun and encouraging.'
             },
             {
-                'name': 'Emma Johnson',
-                'country': 'Other',
+                'name': 'Phạm Thị Linh',
+                'country': 'Vietnam',
                 'gender': 'Female',
-                'question1': 'Reading fantasy novels in cozy places',
-                'question2': 'Creative writing and storytelling',
-                'question3': 'Literature, movies, and creative arts',
-                'question4': 'Reading with tea and snacks',
-                'question5': 'Collecting first edition books',
-                'question6': 'Folk and acoustic music'
+                'question1': 'Spend the day learning traditional áo dài making and then wear them to explore Hội An.',
+                'question2': 'Fashion design - creating beauty that makes people feel confident and proud.',
+                'question3': 'When our friend tried on my grandmother\'s áo dài and accidentally ripped it (but we fixed it together).',
+                'question4': 'Helping people discover their personal style and feel beautiful.',
+                'question5': 'A modern Vietnamese pop song, a romantic period drama, and my sketchbook of dress designs.',
+                'question6': 'Someone who pays attention to details and makes sure everyone feels included.'
             },
             {
-                'name': 'Michael Smith',
-                'country': 'Other',
+                'name': 'Lê Minh Tuấn',
+                'country': 'Vietnam',
                 'gender': 'Male',
-                'question1': 'Building electronics and coding projects',
-                'question2': 'Software engineering and robotics',
-                'question3': 'Technology innovation and engineering',
-                'question4': 'Coding and building projects',
-                'question5': 'Collecting vintage electronics',
-                'question6': 'Electronic and synthwave music'
+                'question1': 'Explore the Cu Chi tunnels and then try authentic street food in Ho Chi Minh City.',
+                'question2': 'History shows us how our ancestors\' struggles shaped who we are today.',
+                'question3': 'Getting lost in the tunnels during a school trip and emerging covered in dirt.',
+                'question4': 'Telling stories that make historical events feel real and personal.',
+                'question5': 'A patriotic Vietnamese song, a war documentary, and a collection of historical photographs.',
+                'question6': 'Someone who learns from the past to make better decisions for the group.'
+            },
+            # Chinese students
+            {
+                'name': '张雨萱',
+                'country': 'China',
+                'gender': 'Female',
+                'question1': 'Take a high-speed train to Xi\'an to see the Terracotta Warriors and eat authentic noodles.',
+                'question2': 'Calligraphy - every brushstroke carries centuries of wisdom and artistic expression.',
+                'question3': 'Practicing calligraphy and accidentally making a character that looked like a cartoon cat.',
+                'question4': 'Creating beautiful handwritten notes that make people feel special.',
+                'question5': 'A classical Chinese instrumental piece, a historical palace drama, and my favorite calligraphy brush.',
+                'question6': 'Someone who appreciates both tradition and innovation in equal measure.'
+            },
+            {
+                'name': '王浩然',
+                'country': 'China',
+                'gender': 'Male',
+                'question1': 'Climb the Great Wall at sunrise and have breakfast at a local village.',
+                'question2': 'Technology and AI - we\'re living in the most exciting time in human history.',
+                'question3': 'When I tried to impress friends by coding a game but it crashed every 5 seconds.',
+                'question4': 'Explaining complex technology in ways that anyone can understand.',
+                'question5': 'An electronic music track, a sci-fi movie about the future, and my laptop full of coding projects.',
+                'question6': 'Someone who can solve problems creatively and thinks outside the box.'
+            },
+            {
+                'name': '刘思琪',
+                'country': 'China',
+                'gender': 'Female',
+                'question1': 'Visit the pandas in Chengdu and spend the afternoon learning about wildlife conservation.',
+                'question2': 'Environmental science - protecting our planet for future generations is crucial.',
+                'question3': 'Volunteering at an animal shelter and getting completely covered in puppy kisses.',
+                'question4': 'Motivating people to care about environmental issues without being preachy.',
+                'question5': 'A peaceful nature soundtrack, a documentary about wildlife, and my collection of eco-friendly products.',
+                'question6': 'Someone who cares deeply about the world and inspires others to take action.'
+            },
+            {
+                'name': '陈嘉豪',
+                'country': 'China',
+                'gender': 'Male',
+                'question1': 'Explore Beijing\'s hutongs on bicycle and discover hidden traditional restaurants.',
+                'question2': 'Traditional Chinese martial arts - they teach discipline, respect, and inner strength.',
+                'question3': 'Attempting kung fu moves from movies and accidentally kicking a hole in the wall.',
+                'question4': 'Teaching people self-discipline and helping them build confidence.',
+                'question5': 'A powerful traditional Chinese song, a martial arts epic film, and my wooden practice sword.',
+                'question6': 'Someone who leads by example and helps others discover their inner strength.'
             }
         ]
         
