@@ -105,90 +105,47 @@
 
 {% block content %}
 <div class="teacher-container">
-    <!-- Header -->
+    <!-- Clean Header -->
     <div class="teacher-header">
-        <h1 class="teacher-title">
-            <i class="fas fa-chalkboard-teacher me-3"></i>
-            先生ダッシュボード
-        </h1>
-        <p class="teacher-description">
-            全ての学生提出を見る・管理する
-        </p>
-        <div class="teacher-actions">
-            <a href="{{ url_for('session_password') }}" class="btn btn-outline-primary me-2">
-                <i class="fas fa-key me-2"></i>
-                学生ログインページ
-            </a>
-            <a href="{{ url_for('teacher_logout') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-sign-out-alt me-2"></i>
-                ログアウト
-            </a>
-        </div>
-    </div>
-    
-    <!-- Statistics Card -->
-    <div class="stats-card">
-        <div class="row text-center">
-            <div class="col-12">
-                <div class="stat-item">
-                    <i class="fas fa-users"></i>
-                    <h3>{{ students|length }}</h3>
-                    <p>学生総数</p>
-                </div>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="teacher-title mb-1">先生ダッシュボード</h1>
+                <p class="teacher-description mb-0 text-muted">学生総数: {{ students|length }}</p>
+            </div>
+            <div class="teacher-actions">
+                <a href="{{ url_for('teacher_logout') }}" class="btn btn-outline-secondary">
+                    ログアウト
+                </a>
             </div>
         </div>
     </div>
     
     <!-- Main Dashboard Content -->
     <div class="dashboard-content">
-        <!-- Session Control Section -->
+        <!-- Session Control -->
         <div class="dashboard-section">
-            <h2 class="section-title">
-                <i class="fas fa-shield-alt me-2"></i>
-                セッション制御
-            </h2>
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <div class="session-password-display">
-                        <label class="form-label fw-bold">現在のセッションパスワード:</label>
-                        <div class="password-container">
-                            <span class="session-password-code">{{ session_password }}</span>
-                            <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyPassword()" title="クリップボードにコピー">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                        <small class="text-muted">このパスワードを学生と共有してアンケートにアクセスしてもらってください</small>
-                    </div>
+            <h3 class="section-title">セッション制御</h3>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="fw-bold">現在のセッションパスワード: </span>
+                    <span class="session-password-code">{{ session_password }}</span>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyPassword()">
+                        <i class="fas fa-copy"></i>
+                    </button>
                 </div>
-                <div class="col-md-4 text-end">
-                    <form action="{{ url_for('new_session_password') }}" method="POST" style="display: inline;">
-                        <button type="submit" class="btn btn-warning" onclick="return confirm('Generate a new session password? Students will need the new password to access the form.')">
-                            <i class="fas fa-sync-alt me-2"></i>
-                            新しいパスワードを生成
-                        </button>
-                    </form>
-                </div>
+                <form action="{{ url_for('new_session_password') }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-warning" onclick="return confirm('新しいパスワードを生成しますか？')">
+                        新しいパスワードを生成
+                    </button>
+                </form>
             </div>
         </div>
         
-        <!-- Squad Actions Section -->
-        <div class="squad-actions-section">
+        <!-- Student Management -->
+        <div class="dashboard-section">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="section-title">
-                    <i class="fas fa-users me-2"></i>
-                    学生管理
-                </h2>
-            </div>
-        </div>
-        
-        <!-- All Student Submissions Section -->
-        <div class="dashboard-section view-content">
-            <div class="students-section">
-        <h2 class="section-title">
-            <i class="fas fa-list me-2"></i>
-            全学生提出一覧
-            </h2>
-            <div class="squad-actions">
+                <h3 class="section-title mb-0">全学生提出一覧</h3>
+                <div class="squad-actions">
                 <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <button type="submit" id="create-squads-btn" class="btn btn-success me-2">
@@ -200,15 +157,13 @@
                 <form method="POST" action="{{ url_for('clear_squads') }}" style="display: inline;">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <button type="submit" 
-                            class="btn btn-danger me-2"
-                            onclick="return confirm('すべてのデータを削除してもよろしいですか？すべての学生とスクワッドのデータが完全に削除されます。この操作は元に戻せません。')">
-                        <i class="fas fa-trash-alt me-2"></i>
+                            class="btn btn-danger"
+                            onclick="return confirm('すべてのデータを削除してもよろしいですか？')">
                         すべて削除
                     </button>
                 </form>
-
+                </div>
             </div>
-        </div>
         
         {% if squads %}
             <div class="squads-grid">
