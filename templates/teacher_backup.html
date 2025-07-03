@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}先生ダッシュボード - 学生提出{% endblock %}
+{% block title %}Teacher Dashboard - Student Submissions{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -109,19 +109,19 @@
     <div class="teacher-header">
         <h1 class="teacher-title">
             <i class="fas fa-chalkboard-teacher me-3"></i>
-            先生ダッシュボード
+            Teacher Dashboard
         </h1>
         <p class="teacher-description">
-            全ての学生提出を見る・管理する
+            View and manage all student submissions
         </p>
         <div class="teacher-actions">
             <a href="{{ url_for('session_password') }}" class="btn btn-outline-primary me-2">
                 <i class="fas fa-key me-2"></i>
-                学生ログインページ
+                Student Login Page
             </a>
             <a href="{{ url_for('teacher_logout') }}" class="btn btn-outline-secondary">
                 <i class="fas fa-sign-out-alt me-2"></i>
-                ログアウト
+                Logout
             </a>
         </div>
     </div>
@@ -129,11 +129,25 @@
     <!-- Statistics Card -->
     <div class="stats-card">
         <div class="row text-center">
-            <div class="col-12">
+            <div class="col-md-4">
                 <div class="stat-item">
                     <i class="fas fa-users"></i>
                     <h3>{{ students|length }}</h3>
-                    <p>学生総数</p>
+                    <p>Total Students</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <i class="fas fa-calendar-day"></i>
+                    <h3>{{ students|selectattr('created_at')|selectattr('created_at', 'equalto', students|map(attribute='created_at')|max)|list|length if students else 0 }}</h3>
+                    <p>Today's Submissions</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <i class="fas fa-clock"></i>
+                    <h3>{% if students %}{{ students[0].created_at.strftime('%H:%M') }}{% else %}--{% endif %}</h3>
+                    <p>Latest Submission</p>
                 </div>
             </div>
         </div>
@@ -145,26 +159,26 @@
         <div class="dashboard-section">
             <h2 class="section-title">
                 <i class="fas fa-shield-alt me-2"></i>
-                セッション制御
+                Session Control
             </h2>
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <div class="session-password-display">
-                        <label class="form-label fw-bold">現在のセッションパスワード:</label>
+                        <label class="form-label fw-bold">Current Session Password:</label>
                         <div class="password-container">
                             <span class="session-password-code">{{ session_password }}</span>
-                            <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyPassword()" title="クリップボードにコピー">
+                            <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyPassword()" title="Copy to clipboard">
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
-                        <small class="text-muted">このパスワードを学生と共有してアンケートにアクセスしてもらってください</small>
+                        <small class="text-muted">Share this password with students to access the questionnaire</small>
                     </div>
                 </div>
                 <div class="col-md-4 text-end">
                     <form action="{{ url_for('new_session_password') }}" method="POST" style="display: inline;">
                         <button type="submit" class="btn btn-warning" onclick="return confirm('Generate a new session password? Students will need the new password to access the form.')">
                             <i class="fas fa-sync-alt me-2"></i>
-                            新しいパスワードを生成
+                            Generate New Password
                         </button>
                     </form>
                 </div>
@@ -176,8 +190,17 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="section-title">
                     <i class="fas fa-users me-2"></i>
-                    学生管理
+                    Student Management
                 </h2>
+                <div class="squad-actions">
+                    <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
+                        <button type="submit" class="btn btn-success me-2">
+                            <i class="fas fa-magic me-2"></i>
+                            Create AI Squads
+                        </button>
+                    </form>
+
+                </div>
             </div>
         </div>
         
@@ -186,24 +209,13 @@
             <div class="students-section">
         <h2 class="section-title">
             <i class="fas fa-list me-2"></i>
-            全学生提出一覧
+            All Student Submissions
             </h2>
             <div class="squad-actions">
                 <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <button type="submit" id="create-squads-btn" class="btn btn-success me-2">
+                    <button type="submit" class="btn btn-success me-2">
                         <i class="fas fa-magic me-2"></i>
-                        バイブスクワッド作成
-                    </button>
-                </form>
-                
-                <form method="POST" action="{{ url_for('clear_squads') }}" style="display: inline;">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <button type="submit" 
-                            class="btn btn-danger me-2"
-                            onclick="return confirm('すべてのデータを削除してもよろしいですか？すべての学生とスクワッドのデータが完全に削除されます。この操作は元に戻せません。')">
-                        <i class="fas fa-trash-alt me-2"></i>
-                        すべて削除
+                        Create Vibe Squads
                     </button>
                 </form>
 
@@ -238,15 +250,15 @@
                     <div class="squad-actions-bar">
                         <a href="{{ url_for('generate_icebreaker', squad_id=squad.id) }}" 
                            class="generate-icebreaker-btn"
-                           title="このスクワッドのためのAIアイスブレーカーを生成">
+                           title="Generate AI-powered icebreaker for this squad">
                             <i class="fas fa-lightbulb"></i>
-                            アイスブレーカー生成
+                            Generate Icebreaker
                         </a>
                         <a href="{{ url_for('delete_squad', squad_id=squad.id) }}" 
                            class="delete-squad-btn"
-                           onclick="return confirm('{{ squad.name }} スクワッド全体を削除してもよろしいですか？すべてのメンバーがグループ化されていない状態に移動します。')">
+                           onclick="return confirm('Are you sure you want to delete the entire {{ squad.name }} squad? This will move all members to ungrouped.')">
                             <i class="fas fa-trash-alt"></i>
-                            スクワッド削除
+                            Delete Squad
                         </a>
                     </div>
                     
@@ -276,7 +288,7 @@
                             <div class="member-actions">
                                 <a href="{{ url_for('delete_student', student_id=member.id) }}" 
                                    class="delete-student-btn" 
-                                   onclick="return confirm('{{ member.name }}を削除してもよろしいですか？')">
+                                   onclick="return confirm('Are you sure you want to delete {{ member.name }}?')">
                                     <i class="fas fa-trash-alt"></i>
                                 </a>
                             </div>
@@ -287,7 +299,7 @@
                     <div class="squad-footer">
                         <small class="text-muted">
                             <i class="fas fa-calendar me-1"></i>
-                            作成日: {{ squad.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            Created: {{ squad.created_at.strftime('%Y-%m-%d %H:%M') }}
                         </small>
                     </div>
                 </div>
@@ -359,6 +371,92 @@
         </div>
 
 
+                <div class="student-card" data-country="{{ student.country }}" data-gender="{{ student.gender }}">
+                    <div class="student-header">
+                        <div class="student-title">
+                            <h3 class="student-name">
+                                <i class="fas fa-user-graduate me-2"></i>
+                                <a href="{{ url_for('student_profile', student_id=student.id) }}" class="text-decoration-none text-dark">
+                                    {{ student.name }}
+                                </a>
+                                <span class="student-id-badge">ID: {{ student.id }}</span>
+                            </h3>
+                            <a href="{{ url_for('delete_student', student_id=student.id) }}" 
+                               class="delete-student-btn" 
+                               onclick="return confirm('Are you sure you want to delete {{ student.name }}?')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </div>
+                        <div class="student-meta">
+                            <div class="student-details">
+                                <span class="student-tag">
+                                    <i class="fas fa-globe me-1"></i>{{ student.country }}
+                                </span>
+                                <span class="student-tag">
+                                    <i class="fas fa-user me-1"></i>{{ student.gender }}
+                                </span>
+                            </div>
+                            <small class="student-date">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ student.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="student-content">
+                        <h4 class="vibes-label">
+                            <i class="fas fa-heart me-2"></i>
+                            Interests & Vibes
+                        </h4>
+                        <div class="vibes-text">
+                            {{ student.vibes }}
+                        </div>
+                        
+                        {% if student.interests %}
+                        <div class="interest-visualization mt-3">
+                            <h5 class="interest-label">
+                                <i class="fas fa-tags me-2"></i>
+                                Interest Categories
+                            </h5>
+                            <div class="interest-bubbles">
+                                {% for interest in student.interests %}
+                                <div class="interest-bubble" 
+                                     style="background-color: {{ interest.color }}; opacity: {{ 0.7 + (interest.intensity * 0.3) }}">
+                                    <i class="{{ interest.icon }} me-1"></i>
+                                    {{ interest.name }}
+                                    <span class="interest-intensity" 
+                                          style="width: {{ interest.intensity * 100 }}%"></span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="student-footer">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>
+                            Submitted {{ student.created_at.strftime('%m/%d at %H:%M') }}
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <h3 class="empty-title">No Submissions Yet</h3>
+                <p class="empty-message">
+                    Student submissions will appear here once they start filling out the form.
+                </p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>
+                    View Student Form
+                </a>
+            </div>
+        {% endif %}
     
     <!-- Solo Students Section -->
     {% if solo_students %}
@@ -492,54 +590,22 @@
 <div id="deleteModal" class="modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
-            <h4>削除の確認</h4>
+            <h4>Confirm Delete</h4>
             <span class="modal-close" onclick="closeDeleteModal()">&times;</span>
         </div>
         <div class="modal-body">
-            <p><strong id="deleteStudentName"></strong>を削除してもよろしいですか？</p>
-            <p class="text-danger">この操作は元に戻せません。</p>
+            <p>Are you sure you want to delete <strong id="deleteStudentName"></strong>?</p>
+            <p class="text-danger">This action cannot be undone.</p>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeDeleteModal()">キャンセル</button>
-            <button class="btn btn-danger" onclick="deleteStudent()">学生を削除</button>
+            <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn btn-danger" onclick="deleteStudent()">Delete Student</button>
         </div>
     </div>
 </div>
 
 <script>
 let deleteStudentId = null;
-
-// Suppress harmless browser console warnings
-window.addEventListener('error', function(e) {
-    // Suppress specific CSP and permissions policy errors that are harmless
-    const suppressedErrors = [
-        'allowfullscreen',
-        'allowpaymentrequest', 
-        'ambient-light-sensor',
-        'battery',
-        'execution-while-not-rendered',
-        'navigation-override',
-        'oversized-images',
-        'publickey-credentials',
-        'speaker-selection',
-        'unoptimized-images',
-        'unsized-media',
-        'pointer-lock'
-    ];
-    
-    if (suppressedErrors.some(err => e.message.includes(err))) {
-        e.preventDefault();
-        return false;
-    }
-});
-
-// Suppress unhandled promise rejections for clipboard operations
-window.addEventListener('unhandledrejection', function(e) {
-    if (e.reason && e.reason.message && e.reason.message.includes('clipboard')) {
-        e.preventDefault();
-        return false;
-    }
-});
 
 // Dashboard functionality
 document.addEventListener('DOMContentLoaded', function() {
@@ -549,35 +615,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const genderFilter = document.getElementById('genderFilter');
     const studentCount = document.getElementById('studentCount');
     
-    // Only add event listeners if elements exist
-    if (countryFilter && genderFilter && studentCount) {
-        function filterStudents() {
-            const selectedCountry = countryFilter.value;
-            const selectedGender = genderFilter.value;
-            const studentCards = document.querySelectorAll('.student-card');
-            let visibleCount = 0;
-            
-            studentCards.forEach(card => {
-                const cardCountry = card.dataset.country;
-                const cardGender = card.dataset.gender;
-                
-                const countryMatch = !selectedCountry || cardCountry === selectedCountry;
-                const genderMatch = !selectedGender || cardGender === selectedGender;
-                
-                if (countryMatch && genderMatch) {
-                    card.style.display = 'block';
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-            
-            studentCount.textContent = visibleCount;
-        }
+    function filterStudents() {
+        const selectedCountry = countryFilter.value;
+        const selectedGender = genderFilter.value;
+        const studentCards = document.querySelectorAll('.student-card');
+        let visibleCount = 0;
         
-        countryFilter.addEventListener('change', filterStudents);
-        genderFilter.addEventListener('change', filterStudents);
+        studentCards.forEach(card => {
+            const cardCountry = card.dataset.country;
+            const cardGender = card.dataset.gender;
+            
+            const countryMatch = !selectedCountry || cardCountry === selectedCountry;
+            const genderMatch = !selectedGender || cardGender === selectedGender;
+            
+            if (countryMatch && genderMatch) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        studentCount.textContent = visibleCount;
     }
+    
+    countryFilter.addEventListener('change', filterStudents);
+    genderFilter.addEventListener('change', filterStudents);
 });
 
 // Delete functionality
@@ -614,20 +677,14 @@ function deleteStudent() {
     }
 }
 
-// Copy password functionality with better error handling
+// Copy password functionality
 function copyPassword() {
     const passwordElement = document.querySelector('.session-password-code');
-    if (!passwordElement) {
-        console.log('Password element not found');
-        return;
-    }
+    const password = passwordElement.textContent;
     
-    const password = passwordElement.textContent.trim();
-    const button = event.target.closest('button');
-    
-    // Function to show success feedback
-    function showSuccess() {
-        if (!button) return;
+    navigator.clipboard.writeText(password).then(function() {
+        // Show success feedback
+        const button = event.target.closest('button');
         const originalHTML = button.innerHTML;
         button.innerHTML = '<i class="fas fa-check"></i>';
         button.classList.add('btn-success');
@@ -638,50 +695,28 @@ function copyPassword() {
             button.classList.remove('btn-success');
             button.classList.add('btn-outline-secondary');
         }, 2000);
-    }
-    
-    // Try modern clipboard API first (requires HTTPS or localhost)
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(password).then(function() {
-            showSuccess();
-        }).catch(function(err) {
-            console.log('Clipboard API failed, using fallback:', err);
-            fallbackCopy();
-        });
-    } else {
-        // Use fallback for non-secure contexts
-        fallbackCopy();
-    }
-    
-    function fallbackCopy() {
-        try {
-            // Create a temporary text area
-            const textArea = document.createElement('textarea');
-            textArea.value = password;
-            textArea.style.position = 'fixed';
-            textArea.style.left = '-999999px';
-            textArea.style.top = '-999999px';
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            
-            // Try to copy
-            const successful = document.execCommand('copy');
-            document.body.removeChild(textArea);
-            
-            if (successful) {
-                showSuccess();
-            } else {
-                console.log('Copy command failed');
-                // Show password in alert as final fallback
-                alert('パスワード: ' + password);
-            }
-        } catch (err) {
-            console.log('Fallback copy failed:', err);
-            // Show password in alert as final fallback
-            alert('パスワード: ' + password);
-        }
-    }
+    }).catch(function(err) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = password;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        // Show success feedback
+        const button = event.target.closest('button');
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        button.classList.add('btn-success');
+        button.classList.remove('btn-outline-secondary');
+        
+        setTimeout(function() {
+            button.innerHTML = originalHTML;
+            button.classList.remove('btn-success');
+            button.classList.add('btn-outline-secondary');
+        }, 2000);
+    });
 }
 
 // Close modal when clicking outside
@@ -793,44 +828,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     `;
     document.head.appendChild(style);
-    
-    // Add click handlers for Create Vibe Squads and Generate Icebreaker buttons
-    function addButtonClickHandlers() {
-        // Handle Create Vibe Squads button using ID
-        const createSquadsBtn = document.getElementById('create-squads-btn');
-        if (createSquadsBtn) {
-            createSquadsBtn.addEventListener('click', function(e) {
-                // Don't disable immediately - let the form submit first
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 作成中...';
-                
-                // Disable after a short delay to allow form submission
-                setTimeout(() => {
-                    this.disabled = true;
-                }, 100);
-            });
-        }
-        
-        // Handle all Generate Icebreaker buttons using class
-        const icebreakerBtns = document.querySelectorAll('.generate-icebreaker-btn');
-        icebreakerBtns.forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault(); // Prevent default navigation
-                
-                // Show processing state
-                this.style.pointerEvents = 'none';
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 処理中...';
-                
-                // Navigate to the URL after showing feedback
-                const url = this.href;
-                setTimeout(() => {
-                    window.location.href = url;
-                }, 100);
-            });
-        });
-    }
-    
-    // Call the function after DOM is loaded
-    addButtonClickHandlers();
 });
 </script>
 {% endblock %}
