@@ -212,43 +212,34 @@ def generate_personality_signature(student_answers):
             if question_key in student_answers:
                 answers_text += f"Question {i}: {student_answers[question_key]}\n"
         
-        prompt = f"""Analyze the student's 6 answers to generate a "Personality Signature."
-The signature should be insightful, positive, and inspiring.
-All text must be in natural, engaging Japanese.
+        prompt = f"""Create a concise Japanese personality profile based on these student answers:
 
-Student answers:
 {answers_text}
 
-Respond with a JSON object in this exact format:
+Return JSON with these 4 fields:
 {{
-  "archetype": "A creative Japanese nickname that captures their core essence.",
-  "core_strength": "A short paragraph describing their most powerful quality as a friend.",
-  "hidden_potential": "An inspiring insight about a potential they might not see in themselves.",
-  "conversation_catalyst": "A fun fact derived from their answers to start a conversation."
+  "archetype": "Creative Japanese nickname (2-4 words)",
+  "core_strength": "1 sentence about their strength as a friend",
+  "hidden_potential": "1 sentence about their untapped ability", 
+  "conversation_catalyst": "1 sentence conversation starter from their interests"
 }}
 
-Requirements:
-- archetype: 2-6 Japanese words (like 好奇心旺盛な探検家, 静かな語り部)
-- core_strength: 1-2 sentences about their best friendship quality
-- hidden_potential: 1-2 sentences about untapped abilities
-- conversation_catalyst: 1-2 sentences with a conversation starter based on their interests
-- ALL text must be in Japanese
-- Make it personal and specific to their answers"""
+Keep all text in Japanese and make it personal to their answers."""
 
-        # Create OpenAI client with timeout
+        # Create OpenAI client with shorter timeout to prevent hanging
         timeout_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY"),
-            timeout=30.0  # 30 second timeout for personality signature
+            timeout=15.0  # Reduced to 15 second timeout
         )
         
         response = timeout_client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": "You are a skilled personality analyst who creates insightful Japanese personality profiles."},
+                {"role": "system", "content": "You are a skilled personality analyst. Create concise Japanese personality profiles."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.7,
-            max_tokens=500,
+            max_tokens=300,  # Reduced token count for faster response
             response_format={"type": "json_object"}
         )
         

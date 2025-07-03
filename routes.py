@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, session, jsonify
+from flask import render_template, request, redirect, url_for, session, jsonify, flash
 from app import app, db
 from models import Student, SessionSettings, Squad
 from forms import StudentForm, TeacherLoginForm, StudentLoginForm
