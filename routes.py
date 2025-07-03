@@ -528,13 +528,16 @@ def create_squads():
         try:
             from openai_integration import group_students_into_squads
             # Add timeout handling for AI request
-            logging.info("Calling AI for squad formation...")
+            logging.info("🤖 Calling AI for squad formation...")
             ai_response = group_students_into_squads(students_data)
-            logging.info("AI squad formation completed successfully")
+            logging.info("🎯 AI squad formation completed successfully")
+            logging.info(f"AI Response: {ai_response}")
         except Exception as ai_error:
-            logging.error(f"AI squad formation failed: {str(ai_error)}")
+            logging.error(f"❌ AI squad formation failed: {str(ai_error)}")
             # Create a simple fallback grouping in Japanese style
+            logging.info("🔄 Using fallback Japanese squad creation...")
             ai_response = create_simple_japanese_squads(students_data)
+            logging.info(f"Fallback Response: {ai_response}")
         
         # Step 5: Parse AI response and validate structure
         if not isinstance(ai_response, dict) or 'squads' not in ai_response:
@@ -576,13 +579,16 @@ def create_squads():
                 db.session.delete(new_squad)
         
         # Step 7: Commit all changes to database
+        logging.info(f"💾 Committing {squads_created} squads to database...")
         db.session.commit()
+        logging.info("✅ Database commit successful!")
         
         if squads_created > 0:
             flash(f'Successfully created {squads_created} AI-powered squads! Students have been intelligently grouped based on shared interests.', 'success')
-            logging.info(f"Squad formation complete: {squads_created} squads created")
+            logging.info(f"🎉 Squad formation complete: {squads_created} squads created")
         else:
             flash('No squads were created. Please try again or check the student data.', 'warning')
+            logging.warning("⚠️ No squads were created!")
         
     except Exception as e:
         db.session.rollback()

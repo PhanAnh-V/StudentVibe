@@ -189,11 +189,11 @@
             全学生提出一覧
             </h2>
             <div class="squad-actions">
-                <form method="POST" action="{{ url_for('test_button') }}" style="display: inline;">
+                <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <button type="submit" id="create-squads-btn" class="btn btn-success me-2">
                         <i class="fas fa-magic me-2"></i>
-                        テストボタン (TEST)
+                        バイブスクワッド作成
                     </button>
                 </form>
                 
