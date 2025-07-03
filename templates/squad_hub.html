@@ -13,21 +13,21 @@
         .squad-hub-container {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 2rem 0;
+            padding: 1rem 0;
         }
         
         .hub-card {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
             overflow: hidden;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         
         .squad-header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
-            padding: 2.5rem 2rem;
+            padding: 1.8rem 1.5rem;
             text-align: center;
             position: relative;
         }
@@ -43,9 +43,9 @@
         }
         
         .squad-title {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
             position: relative;
             z-index: 1;
         }
@@ -59,9 +59,9 @@
         
         .icebreaker-section {
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
-            padding: 2.5rem 2rem;
-            margin: 2rem;
-            border-radius: 15px;
+            padding: 1.5rem 1.2rem;
+            margin: 1rem;
+            border-radius: 12px;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -112,9 +112,18 @@
         
         .icebreaker-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1.2rem;
+        }
+        
+        /* Additional mobile optimization for icebreaker cards */
+        @media (max-width: 768px) {
+            .icebreaker-cards {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                margin-top: 1rem;
+            }
         }
         
         .icebreaker-card {
@@ -257,7 +266,7 @@
         }
         
         .members-section {
-            padding: 2rem;
+            padding: 1.2rem;
         }
         
         .section-title {
@@ -379,23 +388,88 @@
         
         @media (max-width: 768px) {
             .squad-hub-container {
-                padding: 1rem 0;
+                padding: 0.5rem 0;
+            }
+            
+            .hub-card {
+                margin: 0.5rem;
+                border-radius: 12px;
+            }
+            
+            .squad-header {
+                padding: 1.2rem 1rem;
             }
             
             .squad-title {
-                font-size: 2rem;
+                font-size: 1.6rem;
+                line-height: 1.3;
+            }
+            
+            .shared-interests {
+                font-size: 0.85rem;
+                margin-top: 0.5rem;
             }
             
             .members-section {
-                padding: 1.5rem;
+                padding: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.3rem;
+                margin-bottom: 1rem;
+            }
+            
+            .member-card {
+                padding: 0.8rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .member-avatar {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+            
+            .icebreaker-section {
+                margin: 0.5rem;
+                padding: 1rem 0.8rem;
+            }
+            
+            .icebreaker-title {
+                font-size: 1.3rem;
+            }
+            
+            .question-item {
+                padding: 1rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            .question-text {
+                font-size: 1rem;
+                line-height: 1.5;
             }
             
             .back-link {
                 position: relative;
                 top: auto;
                 left: auto;
-                margin: 1rem;
+                margin: 0.5rem;
+                padding: 0.6rem 0.8rem;
+                font-size: 0.9rem;
                 display: inline-block;
+            }
+            
+            .squad-stats {
+                gap: 1.5rem;
+                margin-top: 0.8rem;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
+            
+            .stat-label {
+                font-size: 0.8rem;
             }
         }
     </style>
