@@ -411,6 +411,59 @@ def teacher_logout():
 
 
 
+def create_simple_japanese_squads(students_data):
+    """
+    Fallback squad creation with Japanese names when AI is unavailable
+    Creates simple squads of 3-4 students with Japanese styling
+    """
+    squads = []
+    current_squad = []
+    squad_names = [
+        "チームハーモニー",  # Team Harmony
+        "クリエイティブスピリッツ",  # Creative Spirits  
+        "アドベンチャーフレンズ",  # Adventure Friends
+        "ドリームチェイサーズ",  # Dream Chasers
+        "フューチャースターズ",  # Future Stars
+        "ユニティーパワー"  # Unity Power
+    ]
+    
+    interests_jp = [
+        "様々な興味と個性を持つ多様なグループです",  # Diverse group with various interests and personalities
+        "創造性と協力の精神で結ばれた仲間です",  # Companions united by creativity and cooperation
+        "新しい冒険と学びを追求するチームです",  # Team pursuing new adventures and learning
+        "お互いの強みを活かし合う素晴らしいグループです",  # Wonderful group that brings out each other's strengths
+        "共に成長し、夢を実現するパートナーです",  # Partners who grow together and realize dreams
+        "協力と友情で繋がった特別なチームです"  # Special team connected by cooperation and friendship
+    ]
+    
+    squad_number = 0
+    
+    for student in students_data:
+        current_squad.append(student['id'])
+        
+        # Create squad when we have 4 members or when we're at the end
+        if len(current_squad) == 4 or student == students_data[-1]:
+            # Don't create squads with less than 3 members unless it's the only option
+            if len(current_squad) >= 3 or len(squads) == 0:
+                squad_name = squad_names[squad_number % len(squad_names)]
+                shared_interest = interests_jp[squad_number % len(interests_jp)]
+                
+                squads.append({
+                    'squad_name': squad_name,
+                    'shared_interests': shared_interest,
+                    'member_ids': current_squad.copy()
+                })
+                squad_number += 1
+            else:
+                # Add remaining students to the last squad
+                if squads:
+                    squads[-1]['member_ids'].extend(current_squad)
+            
+            current_squad = []
+    
+    return {'squads': squads}
+
+
 @app.route('/teacher/create-squads', methods=['POST'])
 def create_squads():
     """AI-powered squad formation - The Sorting Hat of the application"""
@@ -454,8 +507,16 @@ def create_squads():
         logging.info(f"Sending {len(students_data)} students to AI for intelligent grouping")
         
         # Step 4: Send to AI for intelligent squad formation with Japanese names
-        from openai_integration import group_students_into_squads
-        ai_response = group_students_into_squads(students_data)
+        try:
+            from openai_integration import group_students_into_squads
+            # Add timeout handling for AI request
+            logging.info("Calling AI for squad formation...")
+            ai_response = group_students_into_squads(students_data)
+            logging.info("AI squad formation completed successfully")
+        except Exception as ai_error:
+            logging.error(f"AI squad formation failed: {str(ai_error)}")
+            # Create a simple fallback grouping in Japanese style
+            ai_response = create_simple_japanese_squads(students_data)
         
         # Step 5: Parse AI response and validate structure
         if not isinstance(ai_response, dict) or 'squads' not in ai_response:

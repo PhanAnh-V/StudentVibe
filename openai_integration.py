@@ -60,7 +60,13 @@ Requirements:
 
 Make each squad feel like a special club they'd be excited to join!"""
 
-        response = client.chat.completions.create(
+        # Create OpenAI client with timeout
+        timeout_client = OpenAI(
+            api_key=os.environ.get("OPENAI_API_KEY"),
+            timeout=30.0  # 30 second timeout
+        )
+        
+        response = timeout_client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a social dynamics expert specializing in creating meaningful connections between students."},
@@ -111,7 +117,13 @@ Return a JSON object with this format: {{"icebreakers": ["First Japanese questio
 
 IMPORTANT: Both questions MUST be in Japanese. Make them warm, engaging, and tailored to this specific squad."""
 
-        response = client.chat.completions.create(
+        # Create OpenAI client with timeout
+        timeout_client = OpenAI(
+            api_key=os.environ.get("OPENAI_API_KEY"),
+            timeout=25.0  # 25 second timeout for icebreakers
+        )
+        
+        response = timeout_client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are creating fun, personalized icebreaker questions for student squads."},
@@ -151,7 +163,13 @@ def translate_to_japanese(text):
             
         prompt = f"Please translate the following text to Japanese: {text}"
         
-        response = client.chat.completions.create(
+        # Create OpenAI client with timeout
+        timeout_client = OpenAI(
+            api_key=os.environ.get("OPENAI_API_KEY"),
+            timeout=15.0  # 15 second timeout for translations
+        )
+        
+        response = timeout_client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a professional translator. Translate the given text to natural, conversational Japanese that would be appropriate for students."},
