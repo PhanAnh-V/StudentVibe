@@ -28,31 +28,36 @@ def group_students_into_squads(students_data):
             for i in range(1, 7):
                 students_text += f"- Q{i}: {student[f'question{i}']}\n"
         
-        prompt = f"""You are a social dynamics expert specializing in creating meaningful connections between students.
+        prompt = f"""You are a creative team leader and social dynamics expert who specializes in forming amazing student squads.
 
 Below are student responses to 6 questions about their interests, passions, and personalities:
 
 {students_text}
 
-Your task:
+Your mission:
 1. Group these students into squads of 3-4 members each
-2. Ensure each squad has a good balance of shared interests AND complementary qualities
-3. Look for both similarities that will bond them and differences that will help them grow
-4. Consider personality types, energy levels, and collaborative potential
+2. Create fun, memorable squad names that reflect their collective identity
+3. Find the common threads that will bond each group together
+4. Balance shared interests with complementary strengths
+5. Think like a camp counselor - make it exciting and meaningful!
 
 Respond with a JSON object in this exact format:
 {{
     "squads": [
         {{
-            "name": "Creative and engaging squad name",
+            "squad_name": "Fun, creative English name (like 'Adventure Seekers' or 'Creative Spirits')",
             "member_ids": [list of student IDs],
-            "shared_interests": "Brief description of what bonds this group",
-            "reasoning": "Why these students work well together"
+            "shared_interests": "Brief, inspiring summary of what bonds this group together"
         }}
     ]
 }}
 
-Make sure every student is assigned to exactly one squad."""
+Requirements:
+- Every student must be assigned to exactly one squad
+- Squad names should be engaging and reflect the group's collective vibe
+- Shared interests should show why these students belong together
+
+Make each squad feel like a special club they'd be excited to join!"""
 
         response = client.chat.completions.create(
             model="gpt-4o",

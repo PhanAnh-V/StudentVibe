@@ -623,14 +623,14 @@ def create_squads():
         # Step 6: Process each AI-suggested squad and save to database
         for squad_data in ai_response['squads']:
             # Validate squad structure
-            required_keys = ['name', 'shared_interests', 'member_ids']
+            required_keys = ['squad_name', 'shared_interests', 'member_ids']
             if not all(key in squad_data for key in required_keys):
                 logging.warning(f"Skipping squad with missing keys: {squad_data}")
                 continue
             
-            # Create new squad record
+            # Create new squad record with creative name and shared interests
             new_squad = Squad(
-                name=squad_data['name'],
+                name=squad_data['squad_name'],
                 shared_interests=squad_data['shared_interests']
             )
             db.session.add(new_squad)
@@ -643,13 +643,13 @@ def create_squads():
                     student = student_map[student_id]
                     student.squad_id = new_squad.id
                     members_assigned += 1
-                    logging.info(f"Assigned {student.name} to squad '{new_squad.name}'")
+                    logging.info(f"Assigned {student.name} to squad '{squad_data['squad_name']}'")
                 else:
                     logging.warning(f"Student ID {student_id} not found in database")
             
             if members_assigned > 0:
                 squads_created += 1
-                logging.info(f"Created squad '{new_squad.name}' with {members_assigned} members")
+                logging.info(f"Created squad '{squad_data['squad_name']}' with {members_assigned} members")
             else:
                 # Remove empty squads
                 db.session.delete(new_squad)
