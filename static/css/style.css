@@ -665,3 +665,15 @@ body {
         gap: 0.5rem;
     }
 }
+
+/* Fix for questionnaire textarea wrapping */
+.form-group textarea.form-control,
+.question-input,
+textarea.question-input,
+.questionnaire-card .question-input,
+.question-content .question-input {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    text-overflow: clip !important;
+}
