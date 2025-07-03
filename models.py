@@ -71,6 +71,10 @@ class Student(db.Model):
     submission_id = db.Column(db.String(7), unique=True, nullable=True)
     squad_id = db.Column(db.Integer, db.ForeignKey('squads.id'), nullable=True)
     archetype = db.Column(db.String(100), nullable=True)  # AI-generated Japanese archetype nickname
+    # Personality signature fields
+    core_strength = db.Column(db.Text, nullable=True)  # Core strength/talent
+    hidden_potential = db.Column(db.Text, nullable=True)  # Hidden potential/untapped abilities
+    conversation_catalyst = db.Column(db.Text, nullable=True)  # Conversation starter/catalyst
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     
     def __repr__(self):

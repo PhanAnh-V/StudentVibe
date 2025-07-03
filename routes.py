@@ -159,9 +159,9 @@ def submit_form():
             student.gender = form.gender.data
             student.submission_id = submission_id
             
-            # Generate AI-powered archetype nickname
+            # Generate AI-powered archetype nickname and personality signature
             try:
-                from openai_integration import generate_archetype_nickname
+                from openai_integration import generate_archetype_nickname, generate_personality_signature
                 student_answers = {
                     'question1': form.question1.data,
                     'question2': form.question2.data,
@@ -170,11 +170,24 @@ def submit_form():
                     'question5': form.question5.data,
                     'question6': form.question6.data
                 }
+                
+                # Generate archetype nickname
                 student.archetype = generate_archetype_nickname(student_answers)
                 logging.info(f"Generated archetype '{student.archetype}' for student {student.name}")
+                
+                # Generate personality signature
+                personality_signature = generate_personality_signature(student_answers)
+                student.core_strength = personality_signature.get('core_strength', '')
+                student.hidden_potential = personality_signature.get('hidden_potential', '')
+                student.conversation_catalyst = personality_signature.get('conversation_catalyst', '')
+                logging.info(f"Generated personality signature for student {student.name}")
+                
             except Exception as e:
-                logging.error(f"Failed to generate archetype for {student.name}: {str(e)}")
+                logging.error(f"Failed to generate AI insights for {student.name}: {str(e)}")
                 student.archetype = "個性豊かな学生"  # Default fallback
+                student.core_strength = "創造的な思考力と独自の視点を持っています。"
+                student.hidden_potential = "リーダーシップの才能が眠っている可能性があります。"
+                student.conversation_catalyst = "趣味や興味のあることについて話すと、とても輝いて見えます。"
             
             db.session.add(student)
             db.session.commit()

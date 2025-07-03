@@ -244,3 +244,81 @@ IMPORTANT: Respond with ONLY the Japanese archetype nickname. No explanations, n
     except Exception as e:
         logging.error(f"Error generating archetype nickname: {str(e)}")
         return "個性豊かな学生"  # Default: "Unique Student"
+
+
+def generate_personality_signature(student_answers):
+    """
+    Generate a comprehensive personality signature with three key insights
+    """
+    try:
+        # Prepare the student answers text
+        answers_text = ""
+        for i in range(1, 7):
+            question_key = f'question{i}'
+            if question_key in student_answers:
+                answers_text += f"Question {i}: {student_answers[question_key]}\n"
+        
+        prompt = f"""You are a skilled personality analyst who creates insightful Japanese personality profiles.
+
+Analyze these student responses and create a personality signature with three key insights. Write everything in Japanese.
+
+Student responses:
+{answers_text}
+
+Create exactly three insights:
+
+1. CORE_STRENGTH: Their main talent/strength (1-2 sentences in Japanese)
+2. HIDDEN_POTENTIAL: Something they could develop/untapped ability (1-2 sentences in Japanese)  
+3. CONVERSATION_CATALYST: A perfect conversation starter for them (1-2 sentences in Japanese)
+
+Requirements:
+- Write everything in Japanese
+- Be specific and personal based on their answers
+- Keep each insight concise (1-2 sentences)
+- Make it feel encouraging and insightful
+
+Return a JSON object with this format:
+{{
+    "core_strength": "...",
+    "hidden_potential": "...",
+    "conversation_catalyst": "..."
+}}
+
+IMPORTANT: All three values must be in Japanese. Make them personal and specific to this student."""
+
+        # Create OpenAI client with timeout
+        timeout_client = OpenAI(
+            api_key=os.environ.get("OPENAI_API_KEY"),
+            timeout=30.0  # 30 second timeout for personality signature
+        )
+        
+        response = timeout_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "You are a skilled personality analyst who creates insightful Japanese personality profiles."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=400,
+            response_format={"type": "json_object"}
+        )
+        
+        if response.choices[0].message.content:
+            result = json.loads(response.choices[0].message.content)
+            logging.info(f"Generated personality signature: {result}")
+            return result
+        else:
+            logging.warning("Empty response from AI personality signature generation")
+            return {
+                "core_strength": "創造的な思考力と独自の視点を持っています。",
+                "hidden_potential": "リーダーシップの才能が眠っている可能性があります。",
+                "conversation_catalyst": "趣味や興味のあることについて話すと、とても輝いて見えます。"
+            }
+            
+    except Exception as e:
+        logging.error(f"Error generating personality signature: {str(e)}")
+        return {
+            "core_strength": "創造的な思考力と独自の視点を持っています。",
+            "hidden_potential": "リーダーシップの才能が眠っている可能性があります。",
+            "conversation_catalyst": "趣味や興味のあることについて話すと、とても輝いて見えます。"
+        }

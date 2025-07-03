@@ -422,6 +422,45 @@
                             </div>
                         </div>
                         
+                        <!-- Personality Signature -->
+                        <div class="character-abilities">
+                            <h2 class="abilities-title">
+                                <i class="fas fa-user-circle"></i>
+                                パーソナリティ・シグネチャー
+                            </h2>
+                            <div class="abilities-grid">
+                                {% if student.core_strength %}
+                                <div class="ability-card">
+                                    <div class="ability-icon">
+                                        <i class="fas fa-crown"></i>
+                                    </div>
+                                    <div class="ability-name">コア・ストレングス</div>
+                                    <div class="ability-description japanese-text">{{ student.core_strength }}</div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if student.hidden_potential %}
+                                <div class="ability-card">
+                                    <div class="ability-icon">
+                                        <i class="fas fa-gem"></i>
+                                    </div>
+                                    <div class="ability-name">隠れた可能性</div>
+                                    <div class="ability-description japanese-text">{{ student.hidden_potential }}</div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if student.conversation_catalyst %}
+                                <div class="ability-card">
+                                    <div class="ability-icon">
+                                        <i class="fas fa-comments"></i>
+                                    </div>
+                                    <div class="ability-name">会話の触媒</div>
+                                    <div class="ability-description japanese-text">{{ student.conversation_catalyst }}</div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
                         <!-- Character Abilities (Core Sparks) -->
                         <div class="character-abilities">
                             <h2 class="abilities-title">
