@@ -645,34 +645,7 @@
                 });
             });
             
-            // Add progress indicator with enhanced functionality
-            const allQuestionInputs = document.querySelectorAll('.question-input');
-            let completedQuestions = 0;
-            
-            function updateProgress() {
-                completedQuestions = 0;
-                allQuestionInputs.forEach(input => {
-                    if (input.value.trim().length > 10) {
-                        completedQuestions++;
-                    }
-                });
-                
-                // Update submit button state based on progress
-                if (submitBtn) {
-                    if (completedQuestions >= 3) {
-                        submitBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-                    } else {
-                        submitBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                    }
-                }
-            }
-            
-            allQuestionInputs.forEach(input => {
-                input.addEventListener('input', updateProgress);
-            });
-            
-            // Initialize progress check
-            updateProgress();
+            // Progress tracking will be handled by main.js validation
             
             // Add helpful hint for users about Enter key behavior
             const firstTextarea = document.querySelector('.question-input');
@@ -690,5 +663,8 @@
             }
         });
     </script>
+    
+    <!-- Enhanced form validation -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
