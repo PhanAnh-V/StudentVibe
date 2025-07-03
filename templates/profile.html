@@ -359,139 +359,205 @@
         
         @media (max-width: 768px) {
             .character-profile-container {
-                padding: 0.5rem 0;
+                padding: 0;
+                background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            }
+            
+            .container {
+                padding: 0;
+                max-width: 100%;
             }
             
             .character-sheet {
-                margin: 0.5rem;
-                border-radius: 12px;
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
             }
             
             .character-header {
-                padding: 1.2rem 1rem;
+                padding: 2rem 1rem 1.5rem;
+                margin-bottom: 0;
+            }
+            
+            .character-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+                margin-bottom: 1rem;
             }
             
             .character-name {
-                font-size: 1.6rem;
-                line-height: 1.3;
-                margin-bottom: 0.5rem;
+                font-size: 1.8rem;
+                line-height: 1.2;
+                margin-bottom: 0.3rem;
             }
             
-            .character-subtitle {
-                font-size: 0.85rem;
-                margin-bottom: 0.8rem;
+            .character-archetype {
+                font-size: 1rem;
+                margin-bottom: 0.3rem;
+            }
+            
+            .character-location {
+                font-size: 0.9rem;
+                margin-bottom: 0;
+            }
+            
+            .character-stats {
+                padding: 1rem 0;
+                background: #1e2a3a;
             }
             
             .stats-grid {
                 grid-template-columns: 1fr;
-                gap: 0.8rem;
-                padding: 1rem;
+                gap: 0.5rem;
+                padding: 0 1rem;
             }
             
             .stat-card {
-                padding: 1rem;
+                padding: 0.8rem;
+                border-radius: 8px;
+                margin-bottom: 0.5rem;
             }
             
             .stat-label {
-                font-size: 0.8rem;
+                font-size: 0.75rem;
+                margin-bottom: 0.2rem;
             }
             
             .stat-value {
-                font-size: 1.2rem;
+                font-size: 1rem;
+            }
+            
+            .character-abilities {
+                padding: 1rem 0;
+                background: #2c3e50;
             }
             
             .abilities-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
-                padding: 1rem;
+                gap: 0.8rem;
+                padding: 0 1rem;
             }
             
             .ability-card {
                 padding: 1rem;
+                border-radius: 10px;
             }
             
             .ability-title {
-                font-size: 1.1rem;
-                margin-bottom: 0.5rem;
+                font-size: 1rem;
+                margin-bottom: 0.4rem;
             }
             
             .ability-description {
-                font-size: 0.9rem;
-                line-height: 1.5;
+                font-size: 0.85rem;
+                line-height: 1.4;
             }
             
             .signature-section {
                 padding: 1rem;
+                background: #34495e;
             }
             
             .signature-title {
-                font-size: 1.3rem;
+                font-size: 1.4rem;
                 margin-bottom: 1rem;
+                text-align: center;
             }
             
             .signature-cards {
-                gap: 0.8rem;
+                display: block;
+                gap: 0;
             }
             
             .signature-card {
                 padding: 1rem;
-                margin-bottom: 0.8rem;
+                margin-bottom: 1rem;
+                border-radius: 10px;
+                width: 100%;
             }
             
             .signature-card h4 {
                 font-size: 1rem;
                 margin-bottom: 0.5rem;
+                text-align: center;
             }
             
             .signature-card p {
                 font-size: 0.9rem;
-                line-height: 1.5;
+                line-height: 1.4;
+                text-align: center;
             }
             
             .answers-section {
                 padding: 1rem;
+                background: #2c3e50;
+            }
+            
+            .answers-title {
+                font-size: 1.4rem;
+                margin-bottom: 1rem;
+                text-align: center;
+                color: white;
             }
             
             .question-card {
                 padding: 1rem;
-                margin-bottom: 0.8rem;
+                margin-bottom: 1rem;
+                border-radius: 10px;
+                background: #34495e;
             }
             
             .question-title {
-                font-size: 1rem;
+                font-size: 0.9rem;
                 margin-bottom: 0.5rem;
+                color: #3498db;
+                font-weight: 600;
             }
             
             .answer-text {
-                font-size: 0.9rem;
-                line-height: 1.5;
+                font-size: 0.85rem;
+                line-height: 1.4;
+                color: #ecf0f1;
             }
             
             .back-navigation {
-                position: relative;
-                top: auto;
-                left: auto;
-                margin: 0.5rem;
-                padding: 0.6rem 0.8rem;
-                font-size: 0.9rem;
-                display: inline-block;
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                margin: 0;
+                padding: 0.5rem 0.8rem;
+                font-size: 0.8rem;
+                z-index: 1000;
+                border-radius: 20px;
             }
             
             .submission-id-badge {
-                position: relative;
-                top: auto;
-                right: auto;
-                margin: 0.8rem auto;
-                display: block;
-                text-align: center;
-                width: fit-content;
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                margin: 0;
                 padding: 0.4rem 0.8rem;
-                font-size: 0.8rem;
+                font-size: 0.7rem;
+                z-index: 1000;
+                border-radius: 15px;
+                background: rgba(52, 152, 219, 0.9);
+                color: white;
+                width: auto;
+                text-align: center;
             }
             
             .level-badge {
-                padding: 0.3rem 0.6rem;
-                font-size: 0.8rem;
+                padding: 0.2rem 0.5rem;
+                font-size: 0.7rem;
+                border-radius: 10px;
+            }
+            
+            /* Full-width mobile optimization */
+            .col-lg-10,
+            .col-md-12 {
+                padding: 0;
+                max-width: 100%;
             }
         }
     </style>
