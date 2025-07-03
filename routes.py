@@ -310,17 +310,22 @@ def student_profile(student_id):
                 {'question': 'Team Quality', 'answer': student.question6, 'answer_jp': getattr(student, 'question6_jp', '')},
             ]
         
-        # Get enhanced profile data
+        # Get enhanced profile data (legacy compatibility)
         vibes_text = student.vibes or student.get_combined_answers()
-        archetype = get_creative_vibe_archetype(student)
-        core_sparks = get_core_sparks(vibes_text)
         interests = get_interest_categories_with_colors(vibes_text)
+        
+        # Personality Signature data (new AI-generated fields)
+        personality_signature = {
+            'archetype': getattr(student, 'archetype', '個性豊かな学生'),
+            'core_strength': getattr(student, 'core_strength', ''),
+            'hidden_potential': getattr(student, 'hidden_potential', ''),
+            'conversation_catalyst': getattr(student, 'conversation_catalyst', '')
+        }
         
         return render_template('profile.html', 
                              student=student,
                              student_answers=student_answers,
-                             archetype=archetype,
-                             core_sparks=core_sparks,
+                             personality_signature=personality_signature,
                              interests=interests)
         
     except Exception as e:
