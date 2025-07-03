@@ -3,87 +3,83 @@
 {% block title %}送信完了 - 情報が送信されました{% endblock %}
 
 {% block content %}
-<div class="success-container">
-    <div class="success-card">
-        <!-- Success Icon -->
-        <div class="success-icon">
-            <i class="fas fa-check-circle"></i>
-        </div>
-        
-        <!-- Success Message -->
-        <div class="success-content">
-            <h1 class="success-title">ありがとうございました{% if student_name %}、{{ student_name }}さん{% endif %}！</h1>
-            <p class="success-message">
-                あなたの回答を受け取りました。
-            </p>
-            
-            {% if submission_id %}
-            <div class="submission-id-section">
-                <div class="submission-id-card">
-                    <h3 class="submission-id-title">
-                        <i class="fas fa-id-card me-2"></i>
-                        あなたの個人ID
-                    </h3>
-                    <div class="submission-id-code">{{ submission_id }}</div>
-                    <p class="submission-id-message">
-                        <strong>必ず保存してください！</strong> 後でバイブスクワッドを見つけるときに使います。
+<div class="success-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+                
+                <!-- Main Success Card -->
+                <div class="success-card">
+                    <!-- Success Icon -->
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    
+                    <!-- Title and Message -->
+                    <h1 class="success-title">
+                        ありがとうございました{% if student_name %}、{{ student_name }}さん{% endif %}！
+                    </h1>
+                    <p class="success-subtitle">
+                        あなたの回答を正常に受け取りました
                     </p>
+                    
+                    <!-- Submission ID Section -->
+                    {% if submission_id %}
+                    <div class="submission-id-container">
+                        <div class="submission-id-label">
+                            <i class="fas fa-id-card me-2"></i>
+                            あなたの個人ID
+                        </div>
+                        <div class="submission-id-value">{{ submission_id }}</div>
+                        <div class="submission-id-note">
+                            このIDを保存してスクワッドを見つけてください
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Status Badge -->
+                    <div class="status-badge">
+                        <i class="fas fa-check-circle me-2"></i>
+                        処理完了
+                    </div>
                 </div>
-            </div>
-            {% endif %}
-            
-            <div class="success-details">
-                <div class="success-detail-item">
-                    <i class="fas fa-database me-2"></i>
-                    <span>情報が安全に保存されました</span>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <a href="{{ url_for('find_squad') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-search me-2"></i>
+                        マイスクワッドを探す
+                    </a>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-plus me-2"></i>
+                        別の回答を送信
+                    </a>
                 </div>
-                <div class="success-detail-item">
-                    <i class="fas fa-clock me-2"></i>
-                    <span>送信されました</span>
+                
+                <!-- Footer Info -->
+                <div class="success-footer">
+                    <div class="row g-4">
+                        <div class="col-4">
+                            <div class="info-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>セキュア</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="info-item">
+                                <i class="fas fa-users"></i>
+                                <span>コミュニティ</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="info-item">
+                                <i class="fas fa-rocket"></i>
+                                <span>成長</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="success-detail-item">
-                    <i class="fas fa-user-graduate me-2"></i>
-                    <span>処理準備完了</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Action Buttons -->
-        <div class="success-actions">
-            <a href="{{ url_for('find_squad') }}" class="btn btn-primary btn-lg me-2">
-                <i class="fas fa-search me-2"></i>
-                マイスクワッドを探す
-            </a>
-            <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-lg">
-                <i class="fas fa-plus me-2"></i>
-                別の回答を送信
-            </a>
-        </div>
-    </div>
-    
-    <!-- Additional Information -->
-    <div class="success-footer">
-        <div class="row text-center">
-            <div class="col-md-4">
-                <div class="success-info-item">
-                    <i class="fas fa-shield-alt"></i>
-                    <h6>セキュア</h6>
-                    <small class="text-muted">あなたのデータは保護されています</small>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="success-info-item">
-                    <i class="fas fa-users"></i>
-                    <h6>コミュニティ</h6>
-                    <small class="text-muted">学生ネットワークに参加しよう</small>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="success-info-item">
-                    <i class="fas fa-rocket"></i>
-                    <h6>成長</h6>
-                    <small class="text-muted">あなたの旅路を充実させよう</small>
-                </div>
+                
             </div>
         </div>
     </div>
@@ -92,48 +88,186 @@
 
 {% block extra_css %}
 <style>
-.submission-id-section {
-    margin: 2rem 0;
+.success-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 2rem 0;
+    font-family: 'Noto Sans JP', sans-serif;
 }
 
-.submission-id-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1.5rem;
-    border-radius: 15px;
+.success-card {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem 2rem;
     text-align: center;
-    margin: 1rem 0;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.submission-id-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
+.success-icon {
+    font-size: 4rem;
+    color: #10b981;
+    margin-bottom: 1.5rem;
+}
+
+.success-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.success-subtitle {
+    font-size: 1.1rem;
+    color: #6b7280;
+    margin-bottom: 2rem;
+    font-weight: 400;
+}
+
+.submission-id-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
     color: white;
 }
 
-.submission-id-code {
-    font-size: 2.5rem;
-    font-weight: bold;
+.submission-id-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    opacity: 0.9;
+}
+
+.submission-id-value {
+    font-size: 2.2rem;
+    font-weight: 800;
     font-family: 'Courier New', monospace;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
     margin: 1rem 0;
     padding: 0.8rem;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.submission-id-message {
-    font-size: 1rem;
+.submission-id-note {
+    font-size: 0.95rem;
+    opacity: 0.9;
     margin-bottom: 0;
-    color: rgba(255, 255, 255, 0.9);
 }
 
-.submission-id-message strong {
-    color: #ffeb3b;
-    font-weight: 700;
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    background: #ecfdf5;
+    color: #059669;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 1rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+}
+
+.action-buttons .btn {
+    border-radius: 12px;
+    padding: 0.8rem 2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.action-buttons .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.action-buttons .btn-secondary {
+    background: #f8fafc;
+    color: #64748b;
+    border: 2px solid #e2e8f0;
+}
+
+.action-buttons .btn-secondary:hover {
+    background: #f1f5f9;
+    transform: translateY(-1px);
+    border-color: #cbd5e1;
+}
+
+.success-footer {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.info-item {
+    text-align: center;
+    padding: 1rem;
+}
+
+.info-item i {
+    font-size: 1.5rem;
+    color: #667eea;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.info-item span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .success-page {
+        padding: 1rem 0;
+    }
+    
+    .success-card {
+        padding: 2rem 1.5rem;
+        margin: 0 1rem 2rem;
+    }
+    
+    .success-title {
+        font-size: 1.5rem;
+    }
+    
+    .submission-id-value {
+        font-size: 1.8rem;
+        letter-spacing: 1px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+    }
+    
+    .success-footer {
+        margin: 0 1rem;
+    }
 }
 </style>
 {% endblock %}
@@ -141,25 +275,31 @@
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Add entrance animation
+    // Smooth entrance animation
     const successCard = document.querySelector('.success-card');
     if (successCard) {
         successCard.style.opacity = '0';
-        successCard.style.transform = 'translateY(20px)';
+        successCard.style.transform = 'translateY(30px)';
         
         setTimeout(() => {
-            successCard.style.transition = 'all 0.5s ease-out';
+            successCard.style.transition = 'all 0.6s ease-out';
             successCard.style.opacity = '1';
             successCard.style.transform = 'translateY(0)';
-        }, 100);
+        }, 150);
     }
     
-    // Update timestamp
-    const timeElement = document.querySelector('.success-detail-item:nth-child(2) span');
-    if (timeElement) {
-        const now = new Date();
-        timeElement.textContent = `${now.toLocaleTimeString()}に送信されました`;
-    }
+    // Animate action buttons with stagger
+    const buttons = document.querySelectorAll('.action-buttons .btn');
+    buttons.forEach((btn, index) => {
+        btn.style.opacity = '0';
+        btn.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            btn.style.transition = 'all 0.4s ease-out';
+            btn.style.opacity = '1';
+            btn.style.transform = 'translateY(0)';
+        }, 400 + (index * 100));
+    });
 });
 </script>
 {% endblock %}
