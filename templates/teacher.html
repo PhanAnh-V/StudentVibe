@@ -190,7 +190,7 @@
             </h2>
             <div class="squad-actions">
                 <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
-                    <button type="submit" class="btn btn-success me-2">
+                    <button type="submit" id="create-squads-btn" class="btn btn-success me-2">
                         <i class="fas fa-magic me-2"></i>
                         バイブスクワッド作成
                     </button>
@@ -794,8 +794,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add click handlers for Create Vibe Squads and Generate Icebreaker buttons
     function addButtonClickHandlers() {
-        // Handle Create Vibe Squads button
-        const createSquadsBtn = document.querySelector('button[onclick*="create-squads"]');
+        // Handle Create Vibe Squads button using ID
+        const createSquadsBtn = document.getElementById('create-squads-btn');
         if (createSquadsBtn) {
             createSquadsBtn.addEventListener('click', function() {
                 this.disabled = true;
@@ -803,12 +803,21 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // Handle all Generate Icebreaker buttons
-        const icebreakerBtns = document.querySelectorAll('button[onclick*="generate-icebreaker"]');
+        // Handle all Generate Icebreaker buttons using class
+        const icebreakerBtns = document.querySelectorAll('.generate-icebreaker-btn');
         icebreakerBtns.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                this.disabled = true;
+            btn.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent default navigation
+                
+                // Show processing state
+                this.style.pointerEvents = 'none';
                 this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 処理中...';
+                
+                // Navigate to the URL after showing feedback
+                const url = this.href;
+                setTimeout(() => {
+                    window.location.href = url;
+                }, 100);
             });
         });
     }
