@@ -143,25 +143,24 @@ def submit_form():
                         japanese_translations.append("")  # Save empty translation if it fails
             
             # Create new student record with both original and translated answers
-            student = Student(
-                name=form.name.data,
-                vibes=combined_vibes,
-                question1=form.question1.data,
-                question2=form.question2.data,
-                question3=form.question3.data,
-                question4=form.question4.data,
-                question5=form.question5.data,
-                question6=form.question6.data,
-                question1_jp=japanese_translations[0],
-                question2_jp=japanese_translations[1],
-                question3_jp=japanese_translations[2],
-                question4_jp=japanese_translations[3],
-                question5_jp=japanese_translations[4],
-                question6_jp=japanese_translations[5],
-                country=form.country.data,
-                gender=form.gender.data,
-                submission_id=submission_id
-            )
+            student = Student()
+            student.name = form.name.data
+            student.vibes = combined_vibes
+            student.question1 = form.question1.data
+            student.question2 = form.question2.data
+            student.question3 = form.question3.data
+            student.question4 = form.question4.data
+            student.question5 = form.question5.data
+            student.question6 = form.question6.data
+            student.question1_jp = japanese_translations[0]
+            student.question2_jp = japanese_translations[1]
+            student.question3_jp = japanese_translations[2]
+            student.question4_jp = japanese_translations[3]
+            student.question5_jp = japanese_translations[4]
+            student.question6_jp = japanese_translations[5]
+            student.country = form.country.data
+            student.gender = form.gender.data
+            student.submission_id = submission_id
             
             db.session.add(student)
             db.session.commit()
@@ -473,10 +472,9 @@ def create_squads():
                 continue
             
             # Create new squad record with creative name and shared interests
-            new_squad = Squad(
-                name=squad_data['squad_name'],
-                shared_interests=squad_data['shared_interests']
-            )
+            new_squad = Squad()
+            new_squad.name = squad_data['squad_name']
+            new_squad.shared_interests = squad_data['shared_interests']
             db.session.add(new_squad)
             db.session.flush()  # Get the squad ID for student assignments
             
@@ -1319,19 +1317,18 @@ def seed_database():
             # Generate combined vibes text
             vibes_text = f"{student_data['question1']} {student_data['question2']} {student_data['question3']} {student_data['question4']} {student_data['question5']} {student_data['question6']}"
             
-            student = Student(
-                name=student_data['name'],
-                country=student_data['country'],
-                gender=student_data['gender'],
-                question1=student_data['question1'],
-                question2=student_data['question2'],
-                question3=student_data['question3'],
-                question4=student_data['question4'],
-                question5=student_data['question5'],
-                question6=student_data['question6'],
-                vibes=vibes_text,
-                submission_id=Student.generate_submission_id()
-            )
+            student = Student()
+            student.name = student_data['name']
+            student.country = student_data['country']
+            student.gender = student_data['gender']
+            student.question1 = student_data['question1']
+            student.question2 = student_data['question2']
+            student.question3 = student_data['question3']
+            student.question4 = student_data['question4']
+            student.question5 = student_data['question5']
+            student.question6 = student_data['question6']
+            student.vibes = vibes_text
+            student.submission_id = Student.generate_submission_id()
             
             db.session.add(student)
             created_students.append(student)
@@ -1340,14 +1337,13 @@ def seed_database():
         db.session.flush()
         
         # Create two squads
-        squad1 = Squad(
-            name="Creative Explorers",
-            shared_interests="Art, Music, Photography, Creative Expression"
-        )
-        squad2 = Squad(
-            name="Adventure Seekers", 
-            shared_interests="Gaming, Technology, Problem-Solving, Outdoor Activities"
-        )
+        squad1 = Squad()
+        squad1.name = "Creative Explorers"
+        squad1.shared_interests = "Art, Music, Photography, Creative Expression"
+        
+        squad2 = Squad()
+        squad2.name = "Adventure Seekers"
+        squad2.shared_interests = "Gaming, Technology, Problem-Solving, Outdoor Activities"
         
         db.session.add(squad1)
         db.session.add(squad2)
