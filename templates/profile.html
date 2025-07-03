@@ -178,7 +178,61 @@
         
         .japanese-text {
             font-family: 'Noto Sans JP', sans-serif;
-            border-left-color: #2ecc71;
+        }
+        
+        /* Archetype Showcase Styles */
+        .archetype-showcase {
+            margin-bottom: 2rem;
+        }
+        
+        .archetype-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .archetype-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+        }
+        
+        .archetype-icon {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #fff;
+        }
+        
+        .archetype-content {
+            flex: 1;
+        }
+        
+        .archetype-title {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .archetype-name {
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
         }
         
         .japanese-vibe .answer-label {
@@ -422,40 +476,57 @@
                             </div>
                         </div>
                         
-                        <!-- Personality Signature -->
+                        <!-- AI-Generated Personality Signature -->
                         <div class="character-abilities">
                             <h2 class="abilities-title">
-                                <i class="fas fa-user-circle"></i>
-                                パーソナリティ・シグネチャー
+                                <i class="fas fa-sparkles"></i>
+                                AI パーソナリティ・シグネチャー
                             </h2>
+                            
+                            <!-- Archetype Display -->
+                            {% if personality_signature.archetype %}
+                            <div class="archetype-showcase">
+                                <div class="archetype-card">
+                                    <div class="archetype-icon">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <div class="archetype-content">
+                                        <h3 class="archetype-title">あなたのアーキタイプ</h3>
+                                        <div class="archetype-name japanese-text">{{ personality_signature.archetype }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Three Insights Grid -->
                             <div class="abilities-grid">
-                                {% if student.core_strength %}
+                                {% if personality_signature.core_strength %}
                                 <div class="ability-card">
                                     <div class="ability-icon">
                                         <i class="fas fa-crown"></i>
                                     </div>
                                     <div class="ability-name">コア・ストレングス</div>
-                                    <div class="ability-description japanese-text">{{ student.core_strength }}</div>
+                                    <div class="ability-description japanese-text">{{ personality_signature.core_strength }}</div>
                                 </div>
                                 {% endif %}
                                 
-                                {% if student.hidden_potential %}
+                                {% if personality_signature.hidden_potential %}
                                 <div class="ability-card">
                                     <div class="ability-icon">
                                         <i class="fas fa-gem"></i>
                                     </div>
                                     <div class="ability-name">隠れた可能性</div>
-                                    <div class="ability-description japanese-text">{{ student.hidden_potential }}</div>
+                                    <div class="ability-description japanese-text">{{ personality_signature.hidden_potential }}</div>
                                 </div>
                                 {% endif %}
                                 
-                                {% if student.conversation_catalyst %}
+                                {% if personality_signature.conversation_catalyst %}
                                 <div class="ability-card">
                                     <div class="ability-icon">
                                         <i class="fas fa-comments"></i>
                                     </div>
                                     <div class="ability-name">会話の触媒</div>
-                                    <div class="ability-description japanese-text">{{ student.conversation_catalyst }}</div>
+                                    <div class="ability-description japanese-text">{{ personality_signature.conversation_catalyst }}</div>
                                 </div>
                                 {% endif %}
                             </div>

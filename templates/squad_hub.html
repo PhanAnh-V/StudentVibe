@@ -97,6 +97,116 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
+        /* New Connection Blueprint Styles */
+        .icebreaker-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .icebreaker-subtitle {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        .icebreaker-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .icebreaker-card {
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .icebreaker-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .synergy-card {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border-left: 4px solid #ff6b9d;
+        }
+        
+        .complementarity-card {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-left: 4px solid #4ecdc4;
+        }
+        
+        .card-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .card-icon {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 0.75rem;
+        }
+        
+        .card-title {
+            color: #2d3748;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .card-subtitle {
+            color: #4a5568;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .card-content {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1.25rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .question-text {
+            color: #2d3748;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0;
+            font-weight: 500;
+        }
+        
+        .fallback-icebreaker, .no-icebreaker {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .fallback-content, .empty-state {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+        
+        .fallback-content i, .empty-state i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: #9ca3af;
+        }
+        
         .icebreaker-questions {
             margin-top: 1.5rem;
         }
@@ -318,36 +428,59 @@
                         </div>
                     </div>
                     
-                    <!-- AI Icebreaker Section -->
+                    <!-- Connection Blueprint Icebreakers -->
                     <div class="hub-card">
-                        <div class="icebreaker-section">
-                            <h2 class="icebreaker-title">
-                                <i class="fas fa-comments"></i>
-                                アイスブレーカー
+                        <div class="icebreaker-header">
+                            <h2 class="section-title">
+                                <i class="fas fa-magic"></i>
+                                コネクション・ブループリント
                             </h2>
-                            
-                            {% if icebreakers and icebreakers.icebreakers and icebreakers.icebreakers|length >= 2 %}
-                                <div class="icebreaker-questions">
-                                    <div class="question-item">
-                                        <div class="question-number">1</div>
+                            <p class="icebreaker-subtitle">AIがあなたたちの深いつながりを分析して作った特別な質問です</p>
+                        </div>
+                        
+                        {% if icebreakers and icebreakers.icebreakers and icebreakers.icebreakers|length >= 2 %}
+                            <div class="icebreaker-cards">
+                                <div class="icebreaker-card synergy-card">
+                                    <div class="card-header">
+                                        <div class="card-icon">
+                                            <i class="fas fa-heart"></i>
+                                        </div>
+                                        <h3 class="card-title">シナジー質問</h3>
+                                        <p class="card-subtitle">共通の興味を探る</p>
+                                    </div>
+                                    <div class="card-content">
                                         <p class="question-text">{{ icebreakers.icebreakers[0] }}</p>
                                     </div>
-                                    
-                                    <div class="question-item">
-                                        <div class="question-number">2</div>
+                                </div>
+                                
+                                <div class="icebreaker-card complementarity-card">
+                                    <div class="card-header">
+                                        <div class="card-icon">
+                                            <i class="fas fa-puzzle-piece"></i>
+                                        </div>
+                                        <h3 class="card-title">相補性質問</h3>
+                                        <p class="card-subtitle">異なる強みを活かす</p>
+                                    </div>
+                                    <div class="card-content">
                                         <p class="question-text">{{ icebreakers.icebreakers[1] }}</p>
                                     </div>
                                 </div>
-                            {% elif squad.icebreaker_text %}
-                                <div class="fallback-mission">
+                            </div>
+                        {% elif squad.icebreaker_text %}
+                            <div class="fallback-icebreaker">
+                                <div class="fallback-content">
+                                    <i class="fas fa-comments"></i>
                                     <p>{{ squad.icebreaker_text }}</p>
                                 </div>
-                            {% else %}
-                                <div class="no-mission">
-                                    <p>あなたのスクワッドミッションは先生によって生成されるとここに表示されます。</p>
+                            </div>
+                        {% else %}
+                            <div class="no-icebreaker">
+                                <div class="empty-state">
+                                    <i class="fas fa-hourglass-half"></i>
+                                    <p>先生がアイスブレーカーを生成すると、ここに表示されます。</p>
                                 </div>
-                            {% endif %}
-                        </div>
+                            </div>
+                        {% endif %}
                     </div>
                     
                     <!-- Squad Members Section -->
