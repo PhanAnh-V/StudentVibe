@@ -1452,157 +1452,183 @@ def reset_database():
 
 @app.route('/seed-database')
 def seed_database():
-    """Temporary route to seed database with fake student data for testing"""
+    """Temporary route to seed database with 30 realistic fake students for testing"""
     try:
-        # Test student data: 4 Vietnamese and 4 Chinese students
-        fake_students_data = [
-            # Vietnamese students
-            {
-                'name': 'Nguyễn Thị Mai',
-                'country': 'Vietnam',
-                'gender': 'Female',
-                'question1': 'Go on a motorbike adventure through the mountains of Sapa with traditional music playing.',
-                'question2': 'Traditional Vietnamese cooking - the way flavors tell stories of our heritage.',
-                'question3': 'When we tried to make bánh mì at home and the bread exploded in the oven.',
-                'question4': 'Remembering everyone\'s coffee preferences and surprising them with their favorite drink.',
-                'question5': 'A nostalgic Vietnamese ballad, a family drama about tradition, and a collection of old photos.',
-                'question6': 'Someone who keeps our cultural traditions alive while embracing new experiences.'
-            },
-            {
-                'name': 'Trần Văn Hùng',
-                'country': 'Vietnam',
-                'gender': 'Male',
-                'question1': 'Take a boat trip through Ha Long Bay and discover hidden caves.',
-                'question2': 'Football (soccer) - it unites people across all social and economic backgrounds.',
-                'question3': 'Playing football in the rain and slipping into a mud puddle during the winning goal.',
-                'question4': 'Organizing group activities that everyone actually wants to participate in.',
-                'question5': 'An energetic pop song, an inspiring sports movie, and a football signed by my favorite player.',
-                'question6': 'Someone who brings competitive spirit but keeps it fun and encouraging.'
-            },
-            {
-                'name': 'Phạm Thị Linh',
-                'country': 'Vietnam',
-                'gender': 'Female',
-                'question1': 'Spend the day learning traditional áo dài making and then wear them to explore Hội An.',
-                'question2': 'Fashion design - creating beauty that makes people feel confident and proud.',
-                'question3': 'When our friend tried on my grandmother\'s áo dài and accidentally ripped it (but we fixed it together).',
-                'question4': 'Helping people discover their personal style and feel beautiful.',
-                'question5': 'A modern Vietnamese pop song, a romantic period drama, and my sketchbook of dress designs.',
-                'question6': 'Someone who pays attention to details and makes sure everyone feels included.'
-            },
-            {
-                'name': 'Lê Minh Tuấn',
-                'country': 'Vietnam',
-                'gender': 'Male',
-                'question1': 'Explore the Cu Chi tunnels and then try authentic street food in Ho Chi Minh City.',
-                'question2': 'History shows us how our ancestors\' struggles shaped who we are today.',
-                'question3': 'Getting lost in the tunnels during a school trip and emerging covered in dirt.',
-                'question4': 'Telling stories that make historical events feel real and personal.',
-                'question5': 'A patriotic Vietnamese song, a war documentary, and a collection of historical photographs.',
-                'question6': 'Someone who learns from the past to make better decisions for the group.'
-            },
-            # Chinese students
-            {
-                'name': '张雨萱',
-                'country': 'China',
-                'gender': 'Female',
-                'question1': 'Take a high-speed train to Xi\'an to see the Terracotta Warriors and eat authentic noodles.',
-                'question2': 'Calligraphy - every brushstroke carries centuries of wisdom and artistic expression.',
-                'question3': 'Practicing calligraphy and accidentally making a character that looked like a cartoon cat.',
-                'question4': 'Creating beautiful handwritten notes that make people feel special.',
-                'question5': 'A classical Chinese instrumental piece, a historical palace drama, and my favorite calligraphy brush.',
-                'question6': 'Someone who appreciates both tradition and innovation in equal measure.'
-            },
-            {
-                'name': '王浩然',
-                'country': 'China',
-                'gender': 'Male',
-                'question1': 'Climb the Great Wall at sunrise and have breakfast at a local village.',
-                'question2': 'Technology and AI - we\'re living in the most exciting time in human history.',
-                'question3': 'When I tried to impress friends by coding a game but it crashed every 5 seconds.',
-                'question4': 'Explaining complex technology in ways that anyone can understand.',
-                'question5': 'An electronic music track, a sci-fi movie about the future, and my laptop full of coding projects.',
-                'question6': 'Someone who can solve problems creatively and thinks outside the box.'
-            },
-            {
-                'name': '刘思琪',
-                'country': 'China',
-                'gender': 'Female',
-                'question1': 'Visit the pandas in Chengdu and spend the afternoon learning about wildlife conservation.',
-                'question2': 'Environmental science - protecting our planet for future generations is crucial.',
-                'question3': 'Volunteering at an animal shelter and getting completely covered in puppy kisses.',
-                'question4': 'Motivating people to care about environmental issues without being preachy.',
-                'question5': 'A peaceful nature soundtrack, a documentary about wildlife, and my collection of eco-friendly products.',
-                'question6': 'Someone who cares deeply about the world and inspires others to take action.'
-            },
-            {
-                'name': '陈嘉豪',
-                'country': 'China',
-                'gender': 'Male',
-                'question1': 'Explore Beijing\'s hutongs on bicycle and discover hidden traditional restaurants.',
-                'question2': 'Traditional Chinese martial arts - they teach discipline, respect, and inner strength.',
-                'question3': 'Attempting kung fu moves from movies and accidentally kicking a hole in the wall.',
-                'question4': 'Teaching people self-discipline and helping them build confidence.',
-                'question5': 'A powerful traditional Chinese song, a martial arts epic film, and my wooden practice sword.',
-                'question6': 'Someone who leads by example and helps others discover their inner strength.'
-            }
+        import random
+        
+        # Japanese names and varied data for 30 students
+        japanese_names = [
+            'Takeshi Yamamoto', 'Sakura Tanaka', 'Hiroshi Sato', 'Yuki Watanabe', 'Kenji Nakamura',
+            'Miki Suzuki', 'Taro Kobayashi', 'Hanako Ito', 'Ichiro Kato', 'Emiko Yoshida',
+            'Shingo Hayashi', 'Natsuki Shimizu', 'Kenta Yamazaki', 'Chiaki Mori', 'Ryuji Inoue',
+            'Ayame Kimura', 'Masa Okamoto', 'Yui Sasaki', 'Daiki Fukuda', 'Rei Ogawa',
+            'Hiroto Nishida', 'Misaki Matsui', 'Shota Takagi', 'Akiko Hara', 'Jiro Ishii',
+            'Momoka Ueda', 'Koichi Goto', 'Nao Fujita', 'Kaito Hasegawa', 'Rina Miyamoto'
         ]
         
-        # Create students
-        created_students = []
-        for student_data in fake_students_data:
-            # Generate combined vibes text
-            vibes_text = f"{student_data['question1']} {student_data['question2']} {student_data['question3']} {student_data['question4']} {student_data['question5']} {student_data['question6']}"
+        # Sample questionnaire answers in Japanese
+        sample_answers = {
+            'question1': [
+                '家でゲームをしたり、友達とカラオケに行ったりするのが好きです。',
+                '図書館で本を読んだり、カフェでコーヒーを飲みながら勉強したりします。',
+                '公園で写真を撮ったり、散歩したりして自然を楽しみます。',
+                '料理を作ったり、新しいレシピを試したりするのが楽しいです。',
+                '音楽を聞いたり、楽器を練習したりして過ごします。',
+                'アニメを見たり、漫画を読んだりしてリラックスします。',
+                '友達と映画を見に行ったり、ショッピングを楽しんだりします。',
+                'スポーツをしたり、ジムで運動したりして体を動かします。',
+                '家族と時間を過ごしたり、ペットと遊んだりします。',
+                'プログラミングを勉強したり、新しい技術を学んだりします。'
+            ],
+            'question2': [
+                '外国語を話せるようになって、世界中の人とコミュニケーションを取りたいです。',
+                '楽器を上手に演奏できるようになって、人を感動させたいです。',
+                '料理の技術を身につけて、家族や友達を喜ばせたいです。',
+                '絵を描くスキルを磨いて、自分の気持ちを表現したいです。',
+                'プログラミングを学んで、便利なアプリを作りたいです。',
+                'スポーツが上手になって、チームで活躍したいです。',
+                '人前で話すスキルを身につけて、自信を持って発表したいです。',
+                '写真撮影の技術を学んで、美しい瞬間を残したいです。',
+                'ダンスを踊れるようになって、みんなを楽しませたいです。',
+                '文章を書く能力を高めて、人の心に響く物語を作りたいです。'
+            ],
+            'question3': [
+                '友達と一緒にゲームをしているとき、時間を忘れて夢中になります。',
+                '好きな音楽について話すとき、いつまでも語り続けてしまいます。',
+                '新しい技術やガジェットについて、詳しく説明したくなります。',
+                '美味しい食べ物について、作り方や味について熱く語ります。',
+                '旅行の思い出や行きたい場所について、興奮して話します。',
+                'アニメや漫画のストーリーについて、深く分析して話します。',
+                'スポーツの試合やルールについて、詳しく解説したくなります。',
+                '映画や本の感想について、感情豊かに語ります。',
+                'ファッションやメイクについて、楽しそうに話します。',
+                '将来の夢や目標について、熱心に語ります。'
+            ],
+            'question4': [
+                '家族との時間、美味しい食事、好きな音楽、リラックス、笑顔',
+                '友達とのおしゃべり、映画鑑賞、ゲーム、お菓子、のんびり',
+                '読書、静かな環境、コーヒー、創作活動、自由時間',
+                '料理、新しいレシピ、家族、温かい雰囲気、達成感',
+                '音楽、楽器演奏、創造性、感情表現、芸術的な時間',
+                'アニメ、漫画、コスプレ、創作、想像力の世界',
+                'スポーツ、友達、チームワーク、達成感、健康的な時間',
+                '写真撮影、自然、美しい景色、芸術的表現、平和',
+                'ショッピング、ファッション、友達、新しい発見、おしゃれ',
+                '学習、新しい知識、成長、挑戦、自己向上の時間'
+            ],
+            'question5': [
+                '子供の頃に集めていたポケモンカードに夢中になっていました。',
+                '韓国ドラマを見ることに完全にはまっていた時期がありました。',
+                '特定のアニメキャラクターのグッズを集めることに熱中していました。',
+                '植物を育てることに夢中になって、部屋が温室のようになりました。',
+                '特定の歌手の音楽を聞き続けて、全ての歌詞を覚えていました。',
+                '料理番組を見ることに夢中になって、毎日録画していました。',
+                '特定のゲームを何時間もプレイし続けていました。',
+                '外国の文化について調べることに熱中していました。',
+                '手作りのアクセサリーを作ることに夢中になっていました。',
+                '特定のスポーツ選手を応援することに熱狂していました。'
+            ],
+            'question6': [
+                '落ち着いたクラシック音楽のような、安らぎを与える雰囲気です。',
+                '元気なポップスのような、明るく楽しいエネルギーです。',
+                '情熱的なロック音楽のような、強くて熱いエネルギーです。',
+                '優雅なジャズのような、洗練された大人の雰囲気です。',
+                '自然の音のような、穏やかで心地よいエネルギーです。',
+                '電子音楽のような、現代的で革新的な雰囲気です。',
+                '伝統的な民族音楽のような、深い文化的なエネルギーです。',
+                '軽やかなアコースティック音楽のような、自然体の雰囲気です。',
+                '力強いオーケストラのような、壮大で感動的なエネルギーです。',
+                '親しみやすいフォークソングのような、温かい人間性です。'
+            ]
+        }
+        
+        # Pre-defined personality signatures to avoid AI calls
+        archetypes = ['創造的探求者', '静寂の知恵者', '自然の写真家', '料理の魔術師', '音楽の詩人', 
+                     'アニメの夢想家', '社交的な映画愛好家', '活動的な健康推進者', '家族思いの優しい魂', 'テクノロジーの革新者']
+        
+        core_strengths = ['創造性と表現力で周囲を魅了する力', '深い思考と洞察力で問題を解決する能力', '自然の美しさを発見し共有する才能',
+                         '人を喜ばせる料理の技術と心配り', '音楽で感情を表現し人を感動させる力', '想像力で新しい世界を創造する能力',
+                         '人と人をつなぐ社交的な魅力', '体を動かすことで健康とエネルギーを広める力', '家族を大切にする温かい心',
+                         '新しい技術で未来を切り開く革新的な思考']
+        
+        hidden_potentials = ['芸術的な才能がまだ十分に開花していない可能性', 'リーダーシップの素質を秘めている',
+                           '自然保護活動への情熱が眠っている', '教育者として人を導く力を持っている',
+                           '作曲や音楽制作の才能が隠れている', 'ストーリーテリングの天才的な能力',
+                           'イベント企画や組織運営の才能', 'スポーツ指導者としての素質',
+                           'カウンセリングや心理サポートの能力', '起業家精神と事業創造の才能']
+        
+        conversation_catalysts = ['好きなゲームについて熱く語り合える', '読書の感想や好きな本について話し合える',
+                                '美しい写真や撮影テクニックについて語り合える', '料理のレシピや食文化について話し合える',
+                                '音楽の好みや楽器演奏について語り合える', 'アニメやマンガのストーリーについて熱く語れる',
+                                '映画の感想や好きな俳優について話し合える', 'スポーツや健康的な生活について語り合える',
+                                '家族の大切さや思い出について話し合える', '新しい技術や未来について語り合える']
+        
+        countries = ['Japan', 'China', 'Vietnam', 'Other']
+        genders = ['Male', 'Female', 'Prefer not to say']
+        
+        created_students = 0
+        
+        # Create 30 students with varied, realistic data
+        for i in range(30):
+            # Generate random student data
+            name = japanese_names[i]
+            country = random.choice(countries)
+            gender = random.choice(genders)
             
-            student = Student()
-            student.name = student_data['name']
-            student.country = student_data['country']
-            student.gender = student_data['gender']
-            student.question1 = student_data['question1']
-            student.question2 = student_data['question2']
-            student.question3 = student_data['question3']
-            student.question4 = student_data['question4']
-            student.question5 = student_data['question5']
-            student.question6 = student_data['question6']
-            student.vibes = vibes_text
-            student.submission_id = Student.generate_submission_id()
+            # Select random answers for each question
+            question1 = random.choice(sample_answers['question1'])
+            question2 = random.choice(sample_answers['question2'])
+            question3 = random.choice(sample_answers['question3'])
+            question4 = random.choice(sample_answers['question4'])
+            question5 = random.choice(sample_answers['question5'])
+            question6 = random.choice(sample_answers['question6'])
             
+            # Combine all answers for vibes field
+            combined_answers = f"{question1} {question2} {question3} {question4} {question5} {question6}"
+            
+            # Select random personality signatures (no AI calls)
+            archetype = random.choice(archetypes)
+            core_strength = random.choice(core_strengths)
+            hidden_potential = random.choice(hidden_potentials)
+            conversation_catalyst = random.choice(conversation_catalysts)
+            
+            # Create student object
+            student = Student(
+                name=name,
+                country=country,
+                gender=gender,
+                vibes=combined_answers,
+                question1=question1,
+                question2=question2,
+                question3=question3,
+                question4=question4,
+                question5=question5,
+                question6=question6,
+                archetype=archetype,
+                core_strength=core_strength,
+                hidden_potential=hidden_potential,
+                conversation_catalyst=conversation_catalyst,
+                submission_id=Student.generate_submission_id()
+            )
+            
+            # Add to database session
             db.session.add(student)
-            created_students.append(student)
+            created_students += 1
+            
+            # Log progress every 10 students
+            if created_students % 10 == 0:
+                logging.info(f"Created {created_students}/30 students...")
         
-        # Flush to get student IDs
-        db.session.flush()
-        
-        # Create two squads
-        squad1 = Squad()
-        squad1.name = "Creative Explorers"
-        squad1.shared_interests = "Art, Music, Photography, Creative Expression"
-        
-        squad2 = Squad()
-        squad2.name = "Adventure Seekers"
-        squad2.shared_interests = "Gaming, Technology, Problem-Solving, Outdoor Activities"
-        
-        db.session.add(squad1)
-        db.session.add(squad2)
-        db.session.flush()
-        
-        # Assign students to squads (first 4 to squad1, last 4 to squad2)
-        for i, student in enumerate(created_students):
-            if i < 4:
-                student.squad_id = squad1.id
-            else:
-                student.squad_id = squad2.id
-        
-        # Commit all changes
+        # Commit all students to database
         db.session.commit()
         
-        logging.info("Database seeded successfully with 8 students and 2 squads")
+        logging.info(f"Successfully seeded database with {created_students} students")
+        return f"Successfully seeded database with {created_students} students."
         
     except Exception as e:
         db.session.rollback()
-        logging.error(f"Database seeding failed: {str(e)}")
-    
-    return redirect(url_for('teacher'))
+        logging.error(f"Failed to seed database: {str(e)}")
+        return f"Failed to seed database: {str(e)}"
 
 
 

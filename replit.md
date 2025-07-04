@@ -247,6 +247,10 @@ This is a Flask-based web application designed to collect and store student info
 - July 04, 2025. Each AI function now has 10-second timeout and robust fallback values to prevent form submission timeouts
 - July 04, 2025. Updated form submission route to call four separate AI functions sequentially with individual error handling
 - July 04, 2025. Enhanced mobile UI optimization for Language Selection, Questionnaire, and Student Profile pages with full-screen layouts and better touch interaction
+- July 04, 2025. Enhanced /clear-squads route to perform complete database reset - now deletes ALL students and squads instead of just clearing assignments
+- July 04, 2025. Modified AI squad formation to use pre-analyzed personality signatures (archetype, core_strength, hidden_potential, conversation_catalyst) instead of raw questionnaire responses
+- July 04, 2025. Created /seed-database development route to generate 30 realistic test students with Japanese names, varied questionnaire answers, and pre-assigned personality signatures
+- July 04, 2025. Seed route uses predefined personality data instead of AI calls for faster execution - complete seeding takes under 10 seconds
 
 ## User Preferences
 
