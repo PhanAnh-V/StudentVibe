@@ -6,78 +6,40 @@
 <div class="success-page">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-8 col-xl-6">
+            <div class="col-lg-6 col-md-8">
                 
-                <!-- Main Success Card -->
-                <div class="success-card">
-                    <!-- Success Icon -->
-                    <div class="success-icon">
-                        <i class="fas fa-check-circle"></i>
+                <!-- Success Icon -->
+                <div class="success-icon-container">
+                    <i class="fas fa-thumbs-up"></i>
+                </div>
+                
+                <!-- Success Message -->
+                <div class="success-message">
+                    <h1 class="success-title">Thank you{% if student_name %}, {{ student_name }}{% endif %}!</h1>
+                    <p class="success-subtitle">Your Vibe has been successfully submitted.</p>
+                </div>
+                
+                <!-- Personal ID Card -->
+                {% if submission_id %}
+                <div class="personal-id-card">
+                    <div class="card-header">
+                        <h3>YOUR PERSONAL ID</h3>
                     </div>
-                    
-                    <!-- Title and Message -->
-                    <h1 class="success-title">
-                        ありがとうございました{% if student_name %}、{{ student_name }}さん{% endif %}！
-                    </h1>
-                    <p class="success-subtitle">
-                        あなたの回答を正常に受け取りました
-                    </p>
-                    
-                    <!-- Submission ID Section -->
-                    {% if submission_id %}
-                    <div class="submission-id-container">
-                        <div class="submission-id-label">
-                            <i class="fas fa-id-card me-2"></i>
-                            あなたの個人ID
-                        </div>
-                        <div class="submission-id-value">{{ submission_id }}</div>
-                        <div class="submission-id-note">
-                            このIDを保存してスクワッドを見つけてください
-                        </div>
-                    </div>
-                    {% endif %}
-                    
-                    <!-- Status Badge -->
-                    <div class="status-badge">
-                        <i class="fas fa-check-circle me-2"></i>
-                        処理完了
+                    <div class="id-value">{{ submission_id }}</div>
+                    <div class="card-footer">
+                        <p>Save this ID to find your squad later.</p>
                     </div>
                 </div>
+                {% endif %}
                 
                 <!-- Action Buttons -->
-                <div class="action-buttons">
-                    <a href="{{ url_for('find_squad') }}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-search me-2"></i>
-                        マイスクワッドを探す
+                <div class="button-container">
+                    <a href="{{ url_for('find_squad') }}" class="action-btn find-squad-btn">
+                        Find My Squad
                     </a>
-                    <a href="{{ url_for('index') }}" class="btn btn-secondary btn-lg">
-                        <i class="fas fa-plus me-2"></i>
-                        別の回答を送信
+                    <a href="{{ url_for('index') }}" class="action-btn submit-another-btn">
+                        Submit Another
                     </a>
-                </div>
-                
-                <!-- Footer Info -->
-                <div class="success-footer">
-                    <div class="row g-4">
-                        <div class="col-4">
-                            <div class="info-item">
-                                <i class="fas fa-shield-alt"></i>
-                                <span>セキュア</span>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="info-item">
-                                <i class="fas fa-users"></i>
-                                <span>コミュニティ</span>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="info-item">
-                                <i class="fas fa-rocket"></i>
-                                <span>成長</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 
             </div>
@@ -91,101 +53,162 @@
 .success-page {
     min-height: 100vh;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    padding: 2rem 0;
-    font-family: 'Noto Sans JP', sans-serif;
-}
-
-.success-card {
-    background: white;
-    border-radius: 20px;
-    padding: 3rem 2rem;
+    padding: 3rem 0;
+    font-family: 'Inter', sans-serif;
     text-align: center;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.success-icon {
+.success-icon-container {
+    margin-bottom: 2rem;
+}
+
+.success-icon-container i {
     font-size: 4rem;
     color: #10b981;
-    margin-bottom: 1.5rem;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 1.5rem;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.success-message {
+    margin-bottom: 2.5rem;
 }
 
 .success-title {
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 700;
     color: #1f2937;
-    margin-bottom: 0.5rem;
-    line-height: 1.3;
+    margin-bottom: 1rem;
+    line-height: 1.2;
 }
 
 .success-subtitle {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: #6b7280;
-    margin-bottom: 2rem;
     font-weight: 400;
+    margin: 0;
 }
 
-.submission-id-container {
+.personal-id-card {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
     border-radius: 16px;
     padding: 2rem;
     margin: 2rem 0;
-    color: white;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    border: 3px solid rgba(255, 255, 255, 0.2);
 }
 
-.submission-id-label {
-    font-size: 0.9rem;
+.personal-id-card .card-header {
+    margin-bottom: 1.5rem;
+}
+
+.personal-id-card .card-header h3 {
+    font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 0.8rem;
+    margin: 0;
     opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.submission-id-value {
-    font-size: 2.2rem;
+.id-value {
+    font-size: 3rem;
     font-weight: 800;
     font-family: 'Courier New', monospace;
-    letter-spacing: 2px;
-    margin: 1rem 0;
-    padding: 0.8rem;
-    background: rgba(255, 255, 255, 0.15);
+    letter-spacing: 3px;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-.submission-id-note {
-    font-size: 0.95rem;
+.personal-id-card .card-footer {
+    margin-top: 1.5rem;
+}
+
+.personal-id-card .card-footer p {
+    font-size: 1rem;
+    margin: 0;
     opacity: 0.9;
-    margin-bottom: 0;
 }
 
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    background: #ecfdf5;
-    color: #059669;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-top: 1rem;
-}
-
-.action-buttons {
+.button-container {
     display: flex;
     gap: 1rem;
     justify-content: center;
     flex-wrap: wrap;
-    margin-bottom: 3rem;
+    margin-top: 2rem;
 }
 
-.action-buttons .btn {
+.action-btn {
+    padding: 1rem 2rem;
     border-radius: 12px;
-    padding: 0.8rem 2rem;
     font-weight: 600;
     font-size: 1rem;
-    border: none;
+    text-decoration: none;
     transition: all 0.3s ease;
+    border: 2px solid transparent;
+    min-width: 160px;
+    display: inline-block;
+}
+
+.find-squad-btn {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.find-squad-btn:hover {
+    background: #2563eb;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+}
+
+.submit-another-btn {
+    background: transparent;
+    color: #6b7280;
+    border-color: #d1d5db;
+}
+
+.submit-another-btn:hover {
+    background: #f9fafb;
+    color: #374151;
+    border-color: #9ca3af;
+    transform: translateY(-2px);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .success-title {
+        font-size: 2rem;
+    }
+    
+    .id-value {
+        font-size: 2rem;
+        letter-spacing: 2px;
+    }
+    
+    .button-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .action-btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
 }
 
 .action-buttons .btn-primary {

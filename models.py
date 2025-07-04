@@ -133,6 +133,7 @@ class Squad(db.Model):
     name = db.Column(db.String(100), nullable=False)
     shared_interests = db.Column(db.Text, nullable=True)
     icebreaker_text = db.Column(db.Text, nullable=True)
+    squad_icon = db.Column(db.String(50), nullable=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     
     # Relationship to students

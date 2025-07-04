@@ -27,34 +27,66 @@
         .squad-header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
-            padding: 1.8rem 1.5rem;
+            padding: 2rem 1.5rem;
             text-align: center;
             position: relative;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            margin: 1rem;
         }
         
-        .squad-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="30" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="80" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+        .squad-icon-container {
+            margin-bottom: 1rem;
+        }
+        
+        .squad-icon-container i {
+            font-size: 3rem;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
         }
         
         .squad-title {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 0.3rem;
+            margin: 1rem 0;
             position: relative;
             z-index: 1;
         }
         
-        .squad-subtitle {
+        .vibe-label {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin: 1rem 0;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .shared-interests-container {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .shared-interests {
             font-size: 1.1rem;
-            opacity: 0.9;
-            position: relative;
-            z-index: 1;
+            font-weight: 400;
+            line-height: 1.6;
+            margin: 0;
+            color: white;
         }
         
         .icebreaker-section {
@@ -487,17 +519,13 @@
                     <!-- Squad Header Card -->
                     <div class="hub-card">
                         <div class="squad-header">
+                            <div class="squad-icon-container">
+                                <i class="fas {{ squad.squad_icon or 'fa-users' }}"></i>
+                            </div>
                             <h1 class="squad-title">{{ squad.name }}</h1>
-                            <p class="squad-subtitle">{{ squad.shared_interests }}</p>
-                            <div class="squad-stats">
-                                <div class="stat-item">
-                                    <span class="stat-number">{{ squad.members|length }}</span>
-                                    <span class="stat-label">メンバー</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-number">{{ squad.created_at.strftime('%b %d') if squad.created_at else 'N/A' }}</span>
-                                    <span class="stat-label">作成日</span>
-                                </div>
+                            <div class="vibe-label">[ "Our Vibe" LABEL ]</div>
+                            <div class="shared-interests-container">
+                                <p class="shared-interests">{{ squad.shared_interests }}</p>
                             </div>
                         </div>
                     </div>

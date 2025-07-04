@@ -516,6 +516,83 @@ def teacher_logout():
 
 
 
+def assign_squad_icon(squad_name):
+    """
+    Assign Font Awesome icon based on keywords in squad name
+    """
+    squad_name_lower = squad_name.lower()
+    
+    # Icon mapping based on common keywords
+    icon_keywords = {
+        'explorer': 'fa-compass',
+        'adventure': 'fa-compass',
+        'travel': 'fa-compass',
+        '探検': 'fa-compass',
+        'アドベンチャー': 'fa-compass',
+        
+        'creative': 'fa-palette',
+        'art': 'fa-palette',
+        'design': 'fa-palette',
+        'クリエイティブ': 'fa-palette',
+        'アート': 'fa-palette',
+        
+        'music': 'fa-music',
+        'sound': 'fa-music',
+        'ミュージック': 'fa-music',
+        '音楽': 'fa-music',
+        
+        'tech': 'fa-laptop-code',
+        'coding': 'fa-laptop-code',
+        'digital': 'fa-laptop-code',
+        'テック': 'fa-laptop-code',
+        'コーディング': 'fa-laptop-code',
+        
+        'sports': 'fa-running',
+        'fitness': 'fa-running',
+        'active': 'fa-running',
+        'スポーツ': 'fa-running',
+        
+        'stars': 'fa-star',
+        'dream': 'fa-star',
+        'future': 'fa-star',
+        'スター': 'fa-star',
+        'ドリーム': 'fa-star',
+        
+        'unity': 'fa-users',
+        'team': 'fa-users',
+        'harmony': 'fa-users',
+        'ユニティ': 'fa-users',
+        'チーム': 'fa-users',
+        'ハーモニー': 'fa-users',
+        
+        'gaming': 'fa-gamepad',
+        'game': 'fa-gamepad',
+        'ゲーム': 'fa-gamepad',
+        
+        'book': 'fa-book',
+        'reading': 'fa-book',
+        'study': 'fa-book',
+        '本': 'fa-book',
+        
+        'fire': 'fa-fire',
+        'energy': 'fa-fire',
+        'power': 'fa-fire',
+        'パワー': 'fa-fire',
+        
+        'rocket': 'fa-rocket',
+        'space': 'fa-rocket',
+        'innovation': 'fa-rocket',
+        'ロケット': 'fa-rocket',
+    }
+    
+    # Check for keywords in squad name
+    for keyword, icon in icon_keywords.items():
+        if keyword in squad_name_lower:
+            return icon
+    
+    # Default icon if no keywords match
+    return 'fa-users'
+
 def create_simple_japanese_squads(students_data):
     """
     Fallback squad creation with Japanese names when AI is unavailable
@@ -651,6 +728,7 @@ def create_squads():
             new_squad = Squad()
             new_squad.name = squad_data['squad_name']
             new_squad.shared_interests = squad_data['shared_interests']
+            new_squad.squad_icon = assign_squad_icon(squad_data['squad_name'])
             db.session.add(new_squad)
             db.session.flush()  # Get the squad ID for student assignments
             
