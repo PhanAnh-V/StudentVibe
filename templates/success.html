@@ -33,11 +33,14 @@
     
     <!-- Action Buttons -->
     <div class="action-buttons">
-        <a href="{{ url_for('find_squad') }}" class="action-btn primary-btn">
-            マイスクワッドを探す
+        <a href="{{ url_for('find_squad') }}" class="btn btn-primary">
+            <i class="fas fa-search me-2"></i>
+            スクワッドを見つける
         </a>
-        <a href="{{ url_for('index') }}" class="action-btn secondary-btn">
-            別の回答を送信
+        
+        <a href="{{ url_for('session_password') }}" class="btn btn-secondary">
+            <i class="fas fa-home me-2"></i>
+            新しいセッションを開始
         </a>
     </div>
 </div>
@@ -45,25 +48,15 @@
 
 {% block extra_css %}
 <style>
-body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.success-container {
     min-height: 100vh;
-    font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 2rem 1rem;
-    margin: 0;
-}
-
-.success-container {
-    background: white;
-    border-radius: 25px;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-    padding: 4rem 3rem;
-    max-width: 600px;
-    width: 100%;
-    text-align: center;
+    font-family: 'Noto Sans JP', sans-serif;
     position: relative;
     overflow: hidden;
 }
@@ -71,278 +64,172 @@ body {
 .success-container::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
-}
-
-.success-icon {
-    font-size: 4rem;
-    color: #10b981;
-    margin-bottom: 2rem;
-}
-
-.main-title {
-    font-size: 3rem;
-    font-weight: 700;
-    color: #2d3748;
-    margin-bottom: 2rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.2;
-}
-
-.success-message {
-    font-size: 1.25rem;
-    color: #4a5568;
-    margin-bottom: 3rem;
-    line-height: 1.6;
-    font-weight: 400;
-}
-
-.personal-id-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 20px;
-    padding: 2.5rem 2rem;
-    margin: 2rem 0;
-    color: white;
-    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
-}
-
-.id-label {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    opacity: 0.9;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.id-value {
-    font-size: 3rem;
-    font-weight: 800;
-    font-family: 'Courier New', monospace;
-    letter-spacing: 3px;
-    margin: 1.5rem 0;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.id-note {
-    font-size: 1rem;
-    opacity: 0.9;
-    margin-top: 1rem;
-    line-height: 1.4;
-}
-
-.action-buttons {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
-}
-
-.action-btn {
-    background: white;
-    border: 3px solid #e2e8f0;
-    border-radius: 20px;
-    padding: 1.5rem 2rem;
-    text-decoration: none;
-    color: #2d3748;
-    font-size: 1.1rem;
-    font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.action-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    transition: left 0.3s ease;
-    z-index: -1;
-}
-
-.action-btn:hover {
-    color: white;
-    border-color: #667eea;
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
-}
-
-.action-btn:hover::before {
-    left: 0;
-}
-
-.primary-btn {
-    border-color: #667eea;
-}
-
-.secondary-btn {
-    border-color: #cbd5e0;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: pulse 4s ease-in-out infinite;
 }
 
 .vibe-icon {
     position: absolute;
-    opacity: 0.1;
-    font-size: 6rem;
+    top: 2rem;
+    left: 2rem;
+    font-size: 2rem;
+    color: rgba(255, 255, 255, 0.8);
+    animation: bounce 2s ease-in-out infinite;
+}
+
+.success-icon {
+    font-size: 4rem;
+    color: #4CAF50;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+    animation: checkmark 0.8s ease-out;
+}
+
+.main-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.6s ease-out 0.2s both;
+}
+
+.success-message {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    text-align: center;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.6s ease-out 0.4s both;
+}
+
+.personal-id-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    animation: slideUp 0.6s ease-out 0.6s both;
+}
+
+.id-label {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.id-value {
+    font-size: 2rem;
+    font-weight: 700;
     color: #667eea;
-    top: -2rem;
-    right: -2rem;
-    transform: rotate(15deg);
-    z-index: 0;
+    margin-bottom: 0.5rem;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+}
+
+.id-note {
+    font-size: 0.9rem;
+    color: #888;
+    line-height: 1.4;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 320px;
+}
+
+.action-buttons .btn {
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: none;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: white;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.9);
+    color: #667eea;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+@keyframes checkmark {
+    0% { transform: scale(0) rotate(45deg); opacity: 0; }
+    50% { transform: scale(1.2) rotate(45deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 768px) {
-    body {
-        padding: 0;
-        min-height: 100vh;
-        align-items: stretch;
-    }
-    
-    .success-container {
-        padding: 2rem 1rem;
-        margin: 0;
-        border-radius: 0;
-        max-width: 100%;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        box-shadow: none;
-    }
-    
     .main-title {
         font-size: 2rem;
-        line-height: 1.2;
-        margin-bottom: 1rem;
     }
     
     .success-message {
         font-size: 1rem;
-        margin-bottom: 2rem;
-        line-height: 1.4;
     }
     
-    .id-value {
-        font-size: 2rem;
-        letter-spacing: 2px;
-        padding: 0.8rem;
-    }
-    
-    .action-buttons {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    
-    .action-btn {
-        padding: 1.2rem 1rem;
-        border-radius: 15px;
-        font-size: 1rem;
-    }
-    
-    .action-btn:hover {
-        transform: translateY(-3px);
-    }
-}
-</style>
-{% endblock %}
-}
-
-.action-buttons .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.action-buttons .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-}
-
-.action-buttons .btn-secondary {
-    background: #f8fafc;
-    color: #64748b;
-    border: 2px solid #e2e8f0;
-}
-
-.action-buttons .btn-secondary:hover {
-    background: #f1f5f9;
-    transform: translateY(-1px);
-    border-color: #cbd5e1;
-}
-
-.success-footer {
-    background: white;
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.info-item {
-    text-align: center;
-    padding: 1rem;
-}
-
-.info-item i {
-    font-size: 1.5rem;
-    color: #667eea;
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.info-item span {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #4b5563;
-}
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-    .success-page {
-        padding: 1rem 0;
-    }
-    
-    .success-card {
-        padding: 2rem 1.5rem;
+    .personal-id-section {
+        padding: 1.5rem;
         margin: 0 1rem 2rem;
     }
     
-    .success-title {
-        font-size: 1.5rem;
-    }
-    
-    .submission-id-value {
-        font-size: 1.8rem;
-        letter-spacing: 1px;
-    }
-    
     .action-buttons {
-        flex-direction: column;
-        gap: 0.8rem;
+        margin: 0 1rem;
     }
     
     .action-buttons .btn {
         width: 100%;
-    }
-    
-    .success-footer {
-        margin: 0 1rem;
     }
 }
 </style>
@@ -351,20 +238,7 @@ body {
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Smooth entrance animation
-    const successCard = document.querySelector('.success-card');
-    if (successCard) {
-        successCard.style.opacity = '0';
-        successCard.style.transform = 'translateY(30px)';
-        
-        setTimeout(() => {
-            successCard.style.transition = 'all 0.6s ease-out';
-            successCard.style.opacity = '1';
-            successCard.style.transform = 'translateY(0)';
-        }, 150);
-    }
-    
-    // Animate action buttons with stagger
+    // Smooth entrance animation for buttons
     const buttons = document.querySelectorAll('.action-buttons .btn');
     buttons.forEach((btn, index) => {
         btn.style.opacity = '0';
@@ -374,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.style.transition = 'all 0.4s ease-out';
             btn.style.opacity = '1';
             btn.style.transform = 'translateY(0)';
-        }, 400 + (index * 100));
+        }, 800 + (index * 200));
     });
 });
 </script>

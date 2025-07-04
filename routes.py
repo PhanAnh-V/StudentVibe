@@ -84,14 +84,17 @@ def session_auth():
     
     if entered_password == current_password:
         session['session_authenticated'] = True
+        print(f"Session password SET successfully: {session['session_authenticated']}")
         return redirect(url_for('session_password'))
     else:
+        print(f"Session password validation FAILED: entered={entered_password}, current={current_password}")
         return redirect(url_for('session_password'))
 
 @app.route('/submit-form', methods=['POST'])
 def submit_form():
     """Handle questionnaire form submission"""
     print('=== FORM SUBMISSION ROUTE STARTED ===')
+    print(f'Form submission initiated. Current session content: {dict(session)}')
     print(f'Session authenticated: {session.get("session_authenticated")}')
     
     if not session.get('session_authenticated'):
