@@ -57,6 +57,7 @@ Requirements:
 - Squad names MUST be in Japanese and engaging
 - Shared interests MUST be in Japanese and show why these students belong together
 - Use natural, exciting Japanese that students would be proud to be part of
+- CRUCIAL: THE squad_name MUST BE IN JAPANESE KANJI/KANA ONLY. DO NOT INCLUDE ROMAJI OR ANY ENGLISH TRANSLATIONS IN THE NAME.
 
 Make each squad feel like a special club they'd be excited to join!"""
 
