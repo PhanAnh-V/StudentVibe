@@ -91,11 +91,19 @@ def session_auth():
 @app.route('/submit-form', methods=['POST'])
 def submit_form():
     """Handle questionnaire form submission"""
+    print('=== FORM SUBMISSION ROUTE STARTED ===')
+    print(f'Session authenticated: {session.get("session_authenticated")}')
+    
     if not session.get('session_authenticated'):
+        print('Session not authenticated, redirecting to session password')
         return redirect(url_for('session_password'))
     
+    print('Creating StudentForm instance...')
     form = StudentForm()
+    print('Form created, validating...')
+    
     if form.validate_on_submit():
+        print('Form validation PASSED')
         try:
             print('--- Starting form submission ---')
             print(f'Form data received: name={form.name.data}, country={form.country.data}, gender={form.gender.data}')
@@ -177,60 +185,83 @@ def submit_form():
             
             # Generate AI-powered personality signature using four separate functions
             print('--- Starting AI Personality Generation (4 separate functions) ---')
-            from openai_integration import generate_archetype, generate_core_strength, generate_hidden_potential, generate_conversation_catalyst
-            
-            student_answers = {
-                'question1': form.question1.data,
-                'question2': form.question2.data,
-                'question3': form.question3.data,
-                'question4': form.question4.data,
-                'question5': form.question5.data,
-                'question6': form.question6.data
-            }
-            
-            # Generate archetype
-            print('Calling generate_archetype...')
             try:
-                student.archetype = generate_archetype(student_answers)
-                print(f'Generated archetype: {student.archetype}')
-            except Exception as e:
-                print(f'Error generating archetype: {e}')
+                from openai_integration import generate_archetype, generate_core_strength, generate_hidden_potential, generate_conversation_catalyst
+                print('AI integration modules imported successfully')
+                
+                student_answers = {
+                    'question1': form.question1.data,
+                    'question2': form.question2.data,
+                    'question3': form.question3.data,
+                    'question4': form.question4.data,
+                    'question5': form.question5.data,
+                    'question6': form.question6.data
+                }
+                print('Student answers prepared for AI processing')
+                
+                # Generate archetype
+                print('Calling generate_archetype...')
+                try:
+                    student.archetype = generate_archetype(student_answers)
+                    print(f'Archetype generation complete: {student.archetype}')
+                except Exception as e:
+                    print(f'Error generating archetype: {e}')
+                    student.archetype = "個性豊かな学生"
+                    print('Using fallback archetype value')
+                
+                # Generate core strength
+                print('Calling generate_core_strength...')
+                try:
+                    student.core_strength = generate_core_strength(student_answers)
+                    print(f'Core strength generation complete: {student.core_strength}')
+                except Exception as e:
+                    print(f'Error generating core strength: {e}')
+                    student.core_strength = "創造的な思考力と独自の視点を持っています。"
+                    print('Using fallback core strength value')
+                
+                # Generate hidden potential
+                print('Calling generate_hidden_potential...')
+                try:
+                    student.hidden_potential = generate_hidden_potential(student_answers)
+                    print(f'Hidden potential generation complete: {student.hidden_potential}')
+                except Exception as e:
+                    print(f'Error generating hidden potential: {e}')
+                    student.hidden_potential = "リーダーシップの才能が眠っている可能性があります。"
+                    print('Using fallback hidden potential value')
+                
+                # Generate conversation catalyst
+                print('Calling generate_conversation_catalyst...')
+                try:
+                    student.conversation_catalyst = generate_conversation_catalyst(student_answers)
+                    print(f'Conversation catalyst generation complete: {student.conversation_catalyst}')
+                except Exception as e:
+                    print(f'Error generating conversation catalyst: {e}')
+                    student.conversation_catalyst = "趣味や興味のあることについて話すと、とても輝いて見えます。"
+                    print('Using fallback conversation catalyst value')
+                
+                print(f"All AI personality generation completed for student {student.name}")
+                print(f"Final archetype: {student.archetype}")
+                logging.info(f"Generated complete personality profile for student {student.name}: {student.archetype}")
+                
+            except Exception as ai_error:
+                print(f'CRITICAL ERROR in AI personality generation: {ai_error}')
+                logging.error(f'AI personality generation failed: {ai_error}')
+                # Set all fallback values
                 student.archetype = "個性豊かな学生"
-            
-            # Generate core strength
-            print('Calling generate_core_strength...')
-            try:
-                student.core_strength = generate_core_strength(student_answers)
-                print(f'Generated core strength: {student.core_strength}')
-            except Exception as e:
-                print(f'Error generating core strength: {e}')
                 student.core_strength = "創造的な思考力と独自の視点を持っています。"
-            
-            # Generate hidden potential
-            print('Calling generate_hidden_potential...')
-            try:
-                student.hidden_potential = generate_hidden_potential(student_answers)
-                print(f'Generated hidden potential: {student.hidden_potential}')
-            except Exception as e:
-                print(f'Error generating hidden potential: {e}')
                 student.hidden_potential = "リーダーシップの才能が眠っている可能性があります。"
-            
-            # Generate conversation catalyst
-            print('Calling generate_conversation_catalyst...')
-            try:
-                student.conversation_catalyst = generate_conversation_catalyst(student_answers)
-                print(f'Generated conversation catalyst: {student.conversation_catalyst}')
-            except Exception as e:
-                print(f'Error generating conversation catalyst: {e}')
                 student.conversation_catalyst = "趣味や興味のあることについて話すと、とても輝いて見えます。"
-            
-            print(f"Generated complete personality profile for student {student.name}: {student.archetype}")
-            logging.info(f"Generated complete personality profile for student {student.name}: {student.archetype}")
+                print('Using all fallback personality values due to AI error')
             
             print('--- Data prepared, attempting to save to database ---')
-            db.session.add(student)
-            db.session.commit()
-            print('--- Database save successful ---')
+            try:
+                db.session.add(student)
+                print('Student added to database session')
+                db.session.commit()
+                print('--- Database save successful ---')
+            except Exception as db_error:
+                print(f'DATABASE ERROR during commit: {db_error}')
+                raise db_error
             
             logging.info(f"New student registered: {student.name} (ID: {student.id}, Submission ID: {submission_id}) with Japanese translations")
             
@@ -244,13 +275,22 @@ def submit_form():
             print('--- Form submission completed successfully ---')
             return redirect(url_for('success'))
         except Exception as e:
-            print(f'AN ERROR OCCURRED: {e}')
+            print(f'FORM SUBMISSION FAILED WITH ERROR: {e}')
+            print(f'Error type: {type(e).__name__}')
+            print(f'Error args: {e.args}')
+            import traceback
+            print(f'Full traceback:')
+            traceback.print_exc()
             db.session.rollback()
-            logging.error(f"Error saving student: {e}")
+            logging.error(f"Form submission failed with error: {e}")
+            logging.error(f"Full traceback: {traceback.format_exc()}")
             flash('エラーが発生しました。もう一度お試しください。', 'error')
             return redirect(url_for('session_password'))
     
     # If form validation fails, render form with errors
+    print('Form validation FAILED')
+    print(f'Form errors: {form.errors}')
+    print('Rendering questionnaire with validation errors')
     return render_template('questionnaire.html', form=form)
 
 @app.route('/success')
