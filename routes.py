@@ -175,39 +175,57 @@ def submit_form():
             student.submission_id = submission_id
             print('Student record created with basic info')
             
-            # Generate AI-powered personality signature (includes archetype and insights)
-            print('--- Starting AI Personality Signature generation ---')
+            # Generate AI-powered personality signature using four separate functions
+            print('--- Starting AI Personality Generation (4 separate functions) ---')
+            from openai_integration import generate_archetype, generate_core_strength, generate_hidden_potential, generate_conversation_catalyst
+            
+            student_answers = {
+                'question1': form.question1.data,
+                'question2': form.question2.data,
+                'question3': form.question3.data,
+                'question4': form.question4.data,
+                'question5': form.question5.data,
+                'question6': form.question6.data
+            }
+            
+            # Generate archetype
+            print('Calling generate_archetype...')
             try:
-                from openai_integration import generate_personality_signature
-                student_answers = {
-                    'question1': form.question1.data,
-                    'question2': form.question2.data,
-                    'question3': form.question3.data,
-                    'question4': form.question4.data,
-                    'question5': form.question5.data,
-                    'question6': form.question6.data
-                }
-                
-                print('Calling generate_personality_signature...')
-                # Generate complete personality signature (archetype + 3 insights)
-                personality_signature = generate_personality_signature(student_answers)
-                print(f'AI Response received: {personality_signature}')
-                
-                student.archetype = personality_signature.get('archetype', '個性豊かな学生')
-                student.core_strength = personality_signature.get('core_strength', '創造的な思考力と独自の視点を持っています。')
-                student.hidden_potential = personality_signature.get('hidden_potential', 'リーダーシップの才能が眠っている可能性があります。')
-                student.conversation_catalyst = personality_signature.get('conversation_catalyst', '趣味や興味のあることについて話すと、とても輝いて見えます。')
-                print(f"Generated complete personality signature for student {student.name}: {student.archetype}")
-                logging.info(f"Generated complete personality signature for student {student.name}: {student.archetype}")
-                
+                student.archetype = generate_archetype(student_answers)
+                print(f'Generated archetype: {student.archetype}')
             except Exception as e:
-                print(f"AN ERROR OCCURRED during AI personality generation: {e}")
-                logging.error(f"Failed to generate AI personality signature for {student.name}: {str(e)}")
-                student.archetype = "個性豊かな学生"  # Default fallback
+                print(f'Error generating archetype: {e}')
+                student.archetype = "個性豊かな学生"
+            
+            # Generate core strength
+            print('Calling generate_core_strength...')
+            try:
+                student.core_strength = generate_core_strength(student_answers)
+                print(f'Generated core strength: {student.core_strength}')
+            except Exception as e:
+                print(f'Error generating core strength: {e}')
                 student.core_strength = "創造的な思考力と独自の視点を持っています。"
+            
+            # Generate hidden potential
+            print('Calling generate_hidden_potential...')
+            try:
+                student.hidden_potential = generate_hidden_potential(student_answers)
+                print(f'Generated hidden potential: {student.hidden_potential}')
+            except Exception as e:
+                print(f'Error generating hidden potential: {e}')
                 student.hidden_potential = "リーダーシップの才能が眠っている可能性があります。"
+            
+            # Generate conversation catalyst
+            print('Calling generate_conversation_catalyst...')
+            try:
+                student.conversation_catalyst = generate_conversation_catalyst(student_answers)
+                print(f'Generated conversation catalyst: {student.conversation_catalyst}')
+            except Exception as e:
+                print(f'Error generating conversation catalyst: {e}')
                 student.conversation_catalyst = "趣味や興味のあることについて話すと、とても輝いて見えます。"
-                print('Using fallback personality signature values')
+            
+            print(f"Generated complete personality profile for student {student.name}: {student.archetype}")
+            logging.info(f"Generated complete personality profile for student {student.name}: {student.archetype}")
             
             print('--- Data prepared, attempting to save to database ---')
             db.session.add(student)

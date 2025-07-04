@@ -200,9 +200,9 @@ def translate_to_japanese(text):
         return ""  # Return empty string if translation fails
 
 
-def generate_personality_signature(student_answers):
+def generate_archetype(student_answers):
     """
-    Generate a comprehensive personality signature with archetype and three insights
+    Generate a creative Japanese nickname for the student
     """
     try:
         # Prepare the student answers text
@@ -212,56 +212,174 @@ def generate_personality_signature(student_answers):
             if question_key in student_answers:
                 answers_text += f"Question {i}: {student_answers[question_key]}\n"
         
-        prompt = f"""Create a concise Japanese personality profile based on these student answers:
+        prompt = f"""Based on these student answers, create only a creative Japanese nickname (2-4 words):
 
 {answers_text}
 
-Return JSON with these 4 fields:
-{{
-  "archetype": "Creative Japanese nickname (2-4 words)",
-  "core_strength": "1 sentence about their strength as a friend",
-  "hidden_potential": "1 sentence about their untapped ability", 
-  "conversation_catalyst": "1 sentence conversation starter from their interests"
-}}
+Return only the Japanese nickname that captures their personality."""
 
-Keep all text in Japanese and make it personal to their answers."""
-
-        # Create OpenAI client with shorter timeout to prevent hanging
+        # Create OpenAI client with short timeout
         timeout_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY"),
-            timeout=15.0  # Reduced to 15 second timeout
+            timeout=10.0
         )
         
         response = timeout_client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": "You are a skilled personality analyst. Create concise Japanese personality profiles."},
+                {"role": "system", "content": "You are a creative nickname generator. Create concise Japanese nicknames."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.7,
-            max_tokens=300,  # Reduced token count for faster response
-            response_format={"type": "json_object"}
+            max_tokens=50
         )
         
         if response.choices[0].message.content:
-            result = json.loads(response.choices[0].message.content)
-            logging.info(f"Generated personality signature: {result}")
+            result = response.choices[0].message.content.strip()
+            logging.info(f"Generated archetype: {result}")
             return result
         else:
-            logging.warning("Empty response from AI personality signature generation")
-            return {
-                "archetype": "個性豊かな学生",
-                "core_strength": "創造的な思考力と独自の視点を持っています。",
-                "hidden_potential": "リーダーシップの才能が眠っている可能性があります。",
-                "conversation_catalyst": "趣味や興味のあることについて話すと、とても輝いて見えます。"
-            }
+            return "個性豊かな学生"
             
     except Exception as e:
-        logging.error(f"Error generating personality signature: {str(e)}")
-        return {
-            "archetype": "個性豊かな学生",
-            "core_strength": "創造的な思考力と独自の視点を持っています。",
-            "hidden_potential": "リーダーシップの才能が眠っている可能性があります。",
-            "conversation_catalyst": "趣味や興味のあることについて話すと、とても輝いて見えます。"
-        }
+        logging.error(f"Error generating archetype: {str(e)}")
+        return "個性豊かな学生"
+
+
+def generate_core_strength(student_answers):
+    """
+    Generate a sentence about their strength as a friend
+    """
+    try:
+        # Prepare the student answers text
+        answers_text = ""
+        for i in range(1, 7):
+            question_key = f'question{i}'
+            if question_key in student_answers:
+                answers_text += f"Question {i}: {student_answers[question_key]}\n"
+        
+        prompt = f"""Based on these student answers, write 1 sentence in Japanese about their strength as a friend:
+
+{answers_text}
+
+Return only the Japanese sentence about their core strength."""
+
+        # Create OpenAI client with short timeout
+        timeout_client = OpenAI(
+            api_key=os.environ.get("OPENAI_API_KEY"),
+            timeout=10.0
+        )
+        
+        response = timeout_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "You are a personality analyst. Write concise Japanese sentences about strengths."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=100
+        )
+        
+        if response.choices[0].message.content:
+            result = response.choices[0].message.content.strip()
+            logging.info(f"Generated core strength: {result}")
+            return result
+        else:
+            return "創造的な思考力と独自の視点を持っています。"
+            
+    except Exception as e:
+        logging.error(f"Error generating core strength: {str(e)}")
+        return "創造的な思考力と独自の視点を持っています。"
+
+
+def generate_hidden_potential(student_answers):
+    """
+    Generate a sentence about their untapped ability
+    """
+    try:
+        # Prepare the student answers text
+        answers_text = ""
+        for i in range(1, 7):
+            question_key = f'question{i}'
+            if question_key in student_answers:
+                answers_text += f"Question {i}: {student_answers[question_key]}\n"
+        
+        prompt = f"""Based on these student answers, write 1 sentence in Japanese about their hidden potential or untapped ability:
+
+{answers_text}
+
+Return only the Japanese sentence about their hidden potential."""
+
+        # Create OpenAI client with short timeout
+        timeout_client = OpenAI(
+            api_key=os.environ.get("OPENAI_API_KEY"),
+            timeout=10.0
+        )
+        
+        response = timeout_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "You are a personality analyst. Write concise Japanese sentences about hidden potential."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=100
+        )
+        
+        if response.choices[0].message.content:
+            result = response.choices[0].message.content.strip()
+            logging.info(f"Generated hidden potential: {result}")
+            return result
+        else:
+            return "リーダーシップの才能が眠っている可能性があります。"
+            
+    except Exception as e:
+        logging.error(f"Error generating hidden potential: {str(e)}")
+        return "リーダーシップの才能が眠っている可能性があります。"
+
+
+def generate_conversation_catalyst(student_answers):
+    """
+    Generate a conversation starter based on their interests
+    """
+    try:
+        # Prepare the student answers text
+        answers_text = ""
+        for i in range(1, 7):
+            question_key = f'question{i}'
+            if question_key in student_answers:
+                answers_text += f"Question {i}: {student_answers[question_key]}\n"
+        
+        prompt = f"""Based on these student answers, write 1 sentence in Japanese about a conversation starter from their interests:
+
+{answers_text}
+
+Return only the Japanese sentence about how to start a conversation with them."""
+
+        # Create OpenAI client with short timeout
+        timeout_client = OpenAI(
+            api_key=os.environ.get("OPENAI_API_KEY"),
+            timeout=10.0
+        )
+        
+        response = timeout_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "You are a conversation expert. Write concise Japanese sentences about conversation starters."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=100
+        )
+        
+        if response.choices[0].message.content:
+            result = response.choices[0].message.content.strip()
+            logging.info(f"Generated conversation catalyst: {result}")
+            return result
+        else:
+            return "趣味や興味のあることについて話すと、とても輝いて見えます。"
+            
+    except Exception as e:
+        logging.error(f"Error generating conversation catalyst: {str(e)}")
+        return "趣味や興味のあることについて話すと、とても輝いて見えます。"
 
