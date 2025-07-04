@@ -678,7 +678,7 @@ def create_squads():
         if len(unassigned_students) < 3:
             return redirect(url_for('teacher'))
         
-        # Step 3: Prepare student data with their 6 question responses for AI analysis
+        # Step 3: Prepare student data with their pre-analyzed personality signatures for AI analysis
         students_data = []
         student_map = {}  # For efficient lookups during assignment
         
@@ -686,12 +686,10 @@ def create_squads():
             student_data = {
                 'id': student.id,
                 'name': student.name,
-                'question1': student.question1,
-                'question2': student.question2,
-                'question3': student.question3,
-                'question4': student.question4,
-                'question5': student.question5,
-                'question6': student.question6,
+                'archetype': student.archetype,
+                'core_strength': student.core_strength,
+                'hidden_potential': student.hidden_potential,
+                'conversation_catalyst': student.conversation_catalyst,
             }
             students_data.append(student_data)
             student_map[student.id] = student

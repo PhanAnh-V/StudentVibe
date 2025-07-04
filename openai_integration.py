@@ -21,45 +21,47 @@ def group_students_into_squads(students_data):
     Use AI to intelligently group students into squads of 3-4 based on their interests
     """
     try:
-        # Prepare the prompt with student data
+        # Prepare the prompt with pre-analyzed student personality signatures
         students_text = ""
         for idx, student in enumerate(students_data):
             students_text += f"\nStudent {idx + 1} (ID: {student['id']}, Name: {student['name']}):\n"
-            for i in range(1, 7):
-                students_text += f"- Q{i}: {student[f'question{i}']}\n"
+            students_text += f"- Archetype: {student['archetype']}\n"
+            students_text += f"- Core Strength: {student['core_strength']}\n"
+            students_text += f"- Hidden Potential: {student['hidden_potential']}\n"
+            students_text += f"- Conversation Catalyst: {student['conversation_catalyst']}\n"
         
-        prompt = f"""You are a creative team leader and social dynamics expert who specializes in forming amazing student squads.
+        prompt = f"""You are a master strategist and elite team formation specialist. You receive concise intelligence briefings on student personality signatures, not raw data.
 
-Below are student responses to 6 questions about their interests, passions, and personalities:
+Below are pre-analyzed student profiles with their key personality signatures:
 
 {students_text}
 
-Your mission:
-1. Group these students into squads of 3-4 members each
-2. Create fun, memorable squad names in JAPANESE that reflect their collective identity
-3. Find the common threads that will bond each group together
-4. Balance shared interests with complementary strengths
-5. Think like a camp counselor - make it exciting and meaningful!
+Your strategic mission:
+1. Form elite squads of 3-4 members by analyzing complementary Personality Signatures
+2. Look for strategic combinations where different archetypes create powerful synergies
+3. Balance core strengths with hidden potentials for maximum team effectiveness
+4. Create Japanese squad names that reflect their collective strategic advantage
+5. Think like a master strategist forming specialized units
 
 Respond with a JSON object in this exact format:
 {{
     "squads": [
         {{
-            "squad_name": "Creative Japanese name (like 'アドベンチャーチーム' or 'クリエイティブスピリッツ')",
+            "squad_name": "Strategic Japanese name that reflects their combined power",
             "member_ids": [list of student IDs],
-            "shared_interests": "Brief, inspiring summary in Japanese of what bonds this group together"
+            "shared_interests": "Concise Japanese summary of their strategic synergy and what makes them powerful together"
         }}
     ]
 }}
 
-Requirements:
+Strategic Requirements:
 - Every student must be assigned to exactly one squad
-- Squad names MUST be in Japanese and engaging
-- Shared interests MUST be in Japanese and show why these students belong together
-- Use natural, exciting Japanese that students would be proud to be part of
-- CRUCIAL: THE squad_name MUST BE IN JAPANESE KANJI/KANA ONLY. DO NOT INCLUDE ROMAJI OR ANY ENGLISH TRANSLATIONS IN THE NAME.
+- Squad names MUST be in Japanese kanji/kana only - NO romaji or English
+- Focus on complementary personality signatures, not just similarities
+- Shared interests should explain their strategic advantage as a team
+- Think quality over quantity - create elite, balanced teams
 
-Make each squad feel like a special club they'd be excited to join!"""
+Form teams that would dominate any challenge through their complementary strengths!"""
 
         # Create OpenAI client with timeout
         timeout_client = OpenAI(
