@@ -61,14 +61,24 @@
         }
         
         .squad-title-top {
-            font-size: 2.2rem !important;
-            font-weight: 700 !important;
+            font-size: 1.8rem !important;
+            font-weight: 600 !important;
             color: white !important;
             margin: 0 !important;
-            margin-bottom: 0.5rem !important;
+            margin-bottom: 0.3rem !important;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
             letter-spacing: 0.5px !important;
             line-height: 1.2 !important;
+        }
+        
+        .squad-title-bottom {
+            font-size: 2.4rem !important;
+            font-weight: 700 !important;
+            color: #FFE082 !important;
+            margin: 0 !important;
+            text-shadow: 0 3px 15px rgba(255, 224, 130, 0.4) !important;
+            letter-spacing: 0.5px !important;
+            line-height: 1.1 !important;
         }
         
         .shared-interests-header {
@@ -467,7 +477,13 @@
             }
             
             .squad-title-top {
+                font-size: 1.3rem !important;
+                margin-bottom: 0.2rem !important;
+            }
+            
+            .squad-title-bottom {
                 font-size: 1.8rem !important;
+                line-height: 1.1 !important;
             }
             
             .shared-interests-header {
@@ -561,7 +577,12 @@
                                 <i class="fas {{ squad.squad_icon or 'fa-users' }}"></i>
                             </div>
                             <div class="squad-title-container">
-                                <h1 class="squad-title-top">{{ squad.name }}</h1>
+                                {% if '(' in squad.name %}
+                                    <h1 class="squad-title-top">{{ squad.name.split('(')[0].strip() }}</h1>
+                                    <h2 class="squad-title-bottom">{{ squad.name.split('(')[1].replace(')', '').strip() }}</h2>
+                                {% else %}
+                                    <h1 class="squad-title-top">{{ squad.name }}</h1>
+                                {% endif %}
                             </div>
                             <div class="vibe-label">私たちの波動</div>
                             <div class="shared-interests-container">
