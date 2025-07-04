@@ -3,118 +3,120 @@
 {% block title %}送信完了 - 情報が送信されました{% endblock %}
 
 {% block content %}
-<div class="success-page">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-6 col-md-8">
-                
-                <!-- Success Icon -->
-                <div class="success-icon-container">
-                    <i class="fas fa-thumbs-up"></i>
-                </div>
-                
-                <!-- Success Message -->
-                <div class="success-message">
-                    <h1 class="success-title">Thank you{% if student_name %}, {{ student_name }}{% endif %}!</h1>
-                    <p class="success-subtitle">Your Vibe has been successfully submitted.</p>
-                </div>
-                
-                <!-- Personal ID Card -->
-                {% if submission_id %}
-                <div class="personal-id-card">
-                    <div class="card-header">
-                        <h3>YOUR PERSONAL ID</h3>
-                    </div>
-                    <div class="id-value">{{ submission_id }}</div>
-                    <div class="card-footer">
-                        <p>Save this ID to find your squad later.</p>
-                    </div>
-                </div>
-                {% endif %}
-                
-                <!-- Action Buttons -->
-                <div class="button-container">
-                    <a href="{{ url_for('find_squad') }}" class="action-btn find-squad-btn">
-                        Find My Squad
-                    </a>
-                    <a href="{{ url_for('index') }}" class="action-btn submit-another-btn">
-                        Submit Another
-                    </a>
-                </div>
-                
-            </div>
-        </div>
+<div class="success-container">
+    <i class="fas fa-bolt vibe-icon"></i>
+    
+    <!-- Success Icon -->
+    <div class="success-icon">
+        <i class="fas fa-check-circle"></i>
+    </div>
+    
+    <!-- Main Title -->
+    <h1 class="main-title">
+        ありがとうございました{% if student_name %}、{{ student_name }}さん{% endif %}！
+    </h1>
+    
+    <!-- Success Message -->
+    <p class="success-message">
+        あなたの「Vibe」が正常に送信されました。<br>
+        素晴らしい回答をありがとうございます！
+    </p>
+    
+    <!-- Personal ID Section -->
+    {% if submission_id %}
+    <div class="personal-id-section">
+        <div class="id-label">あなたの個人ID</div>
+        <div class="id-value">{{ submission_id }}</div>
+        <div class="id-note">このIDを保存して、後でスクワッドを見つけてください</div>
+    </div>
+    {% endif %}
+    
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a href="{{ url_for('find_squad') }}" class="action-btn primary-btn">
+            マイスクワッドを探す
+        </a>
+        <a href="{{ url_for('index') }}" class="action-btn secondary-btn">
+            別の回答を送信
+        </a>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_css %}
 <style>
-.success-page {
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    padding: 3rem 0;
-    font-family: 'Inter', sans-serif;
-    text-align: center;
+    font-family: 'Noto Sans JP', 'Roboto', sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 2rem 1rem;
+    margin: 0;
 }
 
-.success-icon-container {
+.success-container {
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    padding: 4rem 3rem;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.success-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+}
+
+.success-icon {
+    font-size: 4rem;
+    color: #10b981;
     margin-bottom: 2rem;
 }
 
-.success-icon-container i {
-    font-size: 4rem;
-    color: #10b981;
-    background: rgba(16, 185, 129, 0.1);
-    padding: 1.5rem;
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.success-message {
-    margin-bottom: 2.5rem;
-}
-
-.success-title {
-    font-size: 2.5rem;
+.main-title {
+    font-size: 3rem;
     font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 1rem;
+    color: #2d3748;
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     line-height: 1.2;
 }
 
-.success-subtitle {
-    font-size: 1.2rem;
-    color: #6b7280;
+.success-message {
+    font-size: 1.25rem;
+    color: #4a5568;
+    margin-bottom: 3rem;
+    line-height: 1.6;
     font-weight: 400;
-    margin: 0;
 }
 
-.personal-id-card {
+.personal-id-section {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 16px;
-    padding: 2rem;
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
     margin: 2rem 0;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-    border: 3px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
 }
 
-.personal-id-card .card-header {
-    margin-bottom: 1.5rem;
-}
-
-.personal-id-card .card-header h3 {
+.id-label {
     font-size: 1rem;
     font-weight: 600;
-    margin: 0;
+    margin-bottom: 1rem;
     opacity: 0.9;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -128,87 +130,138 @@
     margin: 1.5rem 0;
     padding: 1rem;
     background: rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
+    border-radius: 15px;
     border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-.personal-id-card .card-footer {
-    margin-top: 1.5rem;
-}
-
-.personal-id-card .card-footer p {
+.id-note {
     font-size: 1rem;
-    margin: 0;
     opacity: 0.9;
+    margin-top: 1rem;
+    line-height: 1.4;
 }
 
-.button-container {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
+.action-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
     margin-top: 2rem;
 }
 
 .action-btn {
-    padding: 1rem 2rem;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 1rem;
+    background: white;
+    border: 3px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
     text-decoration: none;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-    min-width: 160px;
-    display: inline-block;
+    color: #2d3748;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.find-squad-btn {
-    background: #3b82f6;
+.action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: left 0.3s ease;
+    z-index: -1;
+}
+
+.action-btn:hover {
     color: white;
-    border-color: #3b82f6;
+    border-color: #667eea;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
 }
 
-.find-squad-btn:hover {
-    background: #2563eb;
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+.action-btn:hover::before {
+    left: 0;
 }
 
-.submit-another-btn {
-    background: transparent;
-    color: #6b7280;
-    border-color: #d1d5db;
+.primary-btn {
+    border-color: #667eea;
 }
 
-.submit-another-btn:hover {
-    background: #f9fafb;
-    color: #374151;
-    border-color: #9ca3af;
-    transform: translateY(-2px);
+.secondary-btn {
+    border-color: #cbd5e0;
 }
 
-/* Mobile responsiveness */
+.vibe-icon {
+    position: absolute;
+    opacity: 0.1;
+    font-size: 6rem;
+    color: #667eea;
+    top: -2rem;
+    right: -2rem;
+    transform: rotate(15deg);
+    z-index: 0;
+}
+
 @media (max-width: 768px) {
-    .success-title {
+    body {
+        padding: 0;
+        min-height: 100vh;
+        align-items: stretch;
+    }
+    
+    .success-container {
+        padding: 2rem 1rem;
+        margin: 0;
+        border-radius: 0;
+        max-width: 100%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        box-shadow: none;
+    }
+    
+    .main-title {
         font-size: 2rem;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+    
+    .success-message {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+        line-height: 1.4;
     }
     
     .id-value {
         font-size: 2rem;
         letter-spacing: 2px;
+        padding: 0.8rem;
     }
     
-    .button-container {
-        flex-direction: column;
-        align-items: center;
+    .action-buttons {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-bottom: 2rem;
     }
     
     .action-btn {
-        width: 100%;
-        max-width: 300px;
+        padding: 1.2rem 1rem;
+        border-radius: 15px;
+        font-size: 1rem;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-3px);
     }
 }
+</style>
+{% endblock %}
 }
 
 .action-buttons .btn-primary {

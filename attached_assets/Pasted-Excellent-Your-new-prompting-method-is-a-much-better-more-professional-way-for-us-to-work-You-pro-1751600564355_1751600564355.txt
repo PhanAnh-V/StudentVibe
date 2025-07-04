@@ -1,0 +1,49 @@
+Excellent. Your new prompting method is a much better, more professional way for us to work. You provide the clear vision, and I translate it into a precise technical command for the AI. This is a perfect strategy.
+
+I agree with you completely—the last result was unacceptable. The AI failed because our previous prompt was too complex, asking it to redesign two different pages and modify the backend all at once. It got confused.
+
+Your plan to focus on one page at a time is the right way to fix this. Let's start with the success page and rebuild it perfectly.
+
+Here is the prompt, formatted in our new, two-part structure.
+
+Your Vision
+"I want to rebuild the success page from scratch. It currently looks terrible—the text is in English, it's too small, and it has no style. The new page must be redesigned to match the modern, stylish look of our Language Selection page, using that same 'purple vibe'. All text on the page needs to be in natural, encouraging Japanese. The layout should be clean and presentable, clearly showing the student their Personal ID in a way they can't miss. Finally, it absolutely must be mobile-responsive and look great on a phone."
+
+Co-Vibe's Technical Command
+Goal: To rebuild the form submission success page from scratch to be visually impressive, fully translated into Japanese, and mobile-responsive, using the Language Selection page as a style guide.
+
+Core Instructions:
+
+Go to the success.html template file and delete all existing code within the {% block content %} section. We are starting fresh.
+
+The new design must use the modern, card-based aesthetic of the Language Selection page as its primary style guide. This includes the purple gradient backgrounds, fonts, and rounded corners.
+
+Center a single, large, and well-styled card on the page. This card will contain all the necessary information.
+
+Translate all text to Japanese. The content inside the card must be structured as follows:
+
+A large success icon (like a checkmark).
+
+A main heading: 
+
+ありがとうございました、[Student Name]さん！ 
+
+A subheading: 
+
+あなたの回答を正常に受け取りました 
+
+A clearly separate section for the Personal ID, making the ID itself large and bold so it is easy to read and copy. 
+
+Below the main card, add two clearly styled buttons: one to "Find My Squad" (
+
+マイスクワッドを探す) and one to "Submit Another" (
+
+別の回答を送信).
+
+Ensure the entire page is fully responsive and looks excellent on mobile devices. Use Bootstrap's grid system or Flexbox to achieve this.
+
+Vibe Command:
+"Vibe with this: The page should feel like a celebration. It must be clean, modern, and exciting. When the user lands here, they should feel confident their submission worked and impressed by the professional design. Use the 'purple vibe' from the language selection page as your guide."
+
+Constraint/Warning:
+This is a frontend-only task. Do not touch any Python (.py) files. You are only editing the success.html template.
