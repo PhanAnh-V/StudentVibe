@@ -917,28 +917,29 @@ def delete_squad(squad_id):
 
 @app.route('/clear-squads', methods=['POST'])
 def clear_squads():
-    """Reset all squad assignments by setting squad_id to null and deleting all squads"""
+    """Complete reset - delete all records from both Student and Squad tables"""
     if not session.get('teacher_authenticated'):
         return redirect(url_for('teacher_login'))
     
     try:
-        # Step 1: Unassign all students from squads (set squad_id to null)
-        students_updated = db.session.execute(
-            db.text("UPDATE students SET squad_id = NULL WHERE squad_id IS NOT NULL")
-        ).rowcount
+        # Step 1: Count records before deletion for logging
+        students_count = Student.query.count()
+        squads_count = Squad.query.count()
         
-        # Step 2: Delete all squad records
-        squads_deleted = Squad.query.count()
+        # Step 2: Delete all student records
+        Student.query.delete()
+        
+        # Step 3: Delete all squad records
         Squad.query.delete()
         
         # Commit all changes
         db.session.commit()
         
-        logging.info(f"Squad assignments cleared successfully: {squads_deleted} squads deleted, {students_updated} students unassigned")
+        logging.info(f"Complete database reset: {students_count} students deleted, {squads_count} squads deleted")
         
     except Exception as e:
         db.session.rollback()
-        logging.error(f"Failed to clear squad assignments: {str(e)}")
+        logging.error(f"Failed to complete database reset: {str(e)}")
     
     return redirect(url_for('teacher'))
 
