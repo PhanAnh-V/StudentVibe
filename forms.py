@@ -88,7 +88,6 @@ class StudentForm(FlaskForm):
     country = SelectField(
         'Country',
         choices=[
-            ('', 'あなたの国を選択してください'),
             ('China', '中国'),
             ('Vietnam', 'ベトナム'),
             ('Japan', '日本'),
@@ -103,7 +102,6 @@ class StudentForm(FlaskForm):
     gender = SelectField(
         'Gender',
         choices=[
-            ('', 'あなたの性別を選択してください'),
             ('Male', '男性'),
             ('Female', '女性'),
             ('Prefer not to say', '回答しない')

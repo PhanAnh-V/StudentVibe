@@ -141,7 +141,13 @@
                                     <div class="col-md-6">
                                         <div class="input-group">
                                             <label class="input-label">国</label>
-                                            {{ form.country(class="form-select") }}
+                                            <select name="country" id="country" class="form-select" required>
+                                                <option value="" disabled selected>あなたの国を選択してください</option>
+                                                <option value="China">中国</option>
+                                                <option value="Vietnam">ベトナム</option>
+                                                <option value="Japan">日本</option>
+                                                <option value="Other">その他</option>
+                                            </select>
                                             {% if form.country.errors %}
                                                 <div class="error-message">
                                                     {% for error in form.country.errors %}
@@ -155,7 +161,12 @@
                                     <div class="col-md-6">
                                         <div class="input-group">
                                             <label class="input-label">性別</label>
-                                            {{ form.gender(class="form-select") }}
+                                            <select name="gender" id="gender" class="form-select" required>
+                                                <option value="" disabled selected>あなたの性別を選択してください</option>
+                                                <option value="Male">男性</option>
+                                                <option value="Female">女性</option>
+                                                <option value="Prefer not to say">回答しない</option>
+                                            </select>
                                             {% if form.gender.errors %}
                                                 <div class="error-message">
                                                     {% for error in form.gender.errors %}
@@ -627,9 +638,19 @@
             const submitBtn = document.getElementById('submit-btn');
             const originalText = '送信';
             
-            // Set Japanese text for submit button
+            // Set Japanese text for submit button and reset state
             if (submitBtn) {
                 submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+            }
+            
+            // Reset submit button if there are form errors on page load
+            const formErrors = document.querySelectorAll('.error-message');
+            if (formErrors.length > 0 && submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                submitBtn.style.opacity = '1';
             }
             
             // Enhanced form submission with validation and loading state
@@ -650,7 +671,7 @@
                         const textarea = document.getElementById(`question${i}`);
                         if (!textarea || !textarea.value.trim()) {
                             hasErrors = true;
-                            errorMessages.push(`Question ${i} is required`);
+                            errorMessages.push(`質問 ${i} の回答が必要です`);
                         }
                     }
                     
@@ -658,27 +679,32 @@
                     const nameField = document.getElementById('name');
                     if (!nameField || !nameField.value.trim()) {
                         hasErrors = true;
-                        errorMessages.push('Name is required');
+                        errorMessages.push('お名前の入力が必要です');
                     }
                     
                     // Check country selection
                     const countryField = document.getElementById('country');
                     if (!countryField || !countryField.value) {
                         hasErrors = true;
-                        errorMessages.push('Country selection is required');
+                        errorMessages.push('国の選択が必要です');
                     }
                     
                     // Check gender selection
                     const genderField = document.getElementById('gender');
                     if (!genderField || !genderField.value) {
                         hasErrors = true;
-                        errorMessages.push('Gender selection is required');
+                        errorMessages.push('性別の選択が必要です');
                     }
                     
                     // If validation fails, prevent submission and show error
                     if (hasErrors) {
                         e.preventDefault();
-                        alert('Please complete all required fields:\n\n' + errorMessages.join('\n'));
+                        alert('すべての必須項目を完了してください:\n\n' + errorMessages.join('\n'));
+                        
+                        // Reset submit button to normal state
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                        submitBtn.style.opacity = '1';
                         return;
                     }
                     
