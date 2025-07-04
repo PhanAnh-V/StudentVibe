@@ -33,52 +33,48 @@
             border: 2px solid #fff;
             border-radius: 8px;
             margin: 1rem;
-        }
-        
-        .squad-icon-container {
-            margin-bottom: 1rem;
-        }
-        
-        .squad-icon-container i {
-            font-size: 3rem;
-            color: white;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 1rem;
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
+            flex-direction: column;
+            gap: 1.5rem;
         }
         
-        .squad-title-container {
-            text-align: center;
-            margin: 1rem 0;
-            position: relative;
-            z-index: 1;
+
+        
+        .squad-name {
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
+            line-height: 1.2;
         }
         
-        .squad-title-top {
-            font-size: 1.8rem !important;
-            font-weight: 600 !important;
-            color: white !important;
-            margin: 0 !important;
-            margin-bottom: 0.3rem !important;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
-            letter-spacing: 0.5px !important;
-            line-height: 1.2 !important;
+        .squad-vibe-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
         }
         
-        .squad-title-bottom {
-            font-size: 2.4rem !important;
-            font-weight: 700 !important;
-            color: #FFE082 !important;
-            margin: 0 !important;
-            text-shadow: 0 3px 15px rgba(255, 224, 130, 0.4) !important;
-            letter-spacing: 0.5px !important;
-            line-height: 1.1 !important;
+        .vibe-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+        
+        .vibe-content {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: white;
+            line-height: 1.6;
+            margin: 0;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .shared-interests-header {
@@ -476,14 +472,18 @@
                 padding: 1.2rem 1rem;
             }
             
-            .squad-title-top {
-                font-size: 1.3rem !important;
-                margin-bottom: 0.2rem !important;
+            .squad-name {
+                font-size: 2rem;
+                line-height: 1.1;
             }
             
-            .squad-title-bottom {
-                font-size: 1.8rem !important;
-                line-height: 1.1 !important;
+            .vibe-label {
+                font-size: 1rem;
+            }
+            
+            .vibe-content {
+                font-size: 1.1rem;
+                padding: 0.8rem;
             }
             
             .shared-interests-header {
@@ -573,24 +573,10 @@
                     <!-- Squad Header Card -->
                     <div class="hub-card">
                         <div class="squad-header">
-                            <div class="squad-icon-container">
-                                <i class="fas {{ squad.squad_icon or 'fa-users' }}"></i>
-                            </div>
-                            <div class="squad-title-container">
-                                {% if '(' in squad.name %}
-                                    <h1 class="squad-title-top">{{ squad.name.split('(')[0].strip() }}</h1>
-                                    <h2 class="squad-title-bottom">{{ squad.name.split('(')[1].replace(')', '').strip() }}</h2>
-                                {% else %}
-                                    <h1 class="squad-title-top">{{ squad.name }}</h1>
-                                {% endif %}
-                            </div>
-                            <div class="vibe-label">私たちの波動</div>
-                            <div class="shared-interests-container">
-                                <div class="shared-interests-header">
-                                    <i class="fas fa-heart"></i>
-                                    <span>なぜ私たちはグループになったのか</span>
-                                </div>
-                                <p class="shared-interests">{{ squad.shared_interests }}</p>
+                            <div class="squad-name">{{ squad.name }}</div>
+                            <div class="squad-vibe-section">
+                                <div class="vibe-label">私たちの波動</div>
+                                <div class="vibe-content">{{ squad.shared_interests }}</div>
                             </div>
                         </div>
                     </div>
