@@ -280,11 +280,32 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
         
+        .ability-icon {
+            background: rgba(52, 152, 219, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .ability-card:hover .ability-icon {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            transform: scale(1.1);
+        }
+        
         .ability-name {
             color: #3498db;
-            font-size: 0.95rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.5px;
         }
         
         .ability-description {
@@ -666,14 +687,14 @@
                             </div>
                             {% endif %}
                             
-                            <!-- Three Insights Grid -->
+                            <!-- Personality Insights Grid -->
                             <div class="abilities-grid">
                                 {% if personality_signature.core_strength %}
                                 <div class="ability-card">
                                     <div class="ability-icon">
                                         <i class="fas fa-crown"></i>
                                     </div>
-                                    <div class="ability-name">コア・ストレングス</div>
+                                    <div class="ability-name">あなたの強み</div>
                                     <div class="ability-description japanese-text">{{ personality_signature.core_strength }}</div>
                                 </div>
                                 {% endif %}
@@ -683,7 +704,7 @@
                                     <div class="ability-icon">
                                         <i class="fas fa-gem"></i>
                                     </div>
-                                    <div class="ability-name">隠れた可能性</div>
+                                    <div class="ability-name">秘められた可能性</div>
                                     <div class="ability-description japanese-text">{{ personality_signature.hidden_potential }}</div>
                                 </div>
                                 {% endif %}
@@ -693,7 +714,7 @@
                                     <div class="ability-icon">
                                         <i class="fas fa-comments"></i>
                                     </div>
-                                    <div class="ability-name">会話の触媒</div>
+                                    <div class="ability-name">会話のきっかけ</div>
                                     <div class="ability-description japanese-text">{{ personality_signature.conversation_catalyst }}</div>
                                 </div>
                                 {% endif %}
