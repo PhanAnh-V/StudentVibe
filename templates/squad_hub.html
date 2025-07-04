@@ -1,635 +1,364 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ squad.name }} - スクワッドハブ</title>
+    
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        /* Squad Hub Specific Styles */
-        .squad-hub-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 1rem 0;
-        }
-        
-        .hub-card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-        
-        .squad-header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 2rem 1.5rem;
-            text-align: center;
-            position: relative;
-            border: 2px solid #fff;
-            border-radius: 8px;
-            margin: 1rem;
-        }
-        
-        .squad-icon-container {
-            margin-bottom: 1rem;
-        }
-        
-        .squad-icon-container i {
-            font-size: 3rem;
-            color: white;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 1rem;
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-        }
-        
-        .squad-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 1rem 0;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .vibe-label {
-            font-size: 1.2rem;
-            font-weight: 500;
-            margin: 1rem 0;
-            color: rgba(255, 255, 255, 0.9);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .shared-interests-container {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            max-width: 80%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .shared-interests {
-            font-size: 1.1rem;
-            font-weight: 400;
-            line-height: 1.6;
-            margin: 0;
-            color: white;
-        }
-        
-        .icebreaker-section {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
-            padding: 1.5rem 1.2rem;
-            margin: 1rem;
-            border-radius: 12px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .icebreaker-section::before {
-            content: '✨';
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 2rem;
-            opacity: 0.3;
-        }
-        
-        .icebreaker-title {
-            color: #2d3748;
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        
-        .icebreaker-content {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 1.5rem;
-            border-radius: 10px;
-            color: #2d3748;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* New Connection Blueprint Styles */
-        .icebreaker-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .icebreaker-subtitle {
-            color: #6b7280;
-            font-size: 0.95rem;
-            margin-top: 0.5rem;
-            font-style: italic;
-        }
-        
-        .icebreaker-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.2rem;
-            margin-top: 1.2rem;
-        }
-        
-        /* Additional mobile optimization for icebreaker cards */
-        @media (max-width: 768px) {
-            .icebreaker-cards {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-                margin-top: 1rem;
-            }
-        }
-        
-        .icebreaker-card {
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .icebreaker-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-        
-        .synergy-card {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-            border-left: 4px solid #ff6b9d;
-        }
-        
-        .complementarity-card {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            border-left: 4px solid #4ecdc4;
-        }
-        
-        .card-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-        
-        .card-icon {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: #2d3748;
-            margin-bottom: 0.75rem;
-        }
-        
-        .card-title {
-            color: #2d3748;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-        
-        .card-subtitle {
-            color: #4a5568;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        
-        .card-content {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 1.25rem;
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .question-text {
-            color: #2d3748;
-            font-size: 1rem;
-            line-height: 1.6;
-            margin: 0;
-            font-weight: 500;
-        }
-        
-        .fallback-icebreaker, .no-icebreaker {
-            text-align: center;
-            padding: 2rem;
-        }
-        
-        .fallback-content, .empty-state {
-            color: #6b7280;
-            font-size: 1rem;
-        }
-        
-        .fallback-content i, .empty-state i {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            display: block;
-            color: #9ca3af;
-        }
-        
-        .icebreaker-questions {
-            margin-top: 1.5rem;
-        }
-        
-        .question-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            background: #f8fafc;
-            border-radius: 12px;
-            border-left: 4px solid #3b82f6;
-        }
-        
-        .question-item:last-child {
-            margin-bottom: 0;
-        }
-        
-        .question-number {
-            background: #3b82f6;
-            color: white;
-            width: 2rem;
-            height: 2rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-            margin-top: 0.2rem;
-        }
-        
-        .question-text {
-            color: #374151;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin: 0;
-            flex-grow: 1;
-        }
-        
-        .fallback-mission, .no-mission {
-            text-align: center;
-            padding: 2rem;
-            color: #6b7280;
-            font-style: italic;
-        }
-        
-        .members-section {
-            padding: 1.2rem;
-        }
-        
-        .section-title {
-            color: #2d3748;
-            font-size: 1.6rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .member-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .member-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-        }
-        
-        .member-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            border-color: #4facfe;
-        }
-        
-        .member-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .member-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-        
-        .member-details h5 {
-            color: #2d3748;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-        
-        .member-country {
-            color: #667eea;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        
-        .back-link {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            color: #667eea;
-            padding: 0.75rem 1rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-        
-        .back-link:hover {
-            background: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            color: #667eea;
-            text-decoration: none;
-        }
-        
-        .squad-stats {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 1rem;
-        }
-        
-        .stat-item {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        .stat-number {
-            font-size: 1.8rem;
-            font-weight: 700;
-            display: block;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        
-        @media (max-width: 768px) {
-            .squad-hub-container {
-                padding: 0.5rem 0;
-            }
-            
-            .hub-card {
-                margin: 0.5rem;
-                border-radius: 12px;
-            }
-            
-            .squad-header {
-                padding: 1.2rem 1rem;
-            }
-            
-            .squad-title {
-                font-size: 1.6rem;
-                line-height: 1.3;
-            }
-            
-            .shared-interests {
-                font-size: 0.85rem;
-                margin-top: 0.5rem;
-            }
-            
-            .members-section {
-                padding: 1rem;
-            }
-            
-            .section-title {
-                font-size: 1.3rem;
-                margin-bottom: 1rem;
-            }
-            
-            .member-card {
-                padding: 0.8rem;
-                margin-bottom: 0.6rem;
-            }
-            
-            .member-avatar {
-                width: 45px;
-                height: 45px;
-                font-size: 1.2rem;
-            }
-            
-            .icebreaker-section {
-                margin: 0.5rem;
-                padding: 1rem 0.8rem;
-            }
-            
-            .icebreaker-title {
-                font-size: 1.3rem;
-            }
-            
-            .question-item {
-                padding: 1rem;
-                margin-bottom: 0.8rem;
-            }
-            
-            .question-text {
-                font-size: 1rem;
-                line-height: 1.5;
-            }
-            
-            .back-link {
-                position: relative;
-                top: auto;
-                left: auto;
-                margin: 0.5rem;
-                padding: 0.6rem 0.8rem;
-                font-size: 0.9rem;
-                display: inline-block;
-            }
-            
-            .squad-stats {
-                gap: 1.5rem;
-                margin-top: 0.8rem;
-            }
-            
-            .stat-number {
-                font-size: 1.5rem;
-            }
-            
-            .stat-label {
-                font-size: 0.8rem;
-            }
-        }
-    </style>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="squad-hub-container">
-        <a href="{{ url_for('find_squad') }}" class="back-link">
-            <i class="fas fa-arrow-left me-2"></i>検索に戻る
-        </a>
-        
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 col-md-10">
-                    
-                    <!-- Squad Header Card -->
-                    <div class="hub-card">
-                        <div class="squad-header">
-                            <div class="squad-icon-container">
-                                <i class="fas {{ squad.squad_icon or 'fa-users' }}"></i>
-                            </div>
-                            <h1 class="squad-title">{{ squad.name }}</h1>
-                            <div class="vibe-label">[ "Our Vibe" LABEL ]</div>
-                            <div class="shared-interests-container">
-                                <p class="shared-interests">{{ squad.shared_interests }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Connection Blueprint Icebreakers -->
-                    <div class="hub-card">
-                        <div class="icebreaker-header">
-                            <h2 class="section-title">
-                                <i class="fas fa-magic"></i>
-                                コネクション・ブループリント
-                            </h2>
-                            <p class="icebreaker-subtitle">AIがあなたたちの深いつながりを分析して作った特別な質問です</p>
-                        </div>
-                        
-                        {% if icebreakers and icebreakers.icebreakers and icebreakers.icebreakers|length >= 2 %}
-                            <div class="icebreaker-cards">
-                                <div class="icebreaker-card synergy-card">
-                                    <div class="card-header">
-                                        <div class="card-icon">
-                                            <i class="fas fa-heart"></i>
-                                        </div>
-                                        <h3 class="card-title">シナジー質問</h3>
-                                        <p class="card-subtitle">共通の興味を探る</p>
-                                    </div>
-                                    <div class="card-content">
-                                        <p class="question-text">{{ icebreakers.icebreakers[0] }}</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="icebreaker-card complementarity-card">
-                                    <div class="card-header">
-                                        <div class="card-icon">
-                                            <i class="fas fa-puzzle-piece"></i>
-                                        </div>
-                                        <h3 class="card-title">相補性質問</h3>
-                                        <p class="card-subtitle">異なる強みを活かす</p>
-                                    </div>
-                                    <div class="card-content">
-                                        <p class="question-text">{{ icebreakers.icebreakers[1] }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        {% elif squad.icebreaker_text %}
-                            <div class="fallback-icebreaker">
-                                <div class="fallback-content">
-                                    <i class="fas fa-comments"></i>
-                                    <p>{{ squad.icebreaker_text }}</p>
-                                </div>
-                            </div>
-                        {% else %}
-                            <div class="no-icebreaker">
-                                <div class="empty-state">
-                                    <i class="fas fa-hourglass-half"></i>
-                                    <p>先生がアイスブレーカーを生成すると、ここに表示されます。</p>
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Squad Members Section -->
-                    <div class="hub-card">
-                        <div class="members-section">
-                            <h2 class="section-title">
-                                <i class="fas fa-users"></i>
-                                あなたのスクワッドメンバー
-                            </h2>
-                            
-                            {% for member in squad.members %}
-                            <div class="member-card">
-                                <div class="member-info">
-                                    <div class="member-avatar">
-                                        {{ member.name[0].upper() }}
-                                    </div>
-                                    <div class="member-details">
-                                        <h5>
-                                            <a href="{{ url_for('student_profile', student_id=member.id) }}" class="text-decoration-none" style="color: #2d3748;">
-                                                {{ member.name }}
-                                            </a>
-                                        </h5>
-                                        {% if member.archetype %}
-                                        <div class="member-archetype" style="font-size: 0.85rem; color: #6b7280; margin-bottom: 0.25rem;">
-                                            <i class="fas fa-star" style="color: #fbbf24;"></i> {{ member.archetype }}
-                                        </div>
-                                        {% endif %}
-                                        <div class="member-country">
-                                            <i class="fas fa-globe"></i>
-                                            {{ member.country }}
-                                        </div>
-                                        {% if member.submission_id %}
-                                        <small class="text-muted">ID: {{ member.submission_id }}</small>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    
 
+<div class="squad-hub-container">
+    <!-- Clean Back Button -->
+    <div class="back-button-container">
+        <a href="{{ url_for('find_squad') }}" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            検索に戻る
+        </a>
+    </div>
+
+    <!-- Main Squad Card -->
+    <div class="main-card">
+        <!-- Squad Header - Clean 2-Column Layout -->
+        <div class="squad-header">
+            <div class="header-left">
+                <div class="squad-icon">
+                    <i class="fas {{ squad.squad_icon or 'fa-users' }}"></i>
+                </div>
+                <div class="squad-info">
+                    <h1 class="squad-name">{{ squad.name }}</h1>
+                    <div class="member-count">{{ squad.members|length }}人のメンバー</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="squad-description">
+                    {{ squad.shared_interests }}
                 </div>
             </div>
         </div>
+
+        <!-- Member Cards Grid -->
+        <div class="members-section">
+            <h2 class="section-title">
+                <i class="fas fa-users me-2"></i>
+                メンバー
+            </h2>
+            <div class="members-grid">
+                {% for member in squad.members %}
+                <div class="member-card">
+                    <div class="member-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">
+                            <a href="{{ url_for('student_profile', student_id=member.id) }}">{{ member.name }}</a>
+                        </h3>
+                        <div class="member-archetype">{{ member.archetype or '探検者' }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Icebreaker Questions -->
+        {% if icebreakers and icebreakers.icebreakers and icebreakers.icebreakers|length >= 2 %}
+        <div class="icebreaker-section">
+            <h2 class="section-title">
+                <i class="fas fa-comments me-2"></i>
+                コネクション・ブループリント
+            </h2>
+            <div class="icebreaker-grid">
+                <div class="icebreaker-card">
+                    <div class="card-number">1</div>
+                    <div class="card-content">
+                        <p class="question-text">{{ icebreakers.icebreakers[0] }}</p>
+                    </div>
+                </div>
+                <div class="icebreaker-card">
+                    <div class="card-number">2</div>
+                    <div class="card-content">
+                        <p class="question-text">{{ icebreakers.icebreakers[1] }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
+</div>
+
+<style>
+/* Clean Professional Styling */
+.squad-hub-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Noto Sans JP', sans-serif;
+    padding: 2rem 1rem;
+}
+
+.back-button-container {
+    max-width: 1200px;
+    margin: 0 auto 1rem;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.main-card {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Squad Header - 2 Column Layout */
+.squad-header {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 3rem 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.squad-icon {
+    background: rgba(255, 255, 255, 0.2);
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.squad-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.2;
+}
+
+.member-count {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.header-right {
+    text-align: right;
+}
+
+.squad-description {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    opacity: 0.95;
+}
+
+/* Members Section */
+.members-section {
+    padding: 2.5rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.member-card {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.member-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border-color: #4facfe;
+}
+
+.member-avatar {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.member-name a {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3748;
+    text-decoration: none;
+    margin: 0 0 0.25rem 0;
+}
+
+.member-name a:hover {
+    color: #667eea;
+}
+
+.member-archetype {
+    font-size: 0.9rem;
+    color: #718096;
+    font-weight: 500;
+}
+
+/* Icebreaker Section */
+.icebreaker-section {
+    padding: 2.5rem;
+}
+
+.icebreaker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+}
+
+.icebreaker-card {
+    background: linear-gradient(135deg, #667eea 10%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.icebreaker-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+}
+
+.card-number {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    backdrop-filter: blur(10px);
+}
+
+.card-content {
+    position: relative;
+    z-index: 2;
+}
+
+.question-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .squad-hub-container {
+        padding: 1rem 0.5rem;
+    }
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    .squad-header {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 2rem 1.5rem;
+        text-align: center;
+    }
+    
+    .header-left {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .header-right {
+        text-align: center;
+    }
+    
+    .squad-name {
+        font-size: 2rem;
+    }
+    
+    .members-section,
+    .icebreaker-section {
+        padding: 1.5rem;
+    }
+    
+    .members-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .icebreaker-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
