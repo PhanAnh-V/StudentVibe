@@ -24,9 +24,14 @@
     </div>
     
     <!-- Main Title -->
-    <h1 class="main-title">
-        ありがとうございました{% if student_name %}、{{ student_name }}さん{% endif %}！
-    </h1>
+    <div class="title-section">
+        <h1 class="main-title-top">ありがとうございました</h1>
+        {% if student_name %}
+        <h2 class="main-title-bottom">{{ student_name }}さん！</h2>
+        {% else %}
+        <h2 class="main-title-bottom">！</h2>
+        {% endif %}
+    </div>
     
     <!-- Success Message -->
     <p class="success-message">
@@ -99,14 +104,31 @@
     animation: checkmark 0.8s ease-out;
 }
 
-.main-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: white;
+.title-section {
     text-align: center;
-    margin-bottom: 1rem;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 1.5rem;
     animation: slideUp 0.6s ease-out 0.2s both;
+}
+
+.main-title-top {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: white;
+    margin: 0;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+}
+
+.main-title-bottom {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #FFE082;
+    margin: 0;
+    text-shadow: 0 3px 15px rgba(255, 224, 130, 0.4);
+    letter-spacing: 1px;
+    animation: glow 2s ease-in-out infinite alternate;
 }
 
 .success-message {
@@ -220,9 +242,18 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes glow {
+    from { text-shadow: 0 3px 15px rgba(255, 224, 130, 0.4), 0 0 20px rgba(255, 224, 130, 0.2); }
+    to { text-shadow: 0 3px 15px rgba(255, 224, 130, 0.8), 0 0 30px rgba(255, 224, 130, 0.4); }
+}
+
 @media (max-width: 768px) {
-    .main-title {
-        font-size: 2rem;
+    .main-title-top {
+        font-size: 1.8rem;
+    }
+    
+    .main-title-bottom {
+        font-size: 2.5rem;
     }
     
     .success-message {
