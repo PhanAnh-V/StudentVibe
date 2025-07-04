@@ -632,7 +632,7 @@
                 submitBtn.textContent = originalText;
             }
             
-            // Enhanced form submission with loading state
+            // Enhanced form submission with validation and loading state
             if (form && submitBtn) {
                 form.addEventListener('submit', function(e) {
                     // Prevent double submission
@@ -641,10 +641,72 @@
                         return;
                     }
                     
+                    // Validate all required fields before submission
+                    let hasErrors = false;
+                    const errorMessages = [];
+                    
+                    // Check all question textareas
+                    for (let i = 1; i <= 6; i++) {
+                        const textarea = document.getElementById(`question${i}`);
+                        if (!textarea || !textarea.value.trim()) {
+                            hasErrors = true;
+                            errorMessages.push(`Question ${i} is required`);
+                        }
+                    }
+                    
+                    // Check name field
+                    const nameField = document.getElementById('name');
+                    if (!nameField || !nameField.value.trim()) {
+                        hasErrors = true;
+                        errorMessages.push('Name is required');
+                    }
+                    
+                    // Check country selection
+                    const countryField = document.getElementById('country');
+                    if (!countryField || !countryField.value) {
+                        hasErrors = true;
+                        errorMessages.push('Country selection is required');
+                    }
+                    
+                    // Check gender selection
+                    const genderField = document.getElementById('gender');
+                    if (!genderField || !genderField.value) {
+                        hasErrors = true;
+                        errorMessages.push('Gender selection is required');
+                    }
+                    
+                    // If validation fails, prevent submission and show error
+                    if (hasErrors) {
+                        e.preventDefault();
+                        alert('Please complete all required fields:\n\n' + errorMessages.join('\n'));
+                        return;
+                    }
+                    
                     // Show loading state
                     submitBtn.disabled = true;
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>送信中...';
                     submitBtn.style.opacity = '0.7';
+                });
+                
+                // Prevent accidental form submission on Enter key in text fields
+                const allInputs = form.querySelectorAll('input, textarea, select');
+                allInputs.forEach(input => {
+                    if (input.type !== 'submit') {
+                        input.addEventListener('keydown', function(e) {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                // Move to next field instead
+                                const nextInput = Array.from(allInputs).find(el => 
+                                    el.tabIndex > input.tabIndex || 
+                                    (el.tabIndex === 0 && input.tabIndex === 0 && 
+                                     Array.from(allInputs).indexOf(el) > Array.from(allInputs).indexOf(input))
+                                );
+                                if (nextInput) {
+                                    nextInput.focus();
+                                }
+                            }
+                        });
+                    }
                 });
             }
             
