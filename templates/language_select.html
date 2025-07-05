@@ -129,6 +129,40 @@
             z-index: 0;
         }
         
+        #app-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #app-logo::before {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            top: 5px;
+            left: 10px;
+            opacity: 0.8;
+        }
+        
+        #app-logo::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #764ba2 0%, #f093fb 100%);
+            top: 15px;
+            right: 10px;
+            opacity: 0.7;
+        }
+        
         @media (max-width: 768px) {
             body {
                 padding: 0;
@@ -146,6 +180,26 @@
                 flex-direction: column;
                 justify-content: center;
                 box-shadow: none;
+            }
+            
+            #app-logo {
+                width: 60px;
+                height: 60px;
+                margin: 0 auto 1.5rem auto;
+            }
+            
+            #app-logo::before {
+                width: 40px;
+                height: 40px;
+                top: 3px;
+                left: 8px;
+            }
+            
+            #app-logo::after {
+                width: 40px;
+                height: 40px;
+                top: 12px;
+                right: 8px;
             }
             
             .main-title {
@@ -205,6 +259,8 @@
                 先生ログイン
             </a>
         </div>
+        
+        <div id="app-logo"></div>
         
         <h1 class="main-title">
             「Vibe Check」へようこそ！
