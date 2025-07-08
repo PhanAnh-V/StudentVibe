@@ -1570,7 +1570,7 @@ def reset_database():
 
 @app.route('/dev/seed-database')
 def seed_database():
-    """Developer tool to seed database with 10 new test students for testing"""
+    """Developer tool to seed database with 20 realistic Gen Z students for testing"""
     try:
         import random
         
@@ -1579,121 +1579,316 @@ def seed_database():
         Student.query.delete()
         db.session.commit()
         
-        # Common Japanese names for testing
-        japanese_names = [
-            'Kenji Tanaka', 'Yuki Sato', 'Hiroshi Yamamoto', 'Sakura Watanabe', 'Takeshi Suzuki',
-            'Ayame Nakamura', 'Daiki Kobayashi', 'Rei Ito', 'Shota Kato', 'Miki Yoshida'
+        # Realistic Gen Z names from Japan, Vietnam, and China
+        student_profiles = [
+            # Good/Mature students (10)
+            {
+                'name': 'Yuki Tanaka',
+                'country': 'Japan',
+                'gender': 'Female',
+                'type': 'good',
+                'answers': {
+                    'question1': 'I love reading classical literature and exploring hidden cafés in Tokyo. I spend my free time writing poetry and studying different architectural styles around the city.',
+                    'question2': 'I would master digital art and animation to create meaningful stories that connect people across cultures. Art has the power to bridge differences.',
+                    'question3': 'I can talk for hours about sustainable living and environmental conservation. I believe our generation has a responsibility to protect the planet.',
+                    'question4': 'My ideal Friday night is cooking a homemade meal with friends, followed by deep conversations about life goals and watching Studio Ghibli films.',
+                    'question5': 'I once became obsessed with learning traditional Japanese calligraphy, practicing for hours to perfect each stroke and understanding the philosophy behind each character.',
+                    'question6': 'I want teammates who are genuinely curious about the world, empathetic listeners, and people who can find creative solutions to problems.'
+                }
+            },
+            {
+                'name': 'Hiroshi Yamamoto',
+                'country': 'Japan',
+                'gender': 'Male',
+                'type': 'good',
+                'answers': {
+                    'question1': 'I enjoy building small robots and programming them to solve everyday problems. Technology should make life better for everyone.',
+                    'question2': 'I would master multiple programming languages to develop apps that help people connect and learn from each other more effectively.',
+                    'question3': 'I love discussing the intersection of technology and society, especially how AI can be used ethically to solve global challenges.',
+                    'question4': 'Perfect Friday: attending a tech meetup, then going to a quiet ramen shop to code personal projects while listening to lo-fi music.',
+                    'question5': 'I became fascinated with mechanical keyboards and spent months researching different switch types and building my own custom keyboard.',
+                    'question6': 'I need teammates who are detail-oriented, patient with explaining complex ideas, and passionate about making a positive impact.'
+                }
+            },
+            {
+                'name': 'Linh Nguyen',
+                'country': 'Vietnam',
+                'gender': 'Female',
+                'type': 'good',
+                'answers': {
+                    'question1': 'I love exploring Vietnamese street food culture and learning traditional recipes from my grandmother. Food connects generations and cultures.',
+                    'question2': 'I would master photography to document the stories of everyday people and preserve cultural heritage through visual storytelling.',
+                    'question3': 'I can talk endlessly about travel experiences and cultural differences, sharing stories about local customs and the beauty of human diversity.',
+                    'question4': 'My ideal Friday involves visiting local markets, trying new foods, and having meaningful conversations with older generations about their life experiences.',
+                    'question5': 'I once became obsessed with learning about coffee cultivation and brewing methods, visiting every coffee shop in my city to understand different flavor profiles.',
+                    'question6': 'I want teammates who are open-minded, respectful of different perspectives, and enthusiastic about learning from others.'
+                }
+            },
+            {
+                'name': 'Duc Tran',
+                'country': 'Vietnam',
+                'gender': 'Male',
+                'type': 'good',
+                'answers': {
+                    'question1': 'I spend my free time tutoring younger students in math and science, believing that education is the key to breaking cycles of poverty.',
+                    'question2': 'I would master renewable energy engineering to help develop sustainable solutions for developing countries like Vietnam.',
+                    'question3': 'I love discussing educational inequality and how technology can make quality education accessible to everyone, regardless of economic background.',
+                    'question4': 'Perfect Friday: studying at the library, then playing basketball with friends, followed by a family dinner with lots of laughter.',
+                    'question5': 'I became fascinated with urban gardening and spent months learning how to grow vegetables in small spaces using hydroponics.',
+                    'question6': 'I need teammates who are hardworking, supportive of each other, and committed to making a difference in their communities.'
+                }
+            },
+            {
+                'name': 'Wei Chen',
+                'country': 'China',
+                'gender': 'Male',
+                'type': 'good',
+                'answers': {
+                    'question1': 'I practice traditional Chinese instruments like the guzheng and study classical poetry. I believe preserving cultural heritage is important.',
+                    'question2': 'I would master international relations and diplomacy to help build bridges between different cultures and prevent conflicts.',
+                    'question3': 'I can talk for hours about philosophy, especially comparing Eastern and Western philosophical traditions and their relevance today.',
+                    'question4': 'My ideal Friday is attending a cultural performance, then having tea with friends while discussing literature and current events.',
+                    'question5': 'I once became obsessed with learning about traditional Chinese medicine and spent months studying herb properties and holistic healing methods.',
+                    'question6': 'I want teammates who are intellectually curious, respectful of traditions, and passionate about cross-cultural understanding.'
+                }
+            },
+            {
+                'name': 'Mei Zhang',
+                'country': 'China',
+                'gender': 'Female',
+                'type': 'good',
+                'answers': {
+                    'question1': 'I love learning languages and currently speak four. I believe communication is the foundation of human connection and understanding.',
+                    'question2': 'I would master simultaneous translation to help people from different cultures communicate and understand each other better.',
+                    'question3': 'I can discuss language learning strategies for hours, sharing resources and exploring how different languages shape our thinking.',
+                    'question4': 'Perfect Friday: language exchange café, then watching foreign films with subtitles to immerse myself in different cultures.',
+                    'question5': 'I became fascinated with etymology and spent months tracing the origins of words across different languages and cultures.',
+                    'question6': 'I need teammates who are patient, good communicators, and appreciate the beauty of linguistic and cultural diversity.'
+                }
+            },
+            {
+                'name': 'Sakura Ito',
+                'country': 'Japan',
+                'gender': 'Female',
+                'type': 'good',
+                'answers': {
+                    'question1': 'I volunteer at animal shelters and study veterinary science. I believe we have a responsibility to protect and care for all living beings.',
+                    'question2': 'I would master veterinary medicine to help animals in need and educate people about responsible pet ownership.',
+                    'question3': 'I love talking about animal behavior and conservation efforts, sharing stories about wildlife protection and rehabilitation.',
+                    'question4': 'My ideal Friday involves volunteering at the animal shelter, then taking nature walks to observe and photograph wildlife.',
+                    'question5': 'I once became obsessed with learning about marine biology and spent months studying ocean ecosystems and conservation efforts.',
+                    'question6': 'I want teammates who are compassionate, environmentally conscious, and willing to take action for causes they believe in.'
+                }
+            },
+            {
+                'name': 'Anh Pham',
+                'country': 'Vietnam',
+                'gender': 'Female',
+                'type': 'good',
+                'answers': {
+                    'question1': 'I create educational content on social media to help students with study techniques and motivation. Knowledge should be shared freely.',
+                    'question2': 'I would master educational psychology to understand how people learn best and develop more effective teaching methods.',
+                    'question3': 'I can talk endlessly about personal development, study strategies, and how to overcome academic challenges through persistence.',
+                    'question4': 'Perfect Friday: creating study guides for my followers, then relaxing with friends over Vietnamese coffee and planning future goals.',
+                    'question5': 'I became fascinated with memory techniques and spent months learning mnemonics and speed-reading methods to improve my learning efficiency.',
+                    'question6': 'I need teammates who are motivated, organized, and supportive of each other\'s academic and personal growth.'
+                }
+            },
+            {
+                'name': 'Jun Liu',
+                'country': 'China',
+                'gender': 'Male',
+                'type': 'good',
+                'answers': {
+                    'question1': 'I practice martial arts and study Chinese philosophy. Physical and mental discipline are equally important for personal growth.',
+                    'question2': 'I would master sports psychology to help athletes develop mental strength and overcome performance anxiety.',
+                    'question3': 'I love discussing the connection between physical fitness and mental health, and how ancient wisdom applies to modern challenges.',
+                    'question4': 'My ideal Friday involves martial arts training, then meditation in nature, followed by reading philosophy books.',
+                    'question5': 'I once became obsessed with studying different meditation techniques from various Buddhist traditions and their scientific benefits.',
+                    'question6': 'I want teammates who are disciplined, balanced in their approach to life, and committed to continuous self-improvement.'
+                }
+            },
+            {
+                'name': 'Ayame Sato',
+                'country': 'Japan',
+                'gender': 'Female',
+                'type': 'good',
+                'answers': {
+                    'question1': 'I study traditional Japanese crafts like pottery and textile weaving. Preserving artisanal skills is important in our digital age.',
+                    'question2': 'I would master traditional craftsmanship to keep cultural heritage alive and teach these skills to future generations.',
+                    'question3': 'I can talk for hours about the intersection of tradition and modernity, and how ancient techniques remain relevant today.',
+                    'question4': 'Perfect Friday: pottery class, then visiting museums to study traditional art, followed by tea ceremony practice.',
+                    'question5': 'I became fascinated with natural dyeing techniques and spent months learning how to create colors from plants and minerals.',
+                    'question6': 'I need teammates who appreciate craftsmanship, have patience for detailed work, and respect cultural traditions.'
+                }
+            },
+            
+            # Immature/Rebellious students (10)
+            {
+                'name': 'Takeshi Suzuki',
+                'country': 'Japan',
+                'gender': 'Male',
+                'type': 'immature',
+                'answers': {
+                    'question1': 'bruh i just play mobile games all day lol. mostly gacha games where i spend my allowance on anime waifus. dont judge me',
+                    'question2': 'i wanna be a pro gamer or maybe a youtuber? idk something where i dont have to wake up early or wear a suit',
+                    'question3': 'memes. literally just memes. i can quote every tiktok trend and vine compilation. also conspiracy theories about anime plots',
+                    'question4': 'gaming until 3am while eating convenience store food and energy drinks. maybe watch some streamers rage quit',
+                    'question5': 'i got really into collecting pokemon cards again even though im 18. spent like 50000 yen on booster packs last month',
+                    'question6': 'someone who wont judge my lifestyle choices and maybe has good wifi for gaming sessions'
+                }
+            },
+            {
+                'name': 'Riku Nakamura',
+                'country': 'Japan',
+                'gender': 'Male',
+                'type': 'immature',
+                'answers': {
+                    'question1': 'skateboarding and causing minor trouble around shibuya. not illegal stuff just... creative interpretations of rules',
+                    'question2': 'honestly? time travel so i can go back and buy bitcoin or prevent embarrassing moments from happening',
+                    'question3': 'why adults are so obsessed with \"responsibility\" and \"growing up\" like chill we have our whole lives to be boring',
+                    'question4': 'sneaking out to all-night karaoke with friends and singing anime openings until we lose our voices',
+                    'question5': 'learning how to do skateboard tricks by watching youtube videos at 2x speed. broke my wrist twice but worth it',
+                    'question6': 'someone who knows how to have fun and wont snitch when we bend the rules a little'
+                }
+            },
+            {
+                'name': 'Minh Hoang',
+                'country': 'Vietnam',
+                'gender': 'Male',
+                'type': 'immature',
+                'answers': {
+                    'question1': 'playing mobile legends and arguing with teammates in voice chat. also making tiktoks of me doing stupid dances',
+                    'question2': 'super speed so i can finish all my homework in 5 minutes and have more time for gaming',
+                    'question3': 'why vietnamese parents always compare you to other kids like \"why cant you be more like duc next door\"',
+                    'question4': 'internet cafe gaming session with the boys, then street food and complaining about school',
+                    'question5': 'trying to learn guitar to impress girls but gave up after 2 weeks because my fingers hurt',
+                    'question6': 'someone who can carry me in team games and doesnt care that i never do group project work'
+                }
+            },
+            {
+                'name': 'Thuy Dang',
+                'country': 'Vietnam',
+                'gender': 'Female',
+                'type': 'immature',
+                'answers': {
+                    'question1': 'scrolling through instagram and tiktok for hours. also online shopping for clothes i dont need with my parents money',
+                    'question2': 'mind reading so i can know what people really think about me and also cheat on tests',
+                    'question3': 'drama. like who said what about who and why everyone is so fake on social media',
+                    'question4': 'boba tea, gossip with friends, and taking 100 selfies until i find the perfect one for instagram',
+                    'question5': 'korean skincare routine. i have like 15 different products and watch youtube tutorials religiously',
+                    'question6': 'someone who has good style, knows all the trends, and wont judge my online shopping addiction'
+                }
+            },
+            {
+                'name': 'Hao Wang',
+                'country': 'China',
+                'gender': 'Male',
+                'type': 'immature',
+                'answers': {
+                    'question1': 'playing league of legends and raging at noob teammates. also watching anime and reading manga instead of studying',
+                    'question2': 'invisibility so i can skip classes without getting caught and also spy on people',
+                    'question3': 'why chinese parents have such high expectations like bro i just want to be average and happy',
+                    'question4': 'hotpot with friends while watching anime and complaining about our strict teachers',
+                    'question5': 'collecting anime figures and hiding them from my parents because they think its childish',
+                    'question6': 'someone who shares my interests in anime/gaming and wont lecture me about studying more'
+                }
+            },
+            {
+                'name': 'Xiao Li',
+                'country': 'China',
+                'gender': 'Female',
+                'type': 'immature',
+                'answers': {
+                    'question1': 'watching kdramas and crying over fictional characters. also stalking celebrities on weibo',
+                    'question2': 'perfect memory so i can remember every kdrama plot and also never forget embarrassing moments',
+                    'question3': 'why kdrama male leads are so perfect but real boys are disappointing. also conspiracy theories about idol groups',
+                    'question4': 'binge watching the latest kdrama while eating snacks and texting my friends about plot twists',
+                    'question5': 'learning korean through kdramas and kpop lyrics. my pronunciation is terrible but i try',
+                    'question6': 'someone who understands my kdrama obsession and maybe knows some korean so we can fangirl together'
+                }
+            },
+            {
+                'name': 'Yuta Kobayashi',
+                'country': 'Japan',
+                'gender': 'Male',
+                'type': 'immature',
+                'answers': {
+                    'question1': 'making weird tiktoks and trying to go viral. also collecting limited edition sneakers i cant afford',
+                    'question2': 'teleportation so i can travel anywhere without paying and also escape awkward situations instantly',
+                    'question3': 'why school is so boring and pointless. like when am i ever gonna use calculus in real life',
+                    'question4': 'convenience store dinner, then wandering around tokyo taking random photos for my instagram aesthetic',
+                    'question5': 'trying to learn every tiktok dance trend but im terrible at dancing so i just make meme versions',
+                    'question6': 'someone who appreciates my humor and wont judge my questionable life choices'
+                }
+            },
+            {
+                'name': 'Khang Tran',
+                'country': 'Vietnam',
+                'gender': 'Male',
+                'type': 'immature',
+                'answers': {
+                    'question1': 'motorbike racing (illegally) and trying to look cool in front of girls. also gym but just for abs',
+                    'question2': 'super strength so i can win every fight and also open stubborn jars',
+                    'question3': 'why vietnamese girls only date rich guys and ignore my obvious charm and motorcycle skills',
+                    'question4': 'racing motorbikes, then bragging about it while eating street food and planning more dangerous stunts',
+                    'question5': 'learning how to do wheelies on my motorbike but crashed into a tree. still have the scar',
+                    'question6': 'someone who thinks im cool and maybe a girl who will be impressed by my motorcycle'
+                }
+            },
+            {
+                'name': 'Zoe Chen',
+                'country': 'China',
+                'gender': 'Female',
+                'type': 'immature',
+                'answers': {
+                    'question1': 'taking aesthetic photos for xiaohongshu and buying expensive makeup i dont know how to use properly',
+                    'question2': 'perfect skin so i never have to worry about acne or spend money on skincare',
+                    'question3': 'why chinese beauty standards are so unrealistic and why everyone is so obsessed with being pale',
+                    'question4': 'shopping for clothes i dont need, then taking outfit photos for social media',
+                    'question5': 'trying every viral skincare trend from korea but my skin got worse instead of better',
+                    'question6': 'someone who takes good photos of me and appreciates my fashion sense'
+                }
+            },
+            {
+                'name': 'Daiki Yoshida',
+                'country': 'Japan',
+                'gender': 'Male',
+                'type': 'immature',
+                'answers': {
+                    'question1': 'sleeping until 2pm and then complaining that the day is too short to do anything productive',
+                    'question2': 'not needing sleep so i can game 24/7 and also never miss anime episodes',
+                    'question3': 'why adults always say \"when i was your age\" like ok boomer times have changed',
+                    'question4': 'ordering uber eats, gaming, and maybe watching netflix if i get bored of gaming',
+                    'question5': 'trying to beat dark souls but rage quit after dying to the same boss 50 times',
+                    'question6': 'someone who doesnt expect me to be productive and maybe brings snacks'
+                }
+            }
         ]
         
-        # Complex, detailed English answers for questionnaire testing
-        detailed_answers = {
-            'question1': [
-                "I love diving deep into video game lore and exploring every hidden secret in RPGs. When I have free time, I spend hours researching the backstory of my favorite characters and creating detailed fan theories about upcoming plot developments.",
-                "My go-to activity is planning elaborate trips through Europe, researching historical sites, local cuisines, and cultural festivals. I create detailed itineraries with backup plans and alternative routes, studying train schedules and hidden gems that most tourists never discover.",
-                "I'm passionate about learning classical piano, spending hours practicing complex pieces by Chopin and Debussy. I study music theory, analyze compositions, and experiment with different interpretations of the same piece to develop my own unique style.",
-                "I enjoy creating intricate digital art using advanced software like Blender and Photoshop. I spend time studying lighting techniques, color theory, and 3D modeling to create photorealistic landscapes and character designs for my personal projects.",
-                "My favorite activity is learning new programming languages and building complex applications. I dive deep into frameworks like React and Node.js, creating full-stack web applications while studying algorithms and data structures.",
-                "I love exploring urban photography, wandering through city streets at different times of day to capture the perfect lighting and atmosphere. I study composition techniques and post-processing methods to create compelling visual narratives.",
-                "I'm deeply interested in studying different cuisines and perfecting complex cooking techniques. I spend hours researching traditional recipes, learning about ingredient sourcing, and experimenting with fusion dishes that combine multiple culinary traditions.",
-                "My passion is learning multiple foreign languages simultaneously, studying grammar patterns, cultural contexts, and regional dialects. I practice conversation with native speakers and immerse myself in literature from different countries.",
-                "I enjoy building and programming Arduino-based robotics projects, studying electronics, sensor integration, and automation systems. I create detailed documentation and tutorials for my inventions.",
-                "My favorite activity is studying film cinematography and creating short documentary films about local communities. I analyze camera angles, editing techniques, and storytelling methods to improve my craft."
-            ],
-            'question2': [
-                "I would love to master advanced 3D animation and visual effects creation, learning software like Maya and After Effects to bring my creative visions to life in professional-quality animations and short films.",
-                "I want to become fluent in multiple programming languages including Python, JavaScript, and C++, so I can develop innovative applications that solve real-world problems and contribute to open-source projects.",
-                "I dream of mastering classical guitar performance, learning complex fingerpicking techniques and being able to play intricate pieces by masters like Andrés Segovia and Francisco Tárrega with perfect emotional expression.",
-                "I would love to master the art of professional photography, learning advanced lighting techniques, composition rules, and post-processing skills to capture stunning portraits and landscapes that tell compelling stories.",
-                "I want to become an expert in sustainable urban gardening, learning hydroponics, permaculture principles, and organic farming techniques to create productive food systems in small spaces.",
-                "I dream of mastering advanced cooking techniques from multiple cuisines, learning knife skills, fermentation processes, and molecular gastronomy to create innovative dishes that surprise and delight people.",
-                "I would love to master the art of storytelling through writing, learning narrative structure, character development, and world-building to create compelling novels that resonate with readers.",
-                "I want to become skilled in advanced data analysis and machine learning, learning statistical modeling, neural networks, and AI algorithms to solve complex problems and make meaningful predictions.",
-                "I dream of mastering traditional Japanese calligraphy, learning brush techniques, character formation, and the philosophical aspects of this ancient art form to create beautiful, meaningful works.",
-                "I would love to master advanced video editing and film production, learning cinematography, sound design, and post-production techniques to create professional-quality documentaries and short films."
-            ],
-            'question3': [
-                "I can talk for hours about the intricate world-building in fantasy novels, analyzing character development, plot structures, and the way authors create believable magic systems and political intrigue.",
-                "I'm passionate about discussing the evolution of video game design, from early arcade games to modern open-world experiences, analyzing how technology has shaped storytelling and player engagement.",
-                "I love exploring the technical aspects of music production, discussing different recording techniques, mixing strategies, and how various genres have evolved through technological innovations.",
-                "I can spend endless time discussing photography techniques, from the basics of composition and lighting to advanced concepts like long exposure, HDR, and the artistic choices behind famous photographers' work.",
-                "I'm fascinated by the intersection of technology and society, discussing how artificial intelligence, blockchain, and emerging technologies are reshaping industries and human interactions.",
-                "I love talking about travel experiences and cultural differences, sharing stories about local customs, traditional foods, and the unique perspectives gained from immersing yourself in different societies.",
-                "I'm passionate about discussing sustainable living practices, from renewable energy and zero-waste lifestyles to permaculture and the ways individuals can reduce their environmental impact.",
-                "I can talk endlessly about the craft of filmmaking, analyzing cinematography choices, editing techniques, and how directors use visual storytelling to convey complex emotions and themes.",
-                "I'm deeply interested in discussing language learning strategies, comparing different methodologies, sharing resources, and exploring how understanding multiple languages opens up new ways of thinking.",
-                "I love exploring the science behind cooking, discussing chemical reactions, fermentation processes, and how understanding food science can improve both flavor and nutrition in home cooking."
-            ],
-            'question4': [
-                "My ideal Friday night would involve gathering close friends for a home-cooked meal, followed by engaging board games, meaningful conversations, and perhaps watching a thought-provoking film together.",
-                "I envision spending the evening in a cozy bookstore café, reading an engrossing novel while sipping artisanal coffee, occasionally chatting with fellow book lovers about recent discoveries.",
-                "My perfect Friday would be attending a live music performance, whether it's a jazz club, classical concert, or indie rock show, experiencing the energy and connection between artists and audience.",
-                "I'd love to spend the evening working on a creative project, whether it's painting, writing, or coding, while listening to inspiring music and losing track of time in the flow of creation.",
-                "My ideal Friday involves exploring a new neighborhood or city, discovering hidden restaurants, unique shops, and interesting architecture while documenting the experience through photography.",
-                "I envision a quiet evening at home, cooking an elaborate meal from scratch, experimenting with new recipes and techniques while enjoying the meditative process of creating something delicious.",
-                "My perfect Friday would be hosting a small gathering where friends share their latest projects, whether it's art, music, writing, or entrepreneurial ventures, celebrating each other's creativity.",
-                "I'd love to spend the evening learning something new, whether it's attending a workshop, taking an online course, or practicing a skill I've been developing, feeling the satisfaction of progress.",
-                "My ideal Friday involves outdoor activities like hiking, stargazing, or having a picnic in a scenic location, connecting with nature and appreciating the beauty of the natural world.",
-                "I envision spending the evening volunteering for a cause I care about, whether it's helping at a community center, participating in environmental cleanup, or mentoring young people."
-            ],
-            'question5': [
-                "I went through a phase where I was completely obsessed with collecting vintage mechanical keyboards, researching switch types, keycap materials, and the history of different manufacturers.",
-                "There was a time when I became fascinated with learning about extinct languages, spending hours studying dead scripts and trying to understand how ancient civilizations communicated.",
-                "I once became incredibly invested in the world of competitive yo-yo tricks, practicing for hours daily and learning the physics behind different string tensions and weight distributions.",
-                "I had a period where I was obsessed with studying the migration patterns of birds, tracking different species through apps and learning to identify them by their songs and flight patterns.",
-                "There was a time when I became fascinated with the art of paper folding, not just simple origami but complex modular designs that required hundreds of individual pieces.",
-                "I once spent months studying the history and techniques of traditional bookbinding, learning about different paper types, binding methods, and the craftsmanship of historical manuscripts.",
-                "I went through a phase of being completely absorbed in learning about urban beekeeping, studying hive management, honey production, and the important role of bees in urban ecosystems.",
-                "There was a period where I became obsessed with the mathematics behind music, studying frequency ratios, harmonic series, and how different tuning systems affect emotional perception.",
-                "I once became fascinated with the process of making sourdough bread from scratch, studying fermentation science, flour types, and the cultural history of bread-making traditions.",
-                "I had a time where I was completely absorbed in learning about the psychology of color, studying how different hues affect mood, behavior, and cultural associations across different societies."
-            ],
-            'question6': [
-                "My energy has the soundtrack of ambient electronic music - thoughtful, atmospheric, with layers of complexity that reveal themselves over time, creating a sense of depth and contemplation.",
-                "I'd describe my energy as indie folk - acoustic, authentic, with storytelling elements that connect with people on a personal level, warm and inviting yet introspective.",
-                "My energy resembles upbeat jazz - improvisational, collaborative, with unexpected rhythms and harmonies that keep things interesting and encourage creative expression.",
-                "I have the energy of classical orchestral music - structured yet dynamic, with moments of quiet reflection balanced by powerful crescendos of passion and intensity.",
-                "My energy is like progressive rock - complex, evolving, with intricate patterns that build into something greater than the sum of their parts, always pushing boundaries.",
-                "I'd say my energy has the soundtrack of world music - diverse, culturally rich, incorporating different traditions and perspectives into a harmonious whole.",
-                "My energy resembles lo-fi hip-hop - calm, steady, perfect for focused work and creative thinking, with subtle complexities that reward careful listening.",
-                "I have the energy of acoustic singer-songwriter music - personal, honest, with meaningful lyrics and melodies that create genuine connections with others.",
-                "My energy is like post-rock instrumental music - patient, building, with emotional depth that doesn't require words to communicate powerful feelings.",
-                "I'd describe my energy as eclectic playlist music - adaptable, surprising, drawing from many genres to create something unique and personally meaningful."
-            ]
-        }
-        
-        countries = ['Japan', 'China', 'Vietnam', 'Other']
-        genders = ['Male', 'Female', 'Prefer not to say']
-        
-        # Create 10 students with detailed answers and empty personality fields
-        for i in range(10):
-            name = japanese_names[i]
-            country = random.choice(countries)
-            gender = random.choice(genders)
-            
-            # Select random detailed answers
-            question1 = random.choice(detailed_answers['question1'])
-            question2 = random.choice(detailed_answers['question2'])
-            question3 = random.choice(detailed_answers['question3'])
-            question4 = random.choice(detailed_answers['question4'])
-            question5 = random.choice(detailed_answers['question5'])
-            question6 = random.choice(detailed_answers['question6'])
+        # Create 20 students from the profiles
+        for profile in student_profiles:
+            name = profile['name']
+            country = profile['country']
+            gender = profile['gender']
+            answers = profile['answers']
             
             # Combine all answers for vibes field
-            combined_answers = f"{question1} {question2} {question3} {question4} {question5} {question6}"
+            combined_answers = f"{answers['question1']} {answers['question2']} {answers['question3']} {answers['question4']} {answers['question5']} {answers['question6']}"
             
-            # Create student object with empty personality fields
+            # Create student object with empty personality fields (to be filled by AI later)
             student = Student(
                 name=name,
                 country=country,
                 gender=gender,
                 vibes=combined_answers,
-                question1=question1,
-                question2=question2,
-                question3=question3,
-                question4=question4,
-                question5=question5,
-                question6=question6,
-                archetype=None,  # Empty personality fields
+                question1=answers['question1'],
+                question2=answers['question2'],
+                question3=answers['question3'],
+                question4=answers['question4'],
+                question5=answers['question5'],
+                question6=answers['question6'],
+                archetype=None,  # Empty personality fields (to be filled by AI later)
                 core_strength=None,
                 hidden_potential=None,
                 conversation_catalyst=None,
@@ -1706,8 +1901,8 @@ def seed_database():
         # Commit all students to database
         db.session.commit()
         
-        logging.info("Successfully seeded database with 10 test students")
-        flash("Database seeded with 10 new test students.", "success")
+        logging.info("Successfully seeded database with 20 realistic Gen Z test students")
+        flash("Database seeded with 20 new Gen Z test students (10 mature, 10 immature).", "success")
         
     except Exception as e:
         db.session.rollback()
