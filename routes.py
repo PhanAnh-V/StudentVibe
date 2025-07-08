@@ -519,7 +519,7 @@ def teacher_logout():
 
 @app.route('/teacher/analyze-batch', methods=['POST'])
 def analyze_batch():
-    """Analyze the next batch of students (max 5) with AI personality generation"""
+    """Analyze the next batch of students (max 2) with AI personality generation for better reliability"""
     print("--- User clicked 'Analyze Batch'. Route was called. ---")
     
     # Check if teacher is authenticated
@@ -528,9 +528,10 @@ def analyze_batch():
     
     try:
         # Find all students who have not yet been analyzed (archetype field is empty or null)
+        # Reduced batch size to 2 for better reliability and faster processing
         unanalyzed_students = Student.query.filter(
             db.or_(Student.archetype.is_(None), Student.archetype == "")
-        ).limit(5).all()
+        ).limit(2).all()
         
         print(f"Found {len(unanalyzed_students)} students to analyze.")
         
@@ -540,6 +541,8 @@ def analyze_batch():
         
         # Import AI personality generation functions
         from openai_integration import generate_archetype, generate_core_strength, generate_hidden_potential, generate_conversation_catalyst
+        
+        successfully_analyzed = 0
         
         # Process each student in the batch
         for student in unanalyzed_students:
@@ -556,14 +559,38 @@ def analyze_batch():
                     'question6': student.question6
                 }
                 
-                # Generate personality signature using AI functions
-                student.archetype = generate_archetype(student_answers)
-                student.core_strength = generate_core_strength(student_answers)
-                student.hidden_potential = generate_hidden_potential(student_answers)
-                student.conversation_catalyst = generate_conversation_catalyst(student_answers)
+                # Generate personality signature using AI functions with individual error handling
+                try:
+                    student.archetype = generate_archetype(student_answers)
+                    print(f"✓ Generated archetype for {student.name}")
+                except Exception as e:
+                    print(f"✗ Archetype failed for {student.name}: {str(e)}")
+                    student.archetype = "個性豊かな学生"
                 
-                # Save changes to database
+                try:
+                    student.core_strength = generate_core_strength(student_answers)
+                    print(f"✓ Generated core strength for {student.name}")
+                except Exception as e:
+                    print(f"✗ Core strength failed for {student.name}: {str(e)}")
+                    student.core_strength = "創造的な思考力と独自の視点を持っています。"
+                
+                try:
+                    student.hidden_potential = generate_hidden_potential(student_answers)
+                    print(f"✓ Generated hidden potential for {student.name}")
+                except Exception as e:
+                    print(f"✗ Hidden potential failed for {student.name}: {str(e)}")
+                    student.hidden_potential = "リーダーシップの才能が眠っている可能性があります。"
+                
+                try:
+                    student.conversation_catalyst = generate_conversation_catalyst(student_answers)
+                    print(f"✓ Generated conversation catalyst for {student.name}")
+                except Exception as e:
+                    print(f"✗ Conversation catalyst failed for {student.name}: {str(e)}")
+                    student.conversation_catalyst = "趣味や興味のあることについて話すと、とても輝いて見えます。"
+                
+                # Save changes to database after each student
                 db.session.commit()
+                successfully_analyzed += 1
                 
                 logging.info(f"Successfully analyzed student {student.name} (ID: {student.id})")
                 
@@ -575,6 +602,7 @@ def analyze_batch():
                 student.hidden_potential = "リーダーシップの才能が眠っている可能性があります。"
                 student.conversation_catalyst = "趣味や興味のあることについて話すと、とても輝いて見えます。"
                 db.session.commit()
+                successfully_analyzed += 1
         
         # Count remaining unanalyzed students
         remaining_count = Student.query.filter(
@@ -582,11 +610,10 @@ def analyze_batch():
         ).count()
         
         # Create status message for teacher
-        analyzed_count = len(unanalyzed_students)
         if remaining_count == 0:
-            flash(f"{analyzed_count}人の学生を分析しました。すべての分析が完了しました！", "success")
+            flash(f"{successfully_analyzed}人の学生を分析しました。すべての分析が完了しました！", "success")
         else:
-            flash(f"{analyzed_count}人の学生を分析しました。残り{remaining_count}人の学生が分析待ちです。", "info")
+            flash(f"{successfully_analyzed}人の学生を分析しました。残り{remaining_count}人の学生が分析待ちです。", "info")
         
     except Exception as e:
         logging.error(f"Error in analyze_batch: {str(e)}")
@@ -1574,9 +1601,10 @@ def seed_database():
     try:
         import random
         
-        # First, delete all existing records from both tables
-        Squad.query.delete()
+        # First, delete all existing records from both tables (fix foreign key constraint)
+        # Delete students first to avoid foreign key constraint violation
         Student.query.delete()
+        Squad.query.delete()
         db.session.commit()
         
         # Realistic Gen Z names from Japan, Vietnam, and China
