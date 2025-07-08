@@ -5,40 +5,50 @@
 {% block head %}
 {{ super() }}
 <style>
-  body {
+  /* Force override static/css/style.css with ultra-specific selectors */
+  html body.success-page,
+  html body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    background-color: transparent !important;
     color: white !important;
     min-height: 100vh !important;
   }
   
-  .id-card {
+  /* Override all text to white except ID card */
+  body div, body p, body h1, body h2, body h3, body h4, body h5, body h6, body span, body a {
+    color: white !important;
+  }
+  
+  /* ID card specific styling */
+  div[style*="background-color: #ffffff"] h4,
+  div[style*="background-color: #ffffff"] p,
+  div[style*="background-color: #ffffff"] span,
+  div[style*="background-color: #ffffff"] * {
     color: #333 !important;
   }
   
-  .id-card h4, .id-card p {
-    color: #333 !important;
-  }
-  
+  /* Language tabs functionality */
   .lang-text { 
-    display: none; 
+    display: none !important;
   }
   .lang-text.active { 
-    display: block; 
+    display: block !important;
   }
   
   .lang-tab.active {
-    background-color: #4A90E2;
-    color: white;
-    border-color: #4A90E2;
+    background-color: #4A90E2 !important;
+    color: white !important;
+    border-color: #4A90E2 !important;
   }
   
+  /* Copy button styling */
   #copy-btn {
-    background: transparent;
-    border: 1px solid #ccc;
-    color: #ccc;
+    background: transparent !important;
+    border: 1px solid #ccc !important;
+    color: #ccc !important;
   }
   #copy-btn:hover {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.1) !important;
   }
 </style>
 {% endblock %}
