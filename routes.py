@@ -233,13 +233,23 @@ def success():
     submission_id = session.get('submission_id')
     student_name = session.get('student_name')
     
+    # Load site content for multilingual support
+    site_content = None
+    try:
+        with open('site_content.json', 'r', encoding='utf-8') as f:
+            site_content = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        logging.error(f"Error loading site_content.json: {e}")
+        site_content = {}
+    
     # Clear the session data after displaying
     session.pop('submission_id', None)
     session.pop('student_name', None)
     
     return render_template('success.html', 
                          submission_id=submission_id,
-                         student_name=student_name)
+                         student_name=student_name,
+                         site_content=site_content)
 
 @app.route('/find-squad', methods=['GET', 'POST'])
 def find_squad():

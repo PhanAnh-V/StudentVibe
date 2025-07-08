@@ -1,0 +1,10 @@
+{
+  "success_page": {
+    "app_explanation": {
+      "en": "This is Vibe Check! A tool to help you connect with new friends through shared interests. Use your ID to find your squad and start a new mission.",
+      "ja": "これは「バイブ・チェック」です！共通の興味を通じて新しい友達とつながるためのツールです。あなたのIDを使ってスクワッドを見つけ、新しいミッションを始めましょう。",
+      "vi": "Đây là Vibe Check! Một công cụ giúp bạn kết nối với những người bạn mới thông qua sở thích chung. Sử dụng ID của bạn để tìm đội của mình và bắt đầu một nhiệm vụ mới.",
+      "zh": "这里是"范儿检查"！一个通过共同兴趣帮助你与新朋友建立联系的工具。使用你的ID找到你的小组，开始新的任务吧。"
+    }
+  }
+}
