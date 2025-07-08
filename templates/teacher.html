@@ -199,14 +199,27 @@
           </form>
         </div>
         <div class="main-actions">
+           {% if not squads_exist %}
            <form id="create-squads-form" action="{{ url_for('create_squads') }}" method="POST" style="display: inline;">
              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
              <button type="submit" class="btn btn-primary">バイブスクワッド作成</button>
            </form>
+           {% else %}
+           <form id="create-squads-form" action="{{ url_for('create_squads') }}" method="POST" style="display: inline;">
+             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+             <button type="submit" class="btn btn-secondary" onclick="return confirm('本当にスクワッドを再作成しますか？現在のスクワッドはすべて削除されます。');">スクワッド再作成</button>
+           </form>
+           {% endif %}
+           {% if not analysis_complete %}
            <form id="analyze-batch-form" action="{{ url_for('analyze_batch') }}" method="POST" style="display: inline;">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="btn btn-info">バッチ分析</button>
            </form>
+           {% else %}
+           <button type="button" class="btn btn-success" disabled>
+            <i class="fas fa-check me-2"></i>分析完了
+           </button>
+           {% endif %}
         </div>
         <div class="danger-zone">
           <form action="{{ url_for('clear_squads') }}" method="POST" onsubmit="return confirm('本当にすべての学生とスクワッドのデータを削除しますか？この操作は元に戻せません。');" style="display: inline;">
