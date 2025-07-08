@@ -5,65 +5,41 @@
 {% block head %}
 {{ super() }}
 <style>
-  html, body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    min-height: 100vh !important;
-    color: white !important;
-    margin: 0 !important;
-    padding: 0 !important;
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
   }
   
-  .container-fluid {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    min-height: 100vh !important;
+  .id-card {
+    color: #333;
   }
   
-  .navbar {
-    background: rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(10px) !important;
-  }
-  
-  .navbar-brand, .nav-link {
-    color: white !important;
-  }
-  
-  /* Keep only the styles needed for JavaScript interactivity */
-  .lang-tab.active {
-    background-color: #4A90E2 !important;
-    color: white !important;
-    border-color: #4A90E2 !important;
-  }
   .lang-text { 
-    display: none !important;
+    display: none; 
   }
   .lang-text.active { 
-    display: block !important;
+    display: block; 
   }
   
-  /* Override text colors for readability */
-  h1, h2, h3, h4, h5, h6 {
-    color: white !important;
-  }
-  p {
-    color: rgba(255, 255, 255, 0.9) !important;
+  .lang-tab.active {
+    background-color: #4A90E2;
+    color: white;
+    border-color: #4A90E2;
   }
   
-  /* Keep ID card background white with dark text */
-  .id-card, .id-card h2, .id-card h4, .id-card p {
-    background-color: white !important;
-    color: #333 !important;
+  #copy-btn {
+    background: transparent;
+    border: 1px solid #ccc;
+    color: #ccc;
   }
-  
-  /* Keep button colors */
-  .btn-primary {
-    background-color: #007bff !important;
-    color: white !important;
+  #copy-btn:hover {
+    background: rgba(255,255,255,0.1);
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 40px auto; padding: 40px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: white;">
+<div style="max-width: 600px; margin: 40px auto; padding: 40px; text-align: center;">
 
   <div>
     <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; color: white;">{{ success_text.thank_you }}</h1>
