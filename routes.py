@@ -517,9 +517,89 @@ def teacher_logout():
     session.pop('teacher_authenticated', None)
     return redirect(url_for('teacher'))
 
+# Global circuit breaker state for AI functions
+circuit_breaker_state = {
+    'failure_count': 0,
+    'last_failure_time': None,
+    'circuit_open': False,
+    'success_count': 0
+}
+
+def intelligent_ai_call_with_retry(ai_function, student_answers, function_name, fallback_value, max_retries=3):
+    """
+    Intelligent retry mechanism with circuit breaker pattern and adaptive timeout
+    """
+    import time
+    
+    # Circuit breaker check
+    if circuit_breaker_state['circuit_open']:
+        if time.time() - circuit_breaker_state['last_failure_time'] > 60:  # Reset after 1 minute
+            circuit_breaker_state['circuit_open'] = False
+            circuit_breaker_state['failure_count'] = 0
+            print(f"🔄 Circuit breaker reset for {function_name}")
+        else:
+            print(f"⚡ Circuit breaker open for {function_name}, using fallback")
+            return fallback_value
+    
+    start_time = time.time()
+    
+    for attempt in range(max_retries):
+        try:
+            # Calculate delay with exponential backoff (1s, 2s, 4s)
+            if attempt > 0:
+                delay = min(2 ** (attempt - 1), 8)  # Cap at 8 seconds
+                print(f"⏳ Retrying {function_name} in {delay}s (attempt {attempt + 1}/{max_retries})")
+                time.sleep(delay)
+            
+            # Call the AI function with timeout monitoring
+            attempt_start = time.time()
+            result = ai_function(student_answers)
+            attempt_duration = time.time() - attempt_start
+            
+            # Validate result quality
+            if result and result.strip() and result != fallback_value and len(result.strip()) > 5:
+                # Success - reset circuit breaker
+                circuit_breaker_state['failure_count'] = 0
+                circuit_breaker_state['success_count'] += 1
+                circuit_breaker_state['circuit_open'] = False
+                
+                total_duration = time.time() - start_time
+                print(f"✓ {function_name} succeeded on attempt {attempt + 1} ({attempt_duration:.1f}s, total: {total_duration:.1f}s)")
+                return result
+            else:
+                print(f"⚠ {function_name} returned low-quality result on attempt {attempt + 1}")
+                if attempt == max_retries - 1:
+                    circuit_breaker_state['failure_count'] += 1
+                    return fallback_value
+                    
+        except Exception as e:
+            error_type = type(e).__name__
+            print(f"✗ {function_name} failed on attempt {attempt + 1}: {error_type} - {str(e)}")
+            
+            # Handle different error types
+            if "timeout" in str(e).lower() or "timed out" in str(e).lower():
+                print(f"🕐 Timeout error for {function_name}")
+            elif "rate limit" in str(e).lower():
+                print(f"⏱ Rate limit error for {function_name}, extending delay")
+                if attempt < max_retries - 1:
+                    time.sleep(10)  # Extended delay for rate limits
+            
+            if attempt == max_retries - 1:
+                circuit_breaker_state['failure_count'] += 1
+                circuit_breaker_state['last_failure_time'] = time.time()
+                
+                # Open circuit breaker after 3 consecutive failures
+                if circuit_breaker_state['failure_count'] >= 3:
+                    circuit_breaker_state['circuit_open'] = True
+                    print(f"⚡ Circuit breaker opened for {function_name}")
+                
+                return fallback_value
+    
+    return fallback_value
+
 @app.route('/teacher/analyze-batch', methods=['POST'])
 def analyze_batch():
-    """Analyze the next batch of students (max 2) with AI personality generation for better reliability"""
+    """Analyze the next batch of students with intelligent retry mechanism"""
     print("--- User clicked 'Analyze Batch'. Route was called. ---")
     
     # Check if teacher is authenticated
@@ -542,12 +622,18 @@ def analyze_batch():
         # Import AI personality generation functions
         from openai_integration import generate_archetype, generate_core_strength, generate_hidden_potential, generate_conversation_catalyst
         
+        import time
         successfully_analyzed = 0
+        total_ai_calls = 0
+        successful_ai_calls = 0
+        fallback_used = 0
+        batch_start_time = time.time()
         
-        # Process each student in the batch
-        for student in unanalyzed_students:
+        # Process each student in the batch with enhanced monitoring
+        for student_idx, student in enumerate(unanalyzed_students):
             try:
-                print(f"Now processing student: {student.name}")
+                student_start_time = time.time()
+                print(f"🔄 Processing student {student_idx + 1}/{len(unanalyzed_students)}: {student.name}")
                 
                 # Prepare student answers for AI analysis
                 student_answers = {
@@ -559,38 +645,39 @@ def analyze_batch():
                     'question6': student.question6
                 }
                 
-                # Generate personality signature using AI functions with individual error handling
-                try:
-                    student.archetype = generate_archetype(student_answers)
-                    print(f"✓ Generated archetype for {student.name}")
-                except Exception as e:
-                    print(f"✗ Archetype failed for {student.name}: {str(e)}")
-                    student.archetype = "個性豊かな学生"
+                # Generate personality signature using intelligent retry mechanism
+                ai_functions = [
+                    (generate_archetype, "archetype", "個性豊かな学生"),
+                    (generate_core_strength, "core_strength", "創造的な思考力と独自の視点を持っています。"),
+                    (generate_hidden_potential, "hidden_potential", "リーダーシップの才能が眠っている可能性があります。"),
+                    (generate_conversation_catalyst, "conversation_catalyst", "趣味や興味のあることについて話すと、とても輝いて見えます。")
+                ]
                 
-                try:
-                    student.core_strength = generate_core_strength(student_answers)
-                    print(f"✓ Generated core strength for {student.name}")
-                except Exception as e:
-                    print(f"✗ Core strength failed for {student.name}: {str(e)}")
-                    student.core_strength = "創造的な思考力と独自の視点を持っています。"
+                student_results = {}
                 
-                try:
-                    student.hidden_potential = generate_hidden_potential(student_answers)
-                    print(f"✓ Generated hidden potential for {student.name}")
-                except Exception as e:
-                    print(f"✗ Hidden potential failed for {student.name}: {str(e)}")
-                    student.hidden_potential = "リーダーシップの才能が眠っている可能性があります。"
+                for ai_func, field_name, fallback in ai_functions:
+                    total_ai_calls += 1
+                    result = intelligent_ai_call_with_retry(ai_func, student_answers, field_name, fallback)
+                    
+                    if result != fallback:
+                        successful_ai_calls += 1
+                    else:
+                        fallback_used += 1
+                    
+                    student_results[field_name] = result
                 
-                try:
-                    student.conversation_catalyst = generate_conversation_catalyst(student_answers)
-                    print(f"✓ Generated conversation catalyst for {student.name}")
-                except Exception as e:
-                    print(f"✗ Conversation catalyst failed for {student.name}: {str(e)}")
-                    student.conversation_catalyst = "趣味や興味のあることについて話すと、とても輝いて見えます。"
+                # Assign results to student
+                student.archetype = student_results['archetype']
+                student.core_strength = student_results['core_strength']
+                student.hidden_potential = student_results['hidden_potential']
+                student.conversation_catalyst = student_results['conversation_catalyst']
                 
                 # Save changes to database after each student
                 db.session.commit()
                 successfully_analyzed += 1
+                
+                student_duration = time.time() - student_start_time
+                print(f"✅ Completed {student.name} in {student_duration:.1f}s")
                 
                 logging.info(f"Successfully analyzed student {student.name} (ID: {student.id})")
                 
@@ -603,17 +690,33 @@ def analyze_batch():
                 student.conversation_catalyst = "趣味や興味のあることについて話すと、とても輝いて見えます。"
                 db.session.commit()
                 successfully_analyzed += 1
+                fallback_used += 4
         
         # Count remaining unanalyzed students
         remaining_count = Student.query.filter(
             db.or_(Student.archetype.is_(None), Student.archetype == "")
         ).count()
         
-        # Create status message for teacher
+        # Calculate batch performance metrics
+        batch_duration = time.time() - batch_start_time
+        success_rate = (successful_ai_calls / total_ai_calls * 100) if total_ai_calls > 0 else 0
+        
+        # Create enhanced status message with performance metrics
         if remaining_count == 0:
-            flash(f"{successfully_analyzed}人の学生を分析しました。すべての分析が完了しました！", "success")
+            flash(f"🎉 {successfully_analyzed}人の学生を分析しました。すべての分析が完了しました！ (成功率: {success_rate:.1f}%, 処理時間: {batch_duration:.1f}s)", "success")
         else:
-            flash(f"{successfully_analyzed}人の学生を分析しました。残り{remaining_count}人の学生が分析待ちです。", "info")
+            flash(f"📊 {successfully_analyzed}人の学生を分析しました。残り{remaining_count}人の学生が分析待ちです。 (成功率: {success_rate:.1f}%, フォールバック使用: {fallback_used}回)", "info")
+        
+        # Log detailed performance metrics
+        print(f"📈 Batch Performance Summary:")
+        print(f"   Students processed: {successfully_analyzed}")
+        print(f"   Total AI calls: {total_ai_calls}")
+        print(f"   Successful AI calls: {successful_ai_calls}")
+        print(f"   Fallback used: {fallback_used}")
+        print(f"   Success rate: {success_rate:.1f}%")
+        print(f"   Total time: {batch_duration:.1f}s")
+        print(f"   Average time per student: {batch_duration/successfully_analyzed:.1f}s")
+        print(f"   Circuit breaker state: {'Open' if circuit_breaker_state['circuit_open'] else 'Closed'}")
         
     except Exception as e:
         logging.error(f"Error in analyze_batch: {str(e)}")
