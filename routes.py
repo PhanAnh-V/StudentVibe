@@ -752,7 +752,7 @@ def create_squads():
                 # Remove empty squads
                 db.session.delete(new_squad)
         
-        # Step 7: Safety net - Create solo squads for any students missed by AI
+        # Step 7: Orphan Adoption - Add unassigned students to existing squads
         logging.info("🔍 Checking for unassigned students...")
         
         # Get all student IDs that were successfully assigned to squads by AI
@@ -765,28 +765,31 @@ def create_squads():
         all_student_ids = set(student_map.keys())
         
         # Find students that were missed by AI
-        unassigned_student_ids = all_student_ids - assigned_student_ids
+        unassigned_students = all_student_ids - assigned_student_ids
         
-        if unassigned_student_ids:
-            logging.warning(f"🚨 Found {len(unassigned_student_ids)} unassigned students: {unassigned_student_ids}")
+        if unassigned_students:
+            logging.warning(f"🚨 Found {len(unassigned_students)} unassigned students: {unassigned_students}")
             
-            # Create solo squads for each unassigned student
-            for student_id in unassigned_student_ids:
+            # Orphan Adoption Algorithm - Add each orphan to the smallest existing squad
+            for student_id in unassigned_students:
                 student = student_map[student_id]
                 
-                # Create a solo squad with Japanese naming
-                solo_squad = Squad()
-                solo_squad.name = f"{student.name}の個人スクワッド"
-                solo_squad.shared_interests = f"{student.name}の個人的な興味"
-                solo_squad.squad_icon = "fas fa-user"
-                db.session.add(solo_squad)
-                db.session.flush()  # Get the squad ID
+                # Find the squad with the fewest members
+                squads_with_counts = db.session.query(
+                    Squad,
+                    db.func.count(Student.id).label('member_count')
+                ).outerjoin(Student, Squad.id == Student.squad_id).group_by(Squad.id).all()
                 
-                # Assign the student to their solo squad
-                student.squad_id = solo_squad.id
-                squads_created += 1
-                
-                logging.info(f"✅ Created solo squad for {student.name} (ID: {student_id})")
+                if squads_with_counts:
+                    # Find the squad with minimum members
+                    best_squad, min_count = min(squads_with_counts, key=lambda x: x.member_count)
+                    
+                    # Add the orphan to this squad
+                    student.squad_id = best_squad.id
+                    
+                    logging.info(f"✅ Adopted {student.name} (ID: {student_id}) into squad '{best_squad.name}' (was {min_count} members)")
+                else:
+                    logging.error(f"❌ No existing squads found to adopt {student.name}")
         else:
             logging.info("✅ All students successfully assigned to squads by AI")
         

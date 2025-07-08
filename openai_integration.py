@@ -37,7 +37,7 @@ Below are pre-analyzed student profiles with their key personality signatures:
 {students_text}
 
 Your strategic mission:
-1. Form elite squads of 3-4 members by analyzing complementary Personality Signatures
+1. Form elite squads of 3-5 members by analyzing complementary Personality Signatures
 2. Look for strategic combinations where different archetypes create powerful synergies
 3. Balance core strengths with hidden potentials for maximum team effectiveness
 4. Create Japanese squad names that reflect their collective strategic advantage
@@ -55,7 +55,7 @@ Respond with a JSON object in this exact format:
 }}
 
 Strategic Requirements:
-- HIGHEST PRIORITY: Every single student MUST be assigned to a squad. If the number of remaining students is less than 3, you are authorized to create a smaller squad of 1 or 2 members. No student can be left behind.
+- HIGHEST PRIORITY: Every single student MUST be assigned to a squad
 - Every student must be assigned to exactly one squad
 - Squad names MUST be in Japanese kanji/kana only - NO romaji or English
 - Focus on complementary personality signatures, not just similarities
