@@ -107,28 +107,37 @@ def generate_squad_icebreaker(squad_members_data, squad_name):
             members_text += f"- Vibe Check: {member['question5']}\n"
             members_text += f"- Ultimate Crew Quality: {member['question6']}\n"
         
-        prompt = f"""You are an expert social facilitator creating Connection Blueprint icebreakers for squad "{squad_name}".
-
-STEP 1: DEEP CONNECTION ANALYSIS
-Analyze these squad members to identify:
-- ONE SYNERGY POINT: A shared interest, value, or experience that connects them
-- ONE COMPLEMENTARITY POINT: Different but compatible strengths that would enhance their group dynamic
-
-Squad members:
+        prompt = f"""Your Persona: You are "The Master Facilitator," an expert at designing conversations that build trust and connection.
+The Squad's Data:
 {members_text}
 
-STEP 2: TARGETED ICEBREAKER CREATION
-Based on your analysis, create TWO Japanese icebreaker questions that:
-- Reference the specific SYNERGY you identified (shared connection)
-- Leverage the COMPLEMENTARITY you found (different strengths working together)
-- Feel natural and engaging for college students
-- Encourage deep, meaningful conversation beyond surface level
-- Are written in warm, friendly Japanese
+Your Mission:
+Design a "Three-Act Conversation" for this specific group of students. Your goal is to provide a structured journey that moves them from easy common ground to deeper connection.
 
-RESPONSE FORMAT:
-Return a JSON object: {{"icebreakers": ["Question 1 in Japanese", "Question 2 in Japanese"]}}
+Step 1: Analyze the Group Dynamics.
+Silently identify:
+- Act I (Common Ground): Find a simple, fun, shared interest or experience across at least two members.
+- Act II (Team-Up Challenge): Find a combination of different skills or ideas from their answers that could be used in a fun, hypothetical team challenge.
+- Act III (Deeper Connection): Find a shared underlying value or emotion from their answers (e.g., a desire for adventure, a love for quiet moments, a specific type of humor).
 
-IMPORTANT: These questions should feel uniquely crafted for THIS specific group based on the deep connections you've discovered. Act like a social facilitator who truly understands what makes people connect."""
+Step 2: Generate the Three-Act Conversation.
+Based on your analysis, generate three questions in Japanese.
+
+Output Requirement:
+Return a JSON object in this exact format:
+{{
+  "act_1_title": "「まずはここから：共通点さがし」",
+  "act_1_question": "[A simple, fun question based on the 'Common Ground' you found.]",
+  "act_2_title": "「ミッション：このチームならどうする？」",
+  "act_2_question": "[A creative, hypothetical team-up question based on the 'Team-Up Challenge' you designed.]",
+  "act_3_title": "「もう一歩深く：本当のつながり」",
+  "act_3_question": "[A slightly more personal or reflective question based on the 'Deeper Connection' value you identified.]"
+}}
+
+Final Instructions:
+- Each question must feel crafted specifically for THIS group.
+- The flow from Act 1 to Act 3 should feel natural and increase in depth.
+- All output text must be in friendly, engaging Japanese."""
 
         # Create OpenAI client with timeout
         timeout_client = OpenAI(
