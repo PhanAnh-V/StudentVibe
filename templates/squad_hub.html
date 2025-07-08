@@ -251,6 +251,122 @@
             margin-top: 1.5rem;
         }
         
+        /* Three-Act Conversation Styles */
+        .three-act-conversation {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .conversation-act {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .conversation-act:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .act-1 {
+            border-left: 4px solid #48bb78;
+            background: linear-gradient(135deg, #68d391 0%, #9ae6b4 100%);
+        }
+        
+        .act-2 {
+            border-left: 4px solid #ed8936;
+            background: linear-gradient(135deg, #f6ad55 0%, #fbd38d 100%);
+        }
+        
+        .act-3 {
+            border-left: 4px solid #9f7aea;
+            background: linear-gradient(135deg, #b794f6 0%, #d6bcfa 100%);
+        }
+        
+        .act-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .act-number {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2d3748;
+            font-size: 1.2rem;
+            font-weight: 700;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .act-title {
+            color: #2d3748;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+            flex: 1;
+        }
+        
+        .act-content {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .act-question {
+            color: #2d3748;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin: 0;
+            font-weight: 500;
+        }
+        
+        /* Mobile optimization for three-act conversation */
+        @media (max-width: 768px) {
+            .three-act-conversation {
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+            
+            .conversation-act {
+                padding: 1rem;
+            }
+            
+            .act-header {
+                gap: 0.8rem;
+            }
+            
+            .act-number {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            
+            .act-title {
+                font-size: 1.1rem;
+            }
+            
+            .act-content {
+                padding: 1rem;
+            }
+            
+            .act-question {
+                font-size: 1rem;
+            }
+        }
+        
         .question-item {
             display: flex;
             align-items: flex-start;
@@ -556,39 +672,39 @@
                             <p class="icebreaker-subtitle">AIがあなたたちの深いつながりを分析して作った特別な質問です</p>
                         </div>
                         
-                        {% if icebreakers and icebreakers.icebreakers and icebreakers.icebreakers|length >= 2 %}
-                            <div class="icebreaker-cards">
-                                <div class="icebreaker-card synergy-card">
-                                    <div class="card-header">
-                                        <div class="card-icon">
-                                            <i class="fas fa-heart"></i>
-                                        </div>
-                                        <h3 class="card-title">シナジー質問</h3>
-                                        <p class="card-subtitle">共通の興味を探る</p>
+                        {% if icebreaker_data and icebreaker_data.act_1_title %}
+                            <div class="three-act-conversation">
+                                <!-- Act 1: Common Ground -->
+                                <div class="conversation-act act-1">
+                                    <div class="act-header">
+                                        <div class="act-number">1</div>
+                                        <h3 class="act-title">{{ icebreaker_data.act_1_title }}</h3>
                                     </div>
-                                    <div class="card-content">
-                                        <p class="question-text">{{ icebreakers.icebreakers[0] }}</p>
+                                    <div class="act-content">
+                                        <p class="act-question">{{ icebreaker_data.act_1_question }}</p>
                                     </div>
                                 </div>
                                 
-                                <div class="icebreaker-card complementarity-card">
-                                    <div class="card-header">
-                                        <div class="card-icon">
-                                            <i class="fas fa-puzzle-piece"></i>
-                                        </div>
-                                        <h3 class="card-title">相補性質問</h3>
-                                        <p class="card-subtitle">異なる強みを活かす</p>
+                                <!-- Act 2: Team-Up Challenge -->
+                                <div class="conversation-act act-2">
+                                    <div class="act-header">
+                                        <div class="act-number">2</div>
+                                        <h3 class="act-title">{{ icebreaker_data.act_2_title }}</h3>
                                     </div>
-                                    <div class="card-content">
-                                        <p class="question-text">{{ icebreakers.icebreakers[1] }}</p>
+                                    <div class="act-content">
+                                        <p class="act-question">{{ icebreaker_data.act_2_question }}</p>
                                     </div>
                                 </div>
-                            </div>
-                        {% elif squad.icebreaker_text %}
-                            <div class="fallback-icebreaker">
-                                <div class="fallback-content">
-                                    <i class="fas fa-comments"></i>
-                                    <p>{{ squad.icebreaker_text }}</p>
+                                
+                                <!-- Act 3: Deeper Connection -->
+                                <div class="conversation-act act-3">
+                                    <div class="act-header">
+                                        <div class="act-number">3</div>
+                                        <h3 class="act-title">{{ icebreaker_data.act_3_title }}</h3>
+                                    </div>
+                                    <div class="act-content">
+                                        <p class="act-question">{{ icebreaker_data.act_3_question }}</p>
+                                    </div>
                                 </div>
                             </div>
                         {% else %}

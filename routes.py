@@ -344,16 +344,17 @@ def squad_hub(squad_id):
         squad = Squad.query.get_or_404(squad_id)
         
         # Parse the JSON icebreaker_text into a Python object
-        icebreakers = None
+        icebreaker_data = None
         if squad.icebreaker_text:
             try:
-                icebreakers = json.loads(squad.icebreaker_text)
+                icebreaker_data = json.loads(squad.icebreaker_text)
+                logging.info(f"Successfully parsed icebreaker data for squad {squad_id}: {icebreaker_data}")
             except (json.JSONDecodeError, TypeError) as e:
                 logging.error(f"Error parsing icebreaker JSON for squad {squad_id}: {e}")
-                # If JSON parsing fails, treat as plain text
-                icebreakers = {"lighthearted": squad.icebreaker_text, "thoughtful": ""}
+                # If JSON parsing fails, create a fallback structure
+                icebreaker_data = None
         
-        return render_template('squad_hub.html', squad=squad, icebreakers=icebreakers)
+        return render_template('squad_hub.html', squad=squad, icebreaker_data=icebreaker_data)
         
     except Exception as e:
         logging.error(f"Error accessing squad hub {squad_id}: {str(e)}")
