@@ -449,6 +449,77 @@ def teacher_logout():
     session.pop('teacher_authenticated', None)
     return redirect(url_for('teacher'))
 
+@app.route('/teacher/analyze-batch', methods=['POST'])
+def analyze_batch():
+    """Analyze the next batch of students (max 5) with AI personality generation"""
+    # Check if teacher is authenticated
+    if not session.get('teacher_authenticated'):
+        return redirect(url_for('teacher_login'))
+    
+    try:
+        # Find all students who have not yet been analyzed (archetype field is empty or null)
+        unanalyzed_students = Student.query.filter(
+            db.or_(Student.archetype.is_(None), Student.archetype == "")
+        ).limit(5).all()
+        
+        if not unanalyzed_students:
+            flash("すべての学生の分析が完了しました。", "info")
+            return redirect(url_for('teacher'))
+        
+        # Import AI personality generation functions
+        from openai_integration import generate_archetype, generate_core_strength, generate_hidden_potential, generate_conversation_catalyst
+        
+        # Process each student in the batch
+        for student in unanalyzed_students:
+            try:
+                # Prepare student answers for AI analysis
+                student_answers = {
+                    'question1': student.question1,
+                    'question2': student.question2,
+                    'question3': student.question3,
+                    'question4': student.question4,
+                    'question5': student.question5,
+                    'question6': student.question6
+                }
+                
+                # Generate personality signature using AI functions
+                student.archetype = generate_archetype(student_answers)
+                student.core_strength = generate_core_strength(student_answers)
+                student.hidden_potential = generate_hidden_potential(student_answers)
+                student.conversation_catalyst = generate_conversation_catalyst(student_answers)
+                
+                # Save changes to database
+                db.session.commit()
+                
+                logging.info(f"Successfully analyzed student {student.name} (ID: {student.id})")
+                
+            except Exception as e:
+                logging.error(f"Error analyzing student {student.name}: {str(e)}")
+                # Set fallback values for this student
+                student.archetype = "個性豊かな学生"
+                student.core_strength = "創造的な思考力と独自の視点を持っています。"
+                student.hidden_potential = "リーダーシップの才能が眠っている可能性があります。"
+                student.conversation_catalyst = "趣味や興味のあることについて話すと、とても輝いて見えます。"
+                db.session.commit()
+        
+        # Count remaining unanalyzed students
+        remaining_count = Student.query.filter(
+            db.or_(Student.archetype.is_(None), Student.archetype == "")
+        ).count()
+        
+        # Create status message for teacher
+        analyzed_count = len(unanalyzed_students)
+        if remaining_count == 0:
+            flash(f"{analyzed_count}人の学生を分析しました。すべての分析が完了しました！", "success")
+        else:
+            flash(f"{analyzed_count}人の学生を分析しました。残り{remaining_count}人の学生が分析待ちです。", "info")
+        
+    except Exception as e:
+        logging.error(f"Error in analyze_batch: {str(e)}")
+        flash("分析中にエラーが発生しました。もう一度お試しください。", "error")
+    
+    return redirect(url_for('teacher'))
+
 
 
 def assign_squad_icon(squad_name):
