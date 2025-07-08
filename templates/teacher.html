@@ -124,66 +124,78 @@
 
 {% block content %}
 <div class="teacher-container">
-    <!-- Clean Header -->
-    <div class="teacher-header">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="teacher-title mb-1">先生ダッシュボード</h1>
-                <p class="teacher-description mb-0 text-muted">学生総数: {{ students|length }}</p>
+    <!-- Professional Header -->
+    <div class="teacher-header" style="background-color: #F8F9FA; padding: 24px; border-bottom: 1px solid #dee2e6;">
+        <!-- Top Row: Title, Count, and Logout -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center">
+                <h1 style="font-size: 28px; font-weight: bold; margin-bottom: 0; margin-right: 20px;">先生ダッシュボード</h1>
+                <span style="font-size: 16px; color: #6c757d;">学生総数: {{ students|length }}</span>
             </div>
-            <div class="teacher-actions">
-                <a href="{{ url_for('teacher_logout') }}" class="btn btn-outline-secondary">
+            <div>
+                <a href="{{ url_for('teacher_logout') }}" class="btn btn-outline-secondary" style="font-size: 16px;">
                     ログアウト
                 </a>
             </div>
         </div>
-    </div>
-    
-    <!-- Main Dashboard Content -->
-    <div class="dashboard-content">
-        <!-- Session Control -->
-        <div class="dashboard-section">
-            <h3 class="section-title">セッション制御</h3>
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <span class="fw-bold">現在のセッションパスワード: </span>
-                    <span class="session-password-code">{{ session_password }}</span>
-                    <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyPassword()">
+        
+        <!-- Bottom Row: Three Sections -->
+        <div class="d-flex justify-content-between align-items-center">
+            <!-- Session Control Section -->
+            <div class="d-flex align-items-center" style="flex: 1;">
+                <div style="margin-right: 20px;">
+                    <span style="font-size: 16px; font-weight: 500;">セッションパスワード: </span>
+                    <span class="session-password-code" style="font-family: monospace; background-color: #e9ecef; padding: 4px 8px; border-radius: 4px;">{{ session_password }}</span>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyPassword()" style="font-size: 14px;">
                         <i class="fas fa-copy"></i>
                     </button>
                 </div>
                 <form action="{{ url_for('new_session_password') }}" method="POST" class="d-inline">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <button type="submit" class="btn btn-warning" onclick="return confirm('新しいパスワードを生成しますか？')">
+                    <button type="submit" class="btn btn-outline-warning" style="font-size: 16px;" onclick="return confirm('新しいパスワードを生成しますか？')">
                         新しいパスワードを生成
                     </button>
                 </form>
             </div>
-        </div>
-        
-        <!-- Student Management -->
-        <div class="dashboard-section">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="section-title mb-0">全学生提出一覧</h3>
-                <div class="squad-actions">
-                <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
+            
+            <!-- Main Actions Section -->
+            <div class="d-flex align-items-center" style="flex: 1; justify-content: center;">
+                <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline; margin-right: 12px;">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <button type="submit" id="create-squads-btn" class="btn btn-success me-2">
+                    <button type="submit" id="create-squads-btn" class="btn btn-primary" style="background-color: #007bff; border-color: #007bff; color: white; font-size: 16px; padding: 8px 16px;">
                         <i class="fas fa-magic me-2"></i>
                         バイブスクワッド作成
                     </button>
                 </form>
                 
-                <form method="POST" action="{{ url_for('clear_squads') }}" style="display: inline;">
+                <form method="POST" action="{{ url_for('analyze_batch') }}" style="display: inline;">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <button type="submit" 
-                            class="btn btn-danger"
-                            onclick="return confirm('すべてのデータを削除してもよろしいですか？')">
-                        すべて削除
+                    <button type="submit" id="analyze-batch-btn" class="btn btn-primary" style="background-color: #007bff; border-color: #007bff; color: white; font-size: 16px; padding: 8px 16px;">
+                        <i class="fas fa-brain me-2"></i>
+                        バッチ分析
                     </button>
                 </form>
+            </div>
+            
+            <!-- Danger Zone Section -->
+            <div style="flex: 1; display: flex; justify-content: flex-end;">
+                <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 12px;">
+                    <form method="POST" action="{{ url_for('clear_squads') }}" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <button type="submit" 
+                                class="btn btn-danger"
+                                style="font-size: 16px; padding: 8px 16px;"
+                                onclick="return confirm('すべてのデータを削除してもよろしいですか？')">
+                            すべて削除
+                        </button>
+                    </form>
                 </div>
             </div>
+        </div>
+    </div>
+    
+    <!-- Main Dashboard Content -->
+    <div class="dashboard-content" style="padding: 20px;">
         
         {% if squads %}
             <div class="squads-grid">
