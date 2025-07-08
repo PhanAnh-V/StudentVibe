@@ -1,3 +1,15 @@
+Goal: Fix the success.html page by completely replacing its broken code with a precise HTML, CSS, and JavaScript blueprint that correctly styles the layout, sizes the images, and implements the language-selection tabs.
+
+Core Instructions:
+
+Open the success.html template file.
+
+Delete all existing code in that file.
+
+Paste the following complete code blueprint into the now-empty file. This is a complete replacement.
+
+HTML
+
 {% extends "base.html" %}
 
 {% block title %}送信完了！{% endblock %}
@@ -6,20 +18,15 @@
 {{ super() }}
 <style>
   .success-container {
-    max-width: 500px;
-    margin: 20px auto;
-    padding: 30px 20px;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 40px;
     text-align: center;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
   }
   .success-header h1 {
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    color: #2c3e50;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   .id-card {
     background-color: #ffffff;
@@ -58,7 +65,6 @@
     margin-top: 1rem;
     color: #6c757d;
     font-size: 0.9rem;
-    text-align: right;
   }
   .scroll-prompt {
     margin: 3rem 0;
@@ -66,15 +72,14 @@
     color: #6c757d;
   }
   .surprise-section {
-    display: flex;
+    display: flex; /* This makes the images side-by-side */
     justify-content: center;
-    gap: 0.5rem;
-    margin: 1rem 0;
+    gap: 2rem;
+    margin-bottom: 2rem;
   }
   .surprise-section img {
-    width: 50px;
-    height: 50px;
-    opacity: 0.8;
+    width: 150px;  /* This makes the images small */
+    height: 150px; /* This makes the images small */
   }
   .lang-tabs {
     margin: 1.5rem 0;
@@ -96,37 +101,12 @@
     border-color: #4A90E2;
   }
   .lang-text {
-    display: none;
+    display: none; /* This hides the other languages */
     text-align: left;
     line-height: 1.6;
   }
   .lang-text.active {
-    display: block;
-  }
-  
-  .explanation-section {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-top: 1rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  }
-  
-  @media (max-width: 768px) {
-    .success-container {
-      margin: 10px;
-      padding: 20px 15px;
-    }
-    .success-header h1 {
-      font-size: 1.5rem;
-    }
-    .id-card h2 {
-      font-size: 1.8rem;
-    }
-    .surprise-section img {
-      width: 40px;
-      height: 40px;
-    }
+    display: block; /* This shows the selected language */
   }
 </style>
 {% endblock %}
@@ -141,7 +121,7 @@
   <div class="id-card">
     <h4>あなたの個人ID</h4>
     <div class="d-flex align-items-center justify-content-center">
-      <h2 id="submission-id-text">{{ submission_id if submission_id else 'None' }}</h2>
+      <h2 id="submission-id-text">{{ student.submission_id }}</h2>
       <button id="copy-btn" class="btn btn-light" onclick="copyIdToClipboard()">
         <i class="far fa-copy"></i>
       </button>
@@ -167,10 +147,10 @@
       <span class="lang-tab" onclick="showLanguage('vi', event)">Tiếng Việt</span>
       <span class="lang-tab" onclick="showLanguage('zh', event)">中文</span>
     </div>
-    <div id="ja" class="lang-text active"><p>{{ app_explanation.ja | default('これは「バイブ・チェック」です！') | safe }}</p></div>
-    <div id="en" class="lang-text"><p>{{ app_explanation.en | default('This is Vibe Check!') | safe }}</p></div>
-    <div id="vi" class="lang-text"><p>{{ app_explanation.vi | default('Đây là Vibe Check!') | safe }}</p></div>
-    <div id="zh" class="lang-text"><p>{{ app_explanation.zh | default('这里是范儿检查！') | safe }}</p></div>
+    <div id="ja" class="lang-text active"><p>{{ site_content.success_page.app_explanation.ja | safe }}</p></div>
+    <div id="en" class="lang-text"><p>{{ site_content.success_page.app_explanation.en | safe }}</p></div>
+    <div id="vi" class="lang-text"><p>{{ site_content.success_page.app_explanation.vi | safe }}</p></div>
+    <div id="zh" class="lang-text"><p>{{ site_content.success_page.app_explanation.zh | safe }}</p></div>
   </div>
 
   <a href="{{ url_for('session_password') }}" class="new-session-link">新しいセッションを開始</a>
@@ -190,14 +170,9 @@
   }
 
   function showLanguage(selectedLang, event) {
-    // Hide all text elements
     document.querySelectorAll('.lang-text').forEach(el => el.classList.remove('active'));
-    // Deactivate all tabs
     document.querySelectorAll('.lang-tab').forEach(el => el.classList.remove('active'));
-
-    // Show the selected one
     document.getElementById(selectedLang).classList.add('active');
-    // Activate the clicked tab
     event.currentTarget.classList.add('active');
   }
 </script>
