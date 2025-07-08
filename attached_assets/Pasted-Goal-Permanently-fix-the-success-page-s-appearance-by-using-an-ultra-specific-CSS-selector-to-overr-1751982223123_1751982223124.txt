@@ -1,0 +1,112 @@
+Goal: Permanently fix the success page's appearance by using an ultra-specific CSS selector to override the conflicting style.css file.
+
+Core Instructions:
+
+Open the success.html template file.
+
+Delete all the inline style="..." attributes from the HTML tags that we added in our last prompt. We are moving everything back to a clean stylesheet.
+
+At the very top of the file, directly below {% extends "base.html" %}, add the following block. This gives the page's <body> tag a unique class that we can target.
+
+Django
+
+{% block body_attributes %}class="success-page-body"{% endblock %}
+Next, locate the <style> block in the <head> of the file.
+
+Delete all the CSS rules currently inside it and replace them with the following complete and corrected stylesheet. This version uses the .success-page-body class to ensure its styles have the highest priority.
+
+CSS
+
+.success-page-body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+.success-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 2rem 1rem;
+    text-align: center;
+}
+.success-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: white;
+}
+.id-card {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-top: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    color: #333; /* Dark text for the white card */
+}
+.id-card h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #4A90E2;
+    margin: 10px 0;
+}
+.id-card p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+#copy-btn {
+    margin-left: 10px;
+    width: 40px;
+    background: transparent;
+    border: 1px solid #ccc;
+    color: #6c757d;
+}
+.success-actions {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+.scroll-prompt {
+    margin: 3rem 0;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.8);
+}
+.surprise-section {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+.surprise-section img {
+    width: 150px;
+    height: 150px;
+}
+.lang-tabs {
+    margin: 1.5rem 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+.lang-tab {
+    cursor: pointer;
+    padding: 8px 16px;
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 20px;
+    background-color: transparent;
+    color: rgba(255,255,255,0.8);
+    transition: all 0.2s;
+}
+.lang-tab.active {
+    background-color: #ffffff;
+    color: #4A90E2;
+    border-color: #ffffff;
+}
+/* This is the critical fix for the language display */
+.lang-text { display: none; }
+.lang-text.active { display: block; }
+
+.new-session-link {
+    display: block;
+    margin-top: 2rem;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.9rem;
+}
+Constraint/Warning: This prompt makes significant changes to the CSS within success.html but should not alter the main HTML body content.
