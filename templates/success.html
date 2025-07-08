@@ -125,16 +125,16 @@
   <p class="scroll-prompt">{{ success_text.scroll_prompt }}</p>
 
   <div class="surprise-section">
-    <img src="{{ url_for('static', filename='images/scratch.svg') }}" alt="Cat Sticker">
-    <img src="{{ url_for('static', filename='images/lick.svg') }}" alt="Cat Sticker">
+    <img src="{{ url_for('static', filename='images/scratch.png') }}" alt="Cat Sticker">
+    <img src="{{ url_for('static', filename='images/lick.png') }}" alt="Cat Sticker">
   </div>
 
   <div class="explanation-section">
     <div class="lang-tabs">
-      <span class="lang-tab active" onclick="showLanguage('ja')">日本語</span>
-      <span class="lang-tab" onclick="showLanguage('en')">English</span>
-      <span class="lang-tab" onclick="showLanguage('vi')">Tiếng Việt</span>
-      <span class="lang-tab" onclick="showLanguage('zh')">中文</span>
+      <span class="lang-tab active" onclick="showLanguage('ja', event)">日本語</span>
+      <span class="lang-tab" onclick="showLanguage('en', event)">English</span>
+      <span class="lang-tab" onclick="showLanguage('vi', event)">Tiếng Việt</span>
+      <span class="lang-tab" onclick="showLanguage('zh', event)">中文</span>
     </div>
     <div id="ja" class="lang-text active"><p>{{ app_explanation.ja | safe }}</p></div>
     <div id="en" class="lang-text"><p>{{ app_explanation.en | safe }}</p></div>
@@ -158,7 +158,7 @@
     });
   }
 
-  function showLanguage(selectedLang) {
+  function showLanguage(selectedLang, event) {
     // Hide all text elements
     document.querySelectorAll('.lang-text').forEach(el => el.classList.remove('active'));
     // Deactivate all tabs
