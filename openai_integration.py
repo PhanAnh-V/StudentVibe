@@ -21,48 +21,45 @@ def group_students_into_squads(students_data):
     Use AI to intelligently group students into squads of 3-4 based on their interests
     """
     try:
-        # Prepare the prompt with pre-analyzed student personality signatures
+        # Prepare the prompt with full questionnaire answers for deep analysis
         students_text = ""
         for idx, student in enumerate(students_data):
             students_text += f"\nStudent {idx + 1} (ID: {student['id']}, Name: {student['name']}):\n"
-            students_text += f"- Archetype: {student['archetype']}\n"
-            students_text += f"- Core Strength: {student['core_strength']}\n"
-            students_text += f"- Hidden Potential: {student['hidden_potential']}\n"
-            students_text += f"- Conversation Catalyst: {student['conversation_catalyst']}\n"
+            students_text += f"- Question 1 (Go-to activity): {student['question1']}\n"
+            students_text += f"- Question 2 (Skill to master): {student['question2']}\n"
+            students_text += f"- Question 3 (Talk about for hours): {student['question3']}\n"
+            students_text += f"- Question 4 (Ideal Friday night): {student['question4']}\n"
+            students_text += f"- Question 5 (Weirdest obsession): {student['question5']}\n"
+            students_text += f"- Question 6 (Energy soundtrack): {student['question6']}\n"
         
-        prompt = f"""You are a master strategist and elite team formation specialist. You receive concise intelligence briefings on student personality signatures, not raw data.
+        prompt = f"""You are a master strategist and social architect. Your mission is to form squads based on a deep, contextual analysis of students' full questionnaire answers to find the best synergies.
 
-Below are pre-analyzed student profiles with their key personality signatures:
+Below are the raw answers from the students:
 
 {students_text}
 
 Your strategic mission:
-1. Form elite squads of 3-5 members by analyzing complementary Personality Signatures
-2. Look for strategic combinations where different archetypes create powerful synergies
-3. Balance core strengths with hidden potentials for maximum team effectiveness
-4. Create Japanese squad names that reflect their collective strategic advantage
-5. Think like a master strategist forming specialized units
+1.  Analyze the full answers for each student to understand their personality, humor, and values.
+2.  Form squads of 3-5 members by identifying complementary strengths and shared underlying interests. Look for potential for genuine friendship.
+3.  For each squad, generate a creative, engaging **squad name in Japanese**.
+4.  For each squad, write a concise summary in **Japanese** explaining the **"shared interest"** or a powerful synergy you discovered that makes them a great match.
 
 Respond with a JSON object in this exact format:
 {{
     "squads": [
         {{
-            "squad_name": "Strategic Japanese name that reflects their combined power",
+            "squad_name": "クリエイティブな日本語のチーム名",
             "member_ids": [list of student IDs],
-            "shared_interests": "Concise Japanese summary of their strategic synergy and what makes them powerful together"
+            "shared_interests": "このチームの相性や共通点を説明する短い日本語の文章"
         }}
     ]
 }}
 
 Strategic Requirements:
-- HIGHEST PRIORITY: Every single student MUST be assigned to a squad
-- Every student must be assigned to exactly one squad
-- Squad names MUST be in Japanese kanji/kana only - NO romaji or English
-- Focus on complementary personality signatures, not just similarities
-- Shared interests should explain their strategic advantage as a team
-- Think quality over quantity - create elite, balanced teams
-
-Form teams that would dominate any challenge through their complementary strengths!"""
+- HIGHEST PRIORITY: Every single student MUST be assigned to a squad.
+- Squad names and shared interests MUST be in Japanese. No English or Romaji.
+- The "shared_interests" summary should be an insightful observation about why the group will connect well.
+- Focus on the quality of the human connection, not just superficial similarities."""
 
         # Create OpenAI client with timeout
         timeout_client = OpenAI(

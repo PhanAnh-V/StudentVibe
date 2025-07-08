@@ -1,0 +1,42 @@
+Goal: Upgrade the group_students_into_squads function to perform a "Deep Analysis" using the full questionnaire answers, aligning it with our advanced AI pipeline strategy.
+
+Core Instructions:
+
+In the openai_integration.py file, locate the group_students_into_squads function.
+
+Modify the logic that prepares the students_text variable. Instead of using the four pre-analyzed personality signatures (archetype, core_strength, etc.), you must now use the students' full, original six questionnaire answers (question1 through question6).
+
+Completely replace the existing prompt variable with the following new strategic prompt. This new prompt instructs the AI to analyze the raw answers for deeper, more meaningful connections.
+
+Python
+
+prompt = f"""You are a master strategist and social architect. Your mission is to form squads based on a deep, contextual analysis of students' full questionnaire answers to find the best synergies.
+
+Below are the raw answers from the students:
+
+{students_text}
+
+Your strategic mission:
+1.  Analyze the full answers for each student to understand their personality, humor, and values.
+2.  Form squads of 3-5 members by identifying complementary strengths and shared underlying interests. Look for potential for genuine friendship.
+3.  For each squad, generate a creative, engaging **squad name in Japanese**.
+4.  For each squad, write a concise summary in **Japanese** explaining the **"shared interest"** or a powerful synergy you discovered that makes them a great match.
+
+Respond with a JSON object in this exact format:
+{{
+    "squads": [
+        {{
+            "squad_name": "クリエイティブな日本語のチーム名",
+            "member_ids": [list of student IDs],
+            "shared_interests": "このチームの相性や共通点を説明する短い日本語の文章"
+        }}
+    ]
+}}
+
+Strategic Requirements:
+- HIGHEST PRIORITY: Every single student MUST be assigned to a squad.
+- Squad names and shared interests MUST be in Japanese. No English or Romaji.
+- The "shared_interests" summary should be an insightful observation about why the group will connect well.
+- Focus on the quality of the human connection, not just superficial similarities.
+"""
+Constraint/Warning: Do not modify any other functions. The JSON output structure (squad_name, member_ids, shared_interests) must remain exactly the same. Do not change the timeout value.
