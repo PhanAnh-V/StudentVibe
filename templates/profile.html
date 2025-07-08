@@ -233,6 +233,91 @@
             font-weight: 700;
             line-height: 1.2;
         }
+        
+        /* Discovery Compass Styles */
+        .discovery-compass-container {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .compass-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .compass-section:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+        }
+        
+        .compass-header {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .compass-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .compass-title {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+            font-family: 'Noto Sans JP', sans-serif;
+            letter-spacing: 0.5px;
+        }
+        
+        .compass-content {
+            padding: 1.5rem;
+        }
+        
+        .compass-text {
+            color: #ecf0f1;
+            font-size: 1rem;
+            line-height: 1.7;
+            font-family: 'Noto Sans JP', sans-serif;
+            white-space: pre-wrap;
+        }
+        
+        /* Specific section styles for visual distinction */
+        .archetype-section .compass-icon {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        .core-compass-section .compass-icon {
+            background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+        }
+        
+        .uncharted-section .compass-icon {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .first-step-section .compass-icon {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);
         }
         
         .japanese-vibe .answer-label {
@@ -510,6 +595,43 @@
                 text-align: center;
             }
             
+            /* Mobile Discovery Compass Styles */
+            .discovery-compass-container {
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+            
+            .compass-section {
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            }
+            
+            .compass-header {
+                padding: 1rem;
+                gap: 0.8rem;
+            }
+            
+            .compass-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+                border-radius: 10px;
+            }
+            
+            .compass-title {
+                font-size: 1rem;
+                letter-spacing: 0.3px;
+            }
+            
+            .compass-content {
+                padding: 1rem;
+            }
+            
+            .compass-text {
+                font-size: 0.9rem;
+                line-height: 1.6;
+            }
+            
             .answers-section {
                 padding: 1rem;
                 background: #2c3e50;
@@ -668,56 +790,73 @@
                         <!-- AI-Generated Personality Signature -->
                         <div class="character-abilities">
                             <h2 class="abilities-title">
-                                <i class="fas fa-sparkles"></i>
-                                AI パーソナリティ・シグネチャー
+                                <i class="fas fa-compass"></i>
+                                ディスカバリー・コンパス
                             </h2>
                             
-                            <!-- Archetype Display -->
-                            {% if personality_signature.archetype %}
-                            <div class="archetype-showcase">
-                                <div class="archetype-card">
-                                    <div class="archetype-icon">
-                                        <i class="fas fa-star"></i>
+                            <!-- Discovery Compass Sections -->
+                            <div class="discovery-compass-container">
+                                
+                                <!-- Your Archetype Section -->
+                                {% if personality_signature.archetype %}
+                                <div class="compass-section archetype-section">
+                                    <div class="compass-header">
+                                        <div class="compass-icon">
+                                            <i class="fas fa-crown"></i>
+                                        </div>
+                                        <h3 class="compass-title">あなたの称号</h3>
                                     </div>
-                                    <div class="archetype-content">
-                                        <h3 class="archetype-title">あなたのアーキタイプ</h3>
-                                        <div class="archetype-name japanese-text">{{ personality_signature.archetype }}</div>
+                                    <div class="compass-content">
+                                        <div class="compass-text japanese-text">{{ personality_signature.archetype }}</div>
                                     </div>
                                 </div>
-                            </div>
-                            {% endif %}
-                            
-                            <!-- Personality Insights Grid -->
-                            <div class="abilities-grid">
+                                {% endif %}
+                                
+                                <!-- Core Compass Section -->
                                 {% if personality_signature.core_strength %}
-                                <div class="ability-card">
-                                    <div class="ability-icon">
-                                        <i class="fas fa-crown"></i>
+                                <div class="compass-section core-compass-section">
+                                    <div class="compass-header">
+                                        <div class="compass-icon">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <h3 class="compass-title">コア・コンパス</h3>
                                     </div>
-                                    <div class="ability-name">あなたの強み</div>
-                                    <div class="ability-description japanese-text">{{ personality_signature.core_strength }}</div>
+                                    <div class="compass-content">
+                                        <div class="compass-text japanese-text">{{ personality_signature.core_strength }}</div>
+                                    </div>
                                 </div>
                                 {% endif %}
                                 
+                                <!-- Uncharted Territory Section -->
                                 {% if personality_signature.hidden_potential %}
-                                <div class="ability-card">
-                                    <div class="ability-icon">
-                                        <i class="fas fa-gem"></i>
+                                <div class="compass-section uncharted-section">
+                                    <div class="compass-header">
+                                        <div class="compass-icon">
+                                            <i class="fas fa-map"></i>
+                                        </div>
+                                        <h3 class="compass-title">未踏の領域</h3>
                                     </div>
-                                    <div class="ability-name">秘められた可能性</div>
-                                    <div class="ability-description japanese-text">{{ personality_signature.hidden_potential }}</div>
+                                    <div class="compass-content">
+                                        <div class="compass-text japanese-text">{{ personality_signature.hidden_potential }}</div>
+                                    </div>
                                 </div>
                                 {% endif %}
                                 
+                                <!-- Your First Step Section -->
                                 {% if personality_signature.conversation_catalyst %}
-                                <div class="ability-card">
-                                    <div class="ability-icon">
-                                        <i class="fas fa-comments"></i>
+                                <div class="compass-section first-step-section">
+                                    <div class="compass-header">
+                                        <div class="compass-icon">
+                                            <i class="fas fa-handshake"></i>
+                                        </div>
+                                        <h3 class="compass-title">はじめの一歩</h3>
                                     </div>
-                                    <div class="ability-name">会話のきっかけ</div>
-                                    <div class="ability-description japanese-text">{{ personality_signature.conversation_catalyst }}</div>
+                                    <div class="compass-content">
+                                        <div class="compass-text japanese-text">{{ personality_signature.conversation_catalyst }}</div>
+                                    </div>
                                 </div>
                                 {% endif %}
+                                
                             </div>
                         </div>
                         
