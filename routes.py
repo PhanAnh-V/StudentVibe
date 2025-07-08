@@ -1494,149 +1494,120 @@ def reset_database():
     
     return redirect(url_for('teacher_login'))
 
-@app.route('/seed-database')
+@app.route('/dev/seed-database')
 def seed_database():
-    """Temporary route to seed database with 30 realistic fake students for testing"""
+    """Developer tool to seed database with 10 new test students for testing"""
     try:
         import random
         
-        # Japanese names and varied data for 30 students
+        # First, delete all existing records from both tables
+        Squad.query.delete()
+        Student.query.delete()
+        db.session.commit()
+        
+        # Common Japanese names for testing
         japanese_names = [
-            'Takeshi Yamamoto', 'Sakura Tanaka', 'Hiroshi Sato', 'Yuki Watanabe', 'Kenji Nakamura',
-            'Miki Suzuki', 'Taro Kobayashi', 'Hanako Ito', 'Ichiro Kato', 'Emiko Yoshida',
-            'Shingo Hayashi', 'Natsuki Shimizu', 'Kenta Yamazaki', 'Chiaki Mori', 'Ryuji Inoue',
-            'Ayame Kimura', 'Masa Okamoto', 'Yui Sasaki', 'Daiki Fukuda', 'Rei Ogawa',
-            'Hiroto Nishida', 'Misaki Matsui', 'Shota Takagi', 'Akiko Hara', 'Jiro Ishii',
-            'Momoka Ueda', 'Koichi Goto', 'Nao Fujita', 'Kaito Hasegawa', 'Rina Miyamoto'
+            'Kenji Tanaka', 'Yuki Sato', 'Hiroshi Yamamoto', 'Sakura Watanabe', 'Takeshi Suzuki',
+            'Ayame Nakamura', 'Daiki Kobayashi', 'Rei Ito', 'Shota Kato', 'Miki Yoshida'
         ]
         
-        # Sample questionnaire answers in Japanese
-        sample_answers = {
+        # Complex, detailed English answers for questionnaire testing
+        detailed_answers = {
             'question1': [
-                '家でゲームをしたり、友達とカラオケに行ったりするのが好きです。',
-                '図書館で本を読んだり、カフェでコーヒーを飲みながら勉強したりします。',
-                '公園で写真を撮ったり、散歩したりして自然を楽しみます。',
-                '料理を作ったり、新しいレシピを試したりするのが楽しいです。',
-                '音楽を聞いたり、楽器を練習したりして過ごします。',
-                'アニメを見たり、漫画を読んだりしてリラックスします。',
-                '友達と映画を見に行ったり、ショッピングを楽しんだりします。',
-                'スポーツをしたり、ジムで運動したりして体を動かします。',
-                '家族と時間を過ごしたり、ペットと遊んだりします。',
-                'プログラミングを勉強したり、新しい技術を学んだりします。'
+                "I love diving deep into video game lore and exploring every hidden secret in RPGs. When I have free time, I spend hours researching the backstory of my favorite characters and creating detailed fan theories about upcoming plot developments.",
+                "My go-to activity is planning elaborate trips through Europe, researching historical sites, local cuisines, and cultural festivals. I create detailed itineraries with backup plans and alternative routes, studying train schedules and hidden gems that most tourists never discover.",
+                "I'm passionate about learning classical piano, spending hours practicing complex pieces by Chopin and Debussy. I study music theory, analyze compositions, and experiment with different interpretations of the same piece to develop my own unique style.",
+                "I enjoy creating intricate digital art using advanced software like Blender and Photoshop. I spend time studying lighting techniques, color theory, and 3D modeling to create photorealistic landscapes and character designs for my personal projects.",
+                "My favorite activity is learning new programming languages and building complex applications. I dive deep into frameworks like React and Node.js, creating full-stack web applications while studying algorithms and data structures.",
+                "I love exploring urban photography, wandering through city streets at different times of day to capture the perfect lighting and atmosphere. I study composition techniques and post-processing methods to create compelling visual narratives.",
+                "I'm deeply interested in studying different cuisines and perfecting complex cooking techniques. I spend hours researching traditional recipes, learning about ingredient sourcing, and experimenting with fusion dishes that combine multiple culinary traditions.",
+                "My passion is learning multiple foreign languages simultaneously, studying grammar patterns, cultural contexts, and regional dialects. I practice conversation with native speakers and immerse myself in literature from different countries.",
+                "I enjoy building and programming Arduino-based robotics projects, studying electronics, sensor integration, and automation systems. I create detailed documentation and tutorials for my inventions.",
+                "My favorite activity is studying film cinematography and creating short documentary films about local communities. I analyze camera angles, editing techniques, and storytelling methods to improve my craft."
             ],
             'question2': [
-                '外国語を話せるようになって、世界中の人とコミュニケーションを取りたいです。',
-                '楽器を上手に演奏できるようになって、人を感動させたいです。',
-                '料理の技術を身につけて、家族や友達を喜ばせたいです。',
-                '絵を描くスキルを磨いて、自分の気持ちを表現したいです。',
-                'プログラミングを学んで、便利なアプリを作りたいです。',
-                'スポーツが上手になって、チームで活躍したいです。',
-                '人前で話すスキルを身につけて、自信を持って発表したいです。',
-                '写真撮影の技術を学んで、美しい瞬間を残したいです。',
-                'ダンスを踊れるようになって、みんなを楽しませたいです。',
-                '文章を書く能力を高めて、人の心に響く物語を作りたいです。'
+                "I would love to master advanced 3D animation and visual effects creation, learning software like Maya and After Effects to bring my creative visions to life in professional-quality animations and short films.",
+                "I want to become fluent in multiple programming languages including Python, JavaScript, and C++, so I can develop innovative applications that solve real-world problems and contribute to open-source projects.",
+                "I dream of mastering classical guitar performance, learning complex fingerpicking techniques and being able to play intricate pieces by masters like Andrés Segovia and Francisco Tárrega with perfect emotional expression.",
+                "I would love to master the art of professional photography, learning advanced lighting techniques, composition rules, and post-processing skills to capture stunning portraits and landscapes that tell compelling stories.",
+                "I want to become an expert in sustainable urban gardening, learning hydroponics, permaculture principles, and organic farming techniques to create productive food systems in small spaces.",
+                "I dream of mastering advanced cooking techniques from multiple cuisines, learning knife skills, fermentation processes, and molecular gastronomy to create innovative dishes that surprise and delight people.",
+                "I would love to master the art of storytelling through writing, learning narrative structure, character development, and world-building to create compelling novels that resonate with readers.",
+                "I want to become skilled in advanced data analysis and machine learning, learning statistical modeling, neural networks, and AI algorithms to solve complex problems and make meaningful predictions.",
+                "I dream of mastering traditional Japanese calligraphy, learning brush techniques, character formation, and the philosophical aspects of this ancient art form to create beautiful, meaningful works.",
+                "I would love to master advanced video editing and film production, learning cinematography, sound design, and post-production techniques to create professional-quality documentaries and short films."
             ],
             'question3': [
-                '友達と一緒にゲームをしているとき、時間を忘れて夢中になります。',
-                '好きな音楽について話すとき、いつまでも語り続けてしまいます。',
-                '新しい技術やガジェットについて、詳しく説明したくなります。',
-                '美味しい食べ物について、作り方や味について熱く語ります。',
-                '旅行の思い出や行きたい場所について、興奮して話します。',
-                'アニメや漫画のストーリーについて、深く分析して話します。',
-                'スポーツの試合やルールについて、詳しく解説したくなります。',
-                '映画や本の感想について、感情豊かに語ります。',
-                'ファッションやメイクについて、楽しそうに話します。',
-                '将来の夢や目標について、熱心に語ります。'
+                "I can talk for hours about the intricate world-building in fantasy novels, analyzing character development, plot structures, and the way authors create believable magic systems and political intrigue.",
+                "I'm passionate about discussing the evolution of video game design, from early arcade games to modern open-world experiences, analyzing how technology has shaped storytelling and player engagement.",
+                "I love exploring the technical aspects of music production, discussing different recording techniques, mixing strategies, and how various genres have evolved through technological innovations.",
+                "I can spend endless time discussing photography techniques, from the basics of composition and lighting to advanced concepts like long exposure, HDR, and the artistic choices behind famous photographers' work.",
+                "I'm fascinated by the intersection of technology and society, discussing how artificial intelligence, blockchain, and emerging technologies are reshaping industries and human interactions.",
+                "I love talking about travel experiences and cultural differences, sharing stories about local customs, traditional foods, and the unique perspectives gained from immersing yourself in different societies.",
+                "I'm passionate about discussing sustainable living practices, from renewable energy and zero-waste lifestyles to permaculture and the ways individuals can reduce their environmental impact.",
+                "I can talk endlessly about the craft of filmmaking, analyzing cinematography choices, editing techniques, and how directors use visual storytelling to convey complex emotions and themes.",
+                "I'm deeply interested in discussing language learning strategies, comparing different methodologies, sharing resources, and exploring how understanding multiple languages opens up new ways of thinking.",
+                "I love exploring the science behind cooking, discussing chemical reactions, fermentation processes, and how understanding food science can improve both flavor and nutrition in home cooking."
             ],
             'question4': [
-                '家族との時間、美味しい食事、好きな音楽、リラックス、笑顔',
-                '友達とのおしゃべり、映画鑑賞、ゲーム、お菓子、のんびり',
-                '読書、静かな環境、コーヒー、創作活動、自由時間',
-                '料理、新しいレシピ、家族、温かい雰囲気、達成感',
-                '音楽、楽器演奏、創造性、感情表現、芸術的な時間',
-                'アニメ、漫画、コスプレ、創作、想像力の世界',
-                'スポーツ、友達、チームワーク、達成感、健康的な時間',
-                '写真撮影、自然、美しい景色、芸術的表現、平和',
-                'ショッピング、ファッション、友達、新しい発見、おしゃれ',
-                '学習、新しい知識、成長、挑戦、自己向上の時間'
+                "My ideal Friday night would involve gathering close friends for a home-cooked meal, followed by engaging board games, meaningful conversations, and perhaps watching a thought-provoking film together.",
+                "I envision spending the evening in a cozy bookstore café, reading an engrossing novel while sipping artisanal coffee, occasionally chatting with fellow book lovers about recent discoveries.",
+                "My perfect Friday would be attending a live music performance, whether it's a jazz club, classical concert, or indie rock show, experiencing the energy and connection between artists and audience.",
+                "I'd love to spend the evening working on a creative project, whether it's painting, writing, or coding, while listening to inspiring music and losing track of time in the flow of creation.",
+                "My ideal Friday involves exploring a new neighborhood or city, discovering hidden restaurants, unique shops, and interesting architecture while documenting the experience through photography.",
+                "I envision a quiet evening at home, cooking an elaborate meal from scratch, experimenting with new recipes and techniques while enjoying the meditative process of creating something delicious.",
+                "My perfect Friday would be hosting a small gathering where friends share their latest projects, whether it's art, music, writing, or entrepreneurial ventures, celebrating each other's creativity.",
+                "I'd love to spend the evening learning something new, whether it's attending a workshop, taking an online course, or practicing a skill I've been developing, feeling the satisfaction of progress.",
+                "My ideal Friday involves outdoor activities like hiking, stargazing, or having a picnic in a scenic location, connecting with nature and appreciating the beauty of the natural world.",
+                "I envision spending the evening volunteering for a cause I care about, whether it's helping at a community center, participating in environmental cleanup, or mentoring young people."
             ],
             'question5': [
-                '子供の頃に集めていたポケモンカードに夢中になっていました。',
-                '韓国ドラマを見ることに完全にはまっていた時期がありました。',
-                '特定のアニメキャラクターのグッズを集めることに熱中していました。',
-                '植物を育てることに夢中になって、部屋が温室のようになりました。',
-                '特定の歌手の音楽を聞き続けて、全ての歌詞を覚えていました。',
-                '料理番組を見ることに夢中になって、毎日録画していました。',
-                '特定のゲームを何時間もプレイし続けていました。',
-                '外国の文化について調べることに熱中していました。',
-                '手作りのアクセサリーを作ることに夢中になっていました。',
-                '特定のスポーツ選手を応援することに熱狂していました。'
+                "I went through a phase where I was completely obsessed with collecting vintage mechanical keyboards, researching switch types, keycap materials, and the history of different manufacturers.",
+                "There was a time when I became fascinated with learning about extinct languages, spending hours studying dead scripts and trying to understand how ancient civilizations communicated.",
+                "I once became incredibly invested in the world of competitive yo-yo tricks, practicing for hours daily and learning the physics behind different string tensions and weight distributions.",
+                "I had a period where I was obsessed with studying the migration patterns of birds, tracking different species through apps and learning to identify them by their songs and flight patterns.",
+                "There was a time when I became fascinated with the art of paper folding, not just simple origami but complex modular designs that required hundreds of individual pieces.",
+                "I once spent months studying the history and techniques of traditional bookbinding, learning about different paper types, binding methods, and the craftsmanship of historical manuscripts.",
+                "I went through a phase of being completely absorbed in learning about urban beekeeping, studying hive management, honey production, and the important role of bees in urban ecosystems.",
+                "There was a period where I became obsessed with the mathematics behind music, studying frequency ratios, harmonic series, and how different tuning systems affect emotional perception.",
+                "I once became fascinated with the process of making sourdough bread from scratch, studying fermentation science, flour types, and the cultural history of bread-making traditions.",
+                "I had a time where I was completely absorbed in learning about the psychology of color, studying how different hues affect mood, behavior, and cultural associations across different societies."
             ],
             'question6': [
-                '落ち着いたクラシック音楽のような、安らぎを与える雰囲気です。',
-                '元気なポップスのような、明るく楽しいエネルギーです。',
-                '情熱的なロック音楽のような、強くて熱いエネルギーです。',
-                '優雅なジャズのような、洗練された大人の雰囲気です。',
-                '自然の音のような、穏やかで心地よいエネルギーです。',
-                '電子音楽のような、現代的で革新的な雰囲気です。',
-                '伝統的な民族音楽のような、深い文化的なエネルギーです。',
-                '軽やかなアコースティック音楽のような、自然体の雰囲気です。',
-                '力強いオーケストラのような、壮大で感動的なエネルギーです。',
-                '親しみやすいフォークソングのような、温かい人間性です。'
+                "My energy has the soundtrack of ambient electronic music - thoughtful, atmospheric, with layers of complexity that reveal themselves over time, creating a sense of depth and contemplation.",
+                "I'd describe my energy as indie folk - acoustic, authentic, with storytelling elements that connect with people on a personal level, warm and inviting yet introspective.",
+                "My energy resembles upbeat jazz - improvisational, collaborative, with unexpected rhythms and harmonies that keep things interesting and encourage creative expression.",
+                "I have the energy of classical orchestral music - structured yet dynamic, with moments of quiet reflection balanced by powerful crescendos of passion and intensity.",
+                "My energy is like progressive rock - complex, evolving, with intricate patterns that build into something greater than the sum of their parts, always pushing boundaries.",
+                "I'd say my energy has the soundtrack of world music - diverse, culturally rich, incorporating different traditions and perspectives into a harmonious whole.",
+                "My energy resembles lo-fi hip-hop - calm, steady, perfect for focused work and creative thinking, with subtle complexities that reward careful listening.",
+                "I have the energy of acoustic singer-songwriter music - personal, honest, with meaningful lyrics and melodies that create genuine connections with others.",
+                "My energy is like post-rock instrumental music - patient, building, with emotional depth that doesn't require words to communicate powerful feelings.",
+                "I'd describe my energy as eclectic playlist music - adaptable, surprising, drawing from many genres to create something unique and personally meaningful."
             ]
         }
-        
-        # Pre-defined personality signatures to avoid AI calls
-        archetypes = ['創造的探求者', '静寂の知恵者', '自然の写真家', '料理の魔術師', '音楽の詩人', 
-                     'アニメの夢想家', '社交的な映画愛好家', '活動的な健康推進者', '家族思いの優しい魂', 'テクノロジーの革新者']
-        
-        core_strengths = ['創造性と表現力で周囲を魅了する力', '深い思考と洞察力で問題を解決する能力', '自然の美しさを発見し共有する才能',
-                         '人を喜ばせる料理の技術と心配り', '音楽で感情を表現し人を感動させる力', '想像力で新しい世界を創造する能力',
-                         '人と人をつなぐ社交的な魅力', '体を動かすことで健康とエネルギーを広める力', '家族を大切にする温かい心',
-                         '新しい技術で未来を切り開く革新的な思考']
-        
-        hidden_potentials = ['芸術的な才能がまだ十分に開花していない可能性', 'リーダーシップの素質を秘めている',
-                           '自然保護活動への情熱が眠っている', '教育者として人を導く力を持っている',
-                           '作曲や音楽制作の才能が隠れている', 'ストーリーテリングの天才的な能力',
-                           'イベント企画や組織運営の才能', 'スポーツ指導者としての素質',
-                           'カウンセリングや心理サポートの能力', '起業家精神と事業創造の才能']
-        
-        conversation_catalysts = ['好きなゲームについて熱く語り合える', '読書の感想や好きな本について話し合える',
-                                '美しい写真や撮影テクニックについて語り合える', '料理のレシピや食文化について話し合える',
-                                '音楽の好みや楽器演奏について語り合える', 'アニメやマンガのストーリーについて熱く語れる',
-                                '映画の感想や好きな俳優について話し合える', 'スポーツや健康的な生活について語り合える',
-                                '家族の大切さや思い出について話し合える', '新しい技術や未来について語り合える']
         
         countries = ['Japan', 'China', 'Vietnam', 'Other']
         genders = ['Male', 'Female', 'Prefer not to say']
         
-        created_students = 0
-        
-        # Create 30 students with varied, realistic data
-        for i in range(30):
-            # Generate random student data
+        # Create 10 students with detailed answers and empty personality fields
+        for i in range(10):
             name = japanese_names[i]
             country = random.choice(countries)
             gender = random.choice(genders)
             
-            # Select random answers for each question
-            question1 = random.choice(sample_answers['question1'])
-            question2 = random.choice(sample_answers['question2'])
-            question3 = random.choice(sample_answers['question3'])
-            question4 = random.choice(sample_answers['question4'])
-            question5 = random.choice(sample_answers['question5'])
-            question6 = random.choice(sample_answers['question6'])
+            # Select random detailed answers
+            question1 = random.choice(detailed_answers['question1'])
+            question2 = random.choice(detailed_answers['question2'])
+            question3 = random.choice(detailed_answers['question3'])
+            question4 = random.choice(detailed_answers['question4'])
+            question5 = random.choice(detailed_answers['question5'])
+            question6 = random.choice(detailed_answers['question6'])
             
             # Combine all answers for vibes field
             combined_answers = f"{question1} {question2} {question3} {question4} {question5} {question6}"
             
-            # Select random personality signatures (no AI calls)
-            archetype = random.choice(archetypes)
-            core_strength = random.choice(core_strengths)
-            hidden_potential = random.choice(hidden_potentials)
-            conversation_catalyst = random.choice(conversation_catalysts)
-            
-            # Create student object
+            # Create student object with empty personality fields
             student = Student(
                 name=name,
                 country=country,
@@ -1648,31 +1619,28 @@ def seed_database():
                 question4=question4,
                 question5=question5,
                 question6=question6,
-                archetype=archetype,
-                core_strength=core_strength,
-                hidden_potential=hidden_potential,
-                conversation_catalyst=conversation_catalyst,
+                archetype=None,  # Empty personality fields
+                core_strength=None,
+                hidden_potential=None,
+                conversation_catalyst=None,
                 submission_id=Student.generate_submission_id()
             )
             
             # Add to database session
             db.session.add(student)
-            created_students += 1
-            
-            # Log progress every 10 students
-            if created_students % 10 == 0:
-                logging.info(f"Created {created_students}/30 students...")
         
         # Commit all students to database
         db.session.commit()
         
-        logging.info(f"Successfully seeded database with {created_students} students")
-        return f"Successfully seeded database with {created_students} students."
+        logging.info("Successfully seeded database with 10 test students")
+        flash("Database seeded with 10 new test students.", "success")
         
     except Exception as e:
         db.session.rollback()
         logging.error(f"Failed to seed database: {str(e)}")
-        return f"Failed to seed database: {str(e)}"
+        flash(f"Failed to seed database: {str(e)}", "error")
+    
+    return redirect(url_for('teacher'))
 
 
 
