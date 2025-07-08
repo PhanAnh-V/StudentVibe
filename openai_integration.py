@@ -67,7 +67,7 @@ Form teams that would dominate any challenge through their complementary strengt
         # Create OpenAI client with timeout
         timeout_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY"),
-            timeout=20.0  # Reduced timeout to prevent hanging
+            timeout=30.0
         )
         
         response = timeout_client.chat.completions.create(
@@ -142,7 +142,7 @@ Final Instructions:
         # Create OpenAI client with timeout
         timeout_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY"),
-            timeout=15.0  # Reduced timeout to prevent hanging for deep analysis
+            timeout=30.0
         )
         
         response = timeout_client.chat.completions.create(
@@ -240,7 +240,7 @@ Example Titles: 「静かな森の探検家」(Explorer of the Quiet Forest), �
         # Create OpenAI client with short timeout
         timeout_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY"),
-            timeout=5.0  # Very short timeout to prevent hanging
+            timeout=30.0
         )
         
         response = timeout_client.chat.completions.create(
@@ -291,7 +291,7 @@ Respond with ONLY the Japanese paragraph describing their core strength."""
         # Create OpenAI client with short timeout
         timeout_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY"),
-            timeout=5.0  # Reduced timeout to prevent hanging
+            timeout=30.0
         )
         
         response = timeout_client.chat.completions.create(
@@ -342,7 +342,7 @@ Respond with ONLY the Japanese paragraph describing their hidden potential."""
         # Create OpenAI client with short timeout
         timeout_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY"),
-            timeout=5.0  # Reduced timeout to prevent hanging
+            timeout=30.0
         )
         
         response = timeout_client.chat.completions.create(
@@ -394,7 +394,7 @@ Example: 「彼らの『秘密のスーパーパワー』が実際に役立っ�
         # Create OpenAI client with short timeout
         timeout_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY"),
-            timeout=5.0  # Reduced timeout to prevent hanging
+            timeout=30.0
         )
         
         response = timeout_client.chat.completions.create(
