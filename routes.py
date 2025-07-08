@@ -230,6 +230,7 @@ def submit_form():
 @app.route('/success')
 def success():
     """Success confirmation page"""
+    print("--- DEBUG: Success route has been called. ---")
     submission_id = session.get('submission_id')
     student_name = session.get('student_name')
     
@@ -244,6 +245,7 @@ def success():
     
     # Get user's selected language, default to English
     lang = session.get('selected_language', 'en')
+    print(f"--- DEBUG: Language selected is: {lang} ---")
     
     # Create dictionary with language-specific text
     success_text = {}
@@ -262,12 +264,16 @@ def success():
         if student_name:
             success_text['thank_you'] = success_text['thank_you'].format(name=student_name)
     
+    print(f"--- DEBUG: Prepared success_text object: {success_text} ---")
+    
     # Get app explanation for all languages (for template flexibility)
     app_explanation = site_content.get('success_page', {}).get('app_explanation', {})
     
     # Clear the session data after displaying
     session.pop('submission_id', None)
     session.pop('student_name', None)
+    
+    print("--- DEBUG: Now attempting to render success.html template. ---")
     
     return render_template('success.html', 
                          submission_id=submission_id,
