@@ -452,6 +452,8 @@ def teacher_logout():
 @app.route('/teacher/analyze-batch', methods=['POST'])
 def analyze_batch():
     """Analyze the next batch of students (max 5) with AI personality generation"""
+    print("--- User clicked 'Analyze Batch'. Route was called. ---")
+    
     # Check if teacher is authenticated
     if not session.get('teacher_authenticated'):
         return redirect(url_for('teacher_login'))
@@ -461,6 +463,8 @@ def analyze_batch():
         unanalyzed_students = Student.query.filter(
             db.or_(Student.archetype.is_(None), Student.archetype == "")
         ).limit(5).all()
+        
+        print(f"Found {len(unanalyzed_students)} students to analyze.")
         
         if not unanalyzed_students:
             flash("すべての学生の分析が完了しました。", "info")
@@ -472,6 +476,8 @@ def analyze_batch():
         # Process each student in the batch
         for student in unanalyzed_students:
             try:
+                print(f"Now processing student: {student.name}")
+                
                 # Prepare student answers for AI analysis
                 student_answers = {
                     'question1': student.question1,
