@@ -1,0 +1,100 @@
+Goal: Fix the Teacher Dashboard layout using our precise HTML blueprint, and shorten the "Generate New Password" button to a clean icon for a better design.
+
+Core Instructions:
+
+In the teacher.html file, locate and completely delete all the current HTML content inside the main dashboard header section.
+
+Insert the following HTML Blueprint in its place. This blueprint contains the corrected structure and replaces the long button text with an icon.
+
+HTML
+
+<div class="dashboard-header">
+  <div class="header-row">
+    <div class="header-title">
+      <h1>先生ダッシュボード</h1>
+      <p>学生総数: {{ students|length }}</p>
+    </div>
+    <a href="{{ url_for('teacher_logout') }}" class="btn btn-outline-secondary">ログアウト</a>
+  </div>
+  <div class="header-row">
+    <div class="session-control">
+      <span>現在のセッションパスワード: <strong>{{ session_password }}</strong></span>
+      <button class="btn btn-sm btn-light" onclick="copyPassword('{{ session_password }}')">
+        <i class="far fa-copy"></i>
+      </button>
+      <form action="{{ url_for('teacher_dashboard') }}" method="POST" style="display: inline;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" name="action" value="generate_password" class="btn btn-secondary" title="新しいパスワードを生成">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+      </form>
+    </div>
+    <div class="main-actions">
+       <form action="{{ url_for('create_squads') }}" method="POST" style="display: inline;">
+         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+         <button type="submit" class="btn btn-primary">バイブスクワッド作成</button>
+       </form>
+       <form action="{{ url_for('analyze_batch') }}" method="POST" style="display: inline;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-info">バッチ分析</button>
+       </form>
+    </div>
+    <div class="danger-zone">
+      <form action="{{ url_for('clear_squads') }}" method="POST" onsubmit="return confirm('本当にすべての学生とスクワッドのデータを削除しますか？この操作は元に戻せません。');" style="display: inline;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-danger">すべて削除</button>
+      </form>
+    </div>
+  </div>
+</div>
+Next, add or update the necessary CSS to style this new layout perfectly.
+
+CSS
+
+.dashboard-header {
+  background-color: #F8F9FA;
+  padding: 24px;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border: 1px solid #DEE2E6;
+}
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.header-row:first-child {
+  margin-bottom: 20px;
+}
+.header-title h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+.header-title p {
+  font-size: 16px;
+  color: #6C757D;
+  margin: 4px 0 0 0;
+}
+.session-control, .main-actions, .danger-zone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.danger-zone {
+  border: 1px solid #F5C2C7;
+  background-color: #F8D7DA;
+  padding: 10px 15px;
+  border-radius: 8px;
+}
+.main-actions .btn-info {
+  background-color: #0DCAF0;
+  border-color: #0DCAF0;
+  color: white;
+}
+.session-control .btn-secondary {
+    width: 40px;
+    height: 40px;
+}
+Constraint/Warning: The AI must only replace the header section. The code for the student lists below the header must be left completely untouched.
