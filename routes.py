@@ -752,7 +752,45 @@ def create_squads():
                 # Remove empty squads
                 db.session.delete(new_squad)
         
-        # Step 7: Commit all changes to database
+        # Step 7: Safety net - Create solo squads for any students missed by AI
+        logging.info("🔍 Checking for unassigned students...")
+        
+        # Get all student IDs that were successfully assigned to squads by AI
+        assigned_student_ids = set()
+        for student in Student.query.all():
+            if student.squad_id is not None:
+                assigned_student_ids.add(student.id)
+        
+        # Get all student IDs that should have been assigned
+        all_student_ids = set(student_map.keys())
+        
+        # Find students that were missed by AI
+        unassigned_student_ids = all_student_ids - assigned_student_ids
+        
+        if unassigned_student_ids:
+            logging.warning(f"🚨 Found {len(unassigned_student_ids)} unassigned students: {unassigned_student_ids}")
+            
+            # Create solo squads for each unassigned student
+            for student_id in unassigned_student_ids:
+                student = student_map[student_id]
+                
+                # Create a solo squad with Japanese naming
+                solo_squad = Squad()
+                solo_squad.name = f"{student.name}の個人スクワッド"
+                solo_squad.shared_interests = f"{student.name}の個人的な興味"
+                solo_squad.squad_icon = "fas fa-user"
+                db.session.add(solo_squad)
+                db.session.flush()  # Get the squad ID
+                
+                # Assign the student to their solo squad
+                student.squad_id = solo_squad.id
+                squads_created += 1
+                
+                logging.info(f"✅ Created solo squad for {student.name} (ID: {student_id})")
+        else:
+            logging.info("✅ All students successfully assigned to squads by AI")
+        
+        # Step 8: Commit all changes to database
         logging.info(f"💾 Committing {squads_created} squads to database...")
         db.session.commit()
         logging.info("✅ Database commit successful!")
