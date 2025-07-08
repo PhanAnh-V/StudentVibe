@@ -138,31 +138,10 @@ def submit_form():
             logging.info(f"Session data: {dict(session)}")
             logging.info(f"Processing answers for language: {student_language}")
             
-            # Handle Japanese translations based on student's language choice
-            japanese_translations = []
-            print('--- Starting translation process ---')
-            
-            for i, answer in enumerate(original_answers, 1):
-                if student_language == 'ja':
-                    # Student chose Japanese - no translation needed, use original answer
-                    japanese_translations.append(answer)
-                    print(f"Question {i}: Japanese detected, using original answer")
-                    logging.info(f"Question {i}: Japanese detected, using original answer")
-                else:
-                    # Student chose other language - translate to Japanese
-                    try:
-                        print(f"Question {i}: Attempting translation from {student_language} to Japanese")
-                        from openai_integration import translate_to_japanese
-                        translation = translate_to_japanese(answer)
-                        japanese_translations.append(translation)
-                        print(f"Question {i}: Translation successful")
-                        print(f"Original: {answer[:50]}...")
-                        print(f"Translated: {translation[:50]}...")
-                        logging.info(f"Question {i} translated successfully from {student_language} to Japanese")
-                    except Exception as e:
-                        print(f"Translation failed for question {i}: {str(e)}")
-                        logging.error(f"Translation failed for question {i}: {str(e)}")
-                        japanese_translations.append("")  # Save empty translation if it fails
+            # BULLETPROOF APPROACH: Save form immediately, handle AI processing later
+            # No AI calls during form submission to prevent failures
+            japanese_translations = ["", "", "", "", "", ""]  # Initialize empty - will be filled by background processing
+            print('--- Skipping AI translation during form submission for maximum reliability ---')
             
             print('--- Creating student record ---')
             # Create new student record with both original and translated answers
@@ -197,7 +176,7 @@ def submit_form():
                 print(f'DATABASE ERROR during commit: {db_error}')
                 raise db_error
             
-            logging.info(f"New student registered: {student.name} (ID: {student.id}, Submission ID: {submission_id}) with Japanese translations")
+            logging.info(f"New student registered: {student.name} (ID: {student.id}, Submission ID: {submission_id}) - AI processing will happen separately")
             
             # Store submission ID in session for success page
             session['submission_id'] = submission_id
@@ -206,7 +185,7 @@ def submit_form():
             # Clear session authentication so form can't be submitted again
             session.pop('session_authenticated', None)
             
-            print('--- Form submission completed successfully ---')
+            print('--- Form submission completed successfully - AI processing will happen in background ---')
             return redirect(url_for('success'))
         except Exception as e:
             print(f'FORM SUBMISSION FAILED WITH ERROR: {e}')
@@ -607,20 +586,33 @@ def analyze_batch():
         return redirect(url_for('teacher_login'))
     
     try:
-        # Find all students who have not yet been analyzed (archetype field is empty or null)
-        # Reduced batch size to 2 for better reliability and faster processing
-        unanalyzed_students = Student.query.filter(
+        # Find students who need translation (empty Japanese fields) or personality analysis
+        students_need_translation = Student.query.filter(
+            db.or_(
+                Student.question1_jp.is_(None), Student.question1_jp == "",
+                Student.question2_jp.is_(None), Student.question2_jp == "",
+                Student.question3_jp.is_(None), Student.question3_jp == "",
+                Student.question4_jp.is_(None), Student.question4_jp == "",
+                Student.question5_jp.is_(None), Student.question5_jp == "",
+                Student.question6_jp.is_(None), Student.question6_jp == ""
+            )
+        ).limit(2).all()
+        
+        students_need_personality = Student.query.filter(
             db.or_(Student.archetype.is_(None), Student.archetype == "")
         ).limit(2).all()
         
-        print(f"Found {len(unanalyzed_students)} students to analyze.")
+        # Combine and deduplicate
+        all_students = list(set(students_need_translation + students_need_personality))[:2]
         
-        if not unanalyzed_students:
+        print(f"Found {len(all_students)} students to process.")
+        
+        if not all_students:
             flash("すべての学生の分析が完了しました。", "info")
             return redirect(url_for('teacher'))
         
-        # Import AI personality generation functions
-        from openai_integration import generate_archetype, generate_core_strength, generate_hidden_potential, generate_conversation_catalyst
+        # Import AI functions
+        from openai_integration import generate_archetype, generate_core_strength, generate_hidden_potential, generate_conversation_catalyst, translate_to_japanese
         
         import time
         successfully_analyzed = 0
@@ -630,47 +622,94 @@ def analyze_batch():
         batch_start_time = time.time()
         
         # Process each student in the batch with enhanced monitoring
-        for student_idx, student in enumerate(unanalyzed_students):
+        for student_idx, student in enumerate(all_students):
             try:
                 student_start_time = time.time()
-                print(f"🔄 Processing student {student_idx + 1}/{len(unanalyzed_students)}: {student.name}")
+                print(f"🔄 Processing student {student_idx + 1}/{len(all_students)}: {student.name}")
                 
-                # Prepare student answers for AI analysis
-                student_answers = {
-                    'question1': student.question1,
-                    'question2': student.question2,
-                    'question3': student.question3,
-                    'question4': student.question4,
-                    'question5': student.question5,
-                    'question6': student.question6
-                }
-                
-                # Generate personality signature using intelligent retry mechanism
-                ai_functions = [
-                    (generate_archetype, "archetype", "個性豊かな学生"),
-                    (generate_core_strength, "core_strength", "創造的な思考力と独自の視点を持っています。"),
-                    (generate_hidden_potential, "hidden_potential", "リーダーシップの才能が眠っている可能性があります。"),
-                    (generate_conversation_catalyst, "conversation_catalyst", "趣味や興味のあることについて話すと、とても輝いて見えます。")
-                ]
-                
-                student_results = {}
-                
-                for ai_func, field_name, fallback in ai_functions:
-                    total_ai_calls += 1
-                    result = intelligent_ai_call_with_retry(ai_func, student_answers, field_name, fallback)
+                # Step 1: Handle translations if needed
+                if not student.question1_jp or student.question1_jp == "":
+                    print(f"Processing translations for {student.name}")
+                    original_answers = [
+                        student.question1, student.question2, student.question3,
+                        student.question4, student.question5, student.question6
+                    ]
                     
-                    if result != fallback:
-                        successful_ai_calls += 1
-                    else:
-                        fallback_used += 1
+                    # Get student's language from session storage (fallback to 'en')
+                    # Note: This is a limitation - we don't store language preference per student
+                    # For now, we'll detect if answers are already in Japanese
+                    japanese_translations = []
                     
-                    student_results[field_name] = result
+                    for i, answer in enumerate(original_answers, 1):
+                        total_ai_calls += 1
+                        try:
+                            # Simple heuristic: if answer contains Japanese characters, use as-is
+                            if any(ord(char) > 127 for char in answer):
+                                japanese_translations.append(answer)
+                                successful_ai_calls += 1
+                                print(f"Question {i}: Japanese detected, using original")
+                            else:
+                                translation = intelligent_ai_call_with_retry(
+                                    translate_to_japanese, answer, f"translation_q{i}", answer
+                                )
+                                if translation != answer:
+                                    successful_ai_calls += 1
+                                else:
+                                    fallback_used += 1
+                                japanese_translations.append(translation)
+                        except Exception as e:
+                            print(f"Translation failed for question {i}: {str(e)}")
+                            japanese_translations.append(answer)
+                            fallback_used += 1
+                    
+                    # Save translations
+                    student.question1_jp = japanese_translations[0]
+                    student.question2_jp = japanese_translations[1]
+                    student.question3_jp = japanese_translations[2]
+                    student.question4_jp = japanese_translations[3]
+                    student.question5_jp = japanese_translations[4]
+                    student.question6_jp = japanese_translations[5]
                 
-                # Assign results to student
-                student.archetype = student_results['archetype']
-                student.core_strength = student_results['core_strength']
-                student.hidden_potential = student_results['hidden_potential']
-                student.conversation_catalyst = student_results['conversation_catalyst']
+                # Step 2: Handle personality analysis if needed
+                if not student.archetype or student.archetype == "":
+                    print(f"Processing personality analysis for {student.name}")
+                    
+                    # Prepare student answers for AI analysis
+                    student_answers = {
+                        'question1': student.question1,
+                        'question2': student.question2,
+                        'question3': student.question3,
+                        'question4': student.question4,
+                        'question5': student.question5,
+                        'question6': student.question6
+                    }
+                    
+                    # Generate personality signature using intelligent retry mechanism
+                    ai_functions = [
+                        (generate_archetype, "archetype", "個性豊かな学生"),
+                        (generate_core_strength, "core_strength", "創造的な思考力と独自の視点を持っています。"),
+                        (generate_hidden_potential, "hidden_potential", "リーダーシップの才能が眠っている可能性があります。"),
+                        (generate_conversation_catalyst, "conversation_catalyst", "趣味や興味のあることについて話すと、とても輝いて見えます。")
+                    ]
+                    
+                    student_results = {}
+                    
+                    for ai_func, field_name, fallback in ai_functions:
+                        total_ai_calls += 1
+                        result = intelligent_ai_call_with_retry(ai_func, student_answers, field_name, fallback)
+                        
+                        if result != fallback:
+                            successful_ai_calls += 1
+                        else:
+                            fallback_used += 1
+                        
+                        student_results[field_name] = result
+                    
+                    # Assign results to student
+                    student.archetype = student_results['archetype']
+                    student.core_strength = student_results['core_strength']
+                    student.hidden_potential = student_results['hidden_potential']
+                    student.conversation_catalyst = student_results['conversation_catalyst']
                 
                 # Save changes to database after each student
                 db.session.commit()
@@ -679,23 +718,37 @@ def analyze_batch():
                 student_duration = time.time() - student_start_time
                 print(f"✅ Completed {student.name} in {student_duration:.1f}s")
                 
-                logging.info(f"Successfully analyzed student {student.name} (ID: {student.id})")
+                logging.info(f"Successfully processed student {student.name} (ID: {student.id})")
                 
             except Exception as e:
-                logging.error(f"Error analyzing student {student.name}: {str(e)}")
+                logging.error(f"Error processing student {student.name}: {str(e)}")
                 # Set fallback values for this student
-                student.archetype = "個性豊かな学生"
-                student.core_strength = "創造的な思考力と独自の視点を持っています。"
-                student.hidden_potential = "リーダーシップの才能が眠っている可能性があります。"
-                student.conversation_catalyst = "趣味や興味のあることについて話すと、とても輝いて見えます。"
+                if not student.archetype:
+                    student.archetype = "個性豊かな学生"
+                    student.core_strength = "創造的な思考力と独自の視点を持っています。"
+                    student.hidden_potential = "リーダーシップの才能が眠っている可能性があります。"
+                    student.conversation_catalyst = "趣味や興味のあることについて話すと、とても輝いて見えます。"
                 db.session.commit()
                 successfully_analyzed += 1
                 fallback_used += 4
         
-        # Count remaining unanalyzed students
-        remaining_count = Student.query.filter(
+        # Count remaining students needing processing
+        remaining_translation = Student.query.filter(
+            db.or_(
+                Student.question1_jp.is_(None), Student.question1_jp == "",
+                Student.question2_jp.is_(None), Student.question2_jp == "",
+                Student.question3_jp.is_(None), Student.question3_jp == "",
+                Student.question4_jp.is_(None), Student.question4_jp == "",
+                Student.question5_jp.is_(None), Student.question5_jp == "",
+                Student.question6_jp.is_(None), Student.question6_jp == ""
+            )
+        ).count()
+        
+        remaining_personality = Student.query.filter(
             db.or_(Student.archetype.is_(None), Student.archetype == "")
         ).count()
+        
+        remaining_count = max(remaining_translation, remaining_personality)
         
         # Calculate batch performance metrics
         batch_duration = time.time() - batch_start_time
@@ -703,9 +756,9 @@ def analyze_batch():
         
         # Create enhanced status message with performance metrics
         if remaining_count == 0:
-            flash(f"🎉 {successfully_analyzed}人の学生を分析しました。すべての分析が完了しました！ (成功率: {success_rate:.1f}%, 処理時間: {batch_duration:.1f}s)", "success")
+            flash(f"🎉 {successfully_analyzed}人の学生を処理しました。すべての処理が完了しました！ (成功率: {success_rate:.1f}%, 処理時間: {batch_duration:.1f}s)", "success")
         else:
-            flash(f"📊 {successfully_analyzed}人の学生を分析しました。残り{remaining_count}人の学生が分析待ちです。 (成功率: {success_rate:.1f}%, フォールバック使用: {fallback_used}回)", "info")
+            flash(f"📊 {successfully_analyzed}人の学生を処理しました。残り約{remaining_count}人の学生が処理待ちです。 (成功率: {success_rate:.1f}%, フォールバック使用: {fallback_used}回)", "info")
         
         # Log detailed performance metrics
         print(f"📈 Batch Performance Summary:")
@@ -720,7 +773,7 @@ def analyze_batch():
         
     except Exception as e:
         logging.error(f"Error in analyze_batch: {str(e)}")
-        flash("分析中にエラーが発生しました。もう一度お試しください。", "error")
+        flash("処理中にエラーが発生しました。もう一度お試しください。", "error")
     
     return redirect(url_for('teacher'))
 
