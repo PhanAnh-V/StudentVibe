@@ -216,11 +216,17 @@ def generate_archetype(student_answers):
             if question_key in student_answers:
                 answers_text += f"Question {i}: {student_answers[question_key]}\n"
         
-        prompt = f"""Based on these student answers, create only a creative Japanese nickname (2-4 words):
-
+        prompt = f"""Your Persona: You are "The Storyteller," an AI that sees the core narrative in people's lives.
+Your Framework: Analyze the student's answers through the lens of Narrative Identity to find their core archetype.
+Student's Answers:
 {answers_text}
 
-Return only the Japanese nickname that captures their personality."""
+Your Mission:
+Based on the student's answers, identify their core Archetype. This should be a creative, inspiring Japanese title that makes them feel unique and understood. It is the name of their personal journey.
+
+Output Requirement:
+Respond with ONLY the Japanese title for the archetype.
+Example Titles: 「静かな森の探検家」(Explorer of the Quiet Forest), 「アイデアの稲妻を放つ者」(One Who Unleashes the Lightning of Ideas), 「心の庭を育てる人」(The Gardener of the Heart's Garden)."""
 
         # Create OpenAI client with short timeout
         timeout_client = OpenAI(
@@ -262,11 +268,16 @@ def generate_core_strength(student_answers):
             if question_key in student_answers:
                 answers_text += f"Question {i}: {student_answers[question_key]}\n"
         
-        prompt = f"""Based on these student answers, write 1 sentence in Japanese about their strength as a friend:
-
+        prompt = f"""Your Persona: You are "The Strength Finder," an AI that recognizes the unique gifts people bring to others.
+Your Framework: Analyze their answers for themes of Agency (their power) and Communion (their connection to others).
+Student's Answers:
 {answers_text}
 
-Return only the Japanese sentence about their core strength."""
+Your Mission:
+Based on the student's answers, write a short, powerful paragraph in Japanese describing their "Core Compass"—their greatest strength as a friend and collaborator. This is the tool they can always rely on.
+
+Output Requirement:
+Respond with ONLY the Japanese paragraph describing their core strength."""
 
         # Create OpenAI client with short timeout
         timeout_client = OpenAI(
@@ -308,11 +319,16 @@ def generate_hidden_potential(student_answers):
             if question_key in student_answers:
                 answers_text += f"Question {i}: {student_answers[question_key]}\n"
         
-        prompt = f"""Based on these student answers, write 1 sentence in Japanese about their hidden potential or untapped ability:
-
+        prompt = f"""Your Persona: You are "The Horizon Scanner," an AI that sees what's possible for people.
+Your Framework: Analyze their answers for what is NOT said—gaps, curiosities, or slight hesitations that suggest an area for growth.
+Student's Answers:
 {answers_text}
 
-Return only the Japanese sentence about their hidden potential."""
+Your Mission:
+Based on their answers, identify their "Uncharted Territory"—a hidden potential or growth edge. Frame it positively as an exciting next adventure. This should feel like an insightful and encouraging challenge.
+
+Output Requirement:
+Respond with ONLY the Japanese paragraph describing their hidden potential."""
 
         # Create OpenAI client with short timeout
         timeout_client = OpenAI(
@@ -354,11 +370,17 @@ def generate_conversation_catalyst(student_answers):
             if question_key in student_answers:
                 answers_text += f"Question {i}: {student_answers[question_key]}\n"
         
-        prompt = f"""Based on these student answers, write 1 sentence in Japanese about a conversation starter from their interests:
-
+        prompt = f"""Your Persona: You are "The Bridge Builder," an AI that knows how to start meaningful conversations.
+Your Framework: Find the single most unique and interesting detail from their answers.
+Student's Answers:
 {answers_text}
 
-Return only the Japanese sentence about how to start a conversation with them."""
+Your Mission:
+Based on their answers, write a single Japanese sentence that acts as "Your First Step"—a perfect conversation starter for others to ask them. It should be intriguing and easy for someone else to act on.
+
+Output Requirement:
+Respond with ONLY the Japanese sentence for the conversation catalyst.
+Example: 「彼らの『秘密のスーパーパワー』が実際に役立った時の話を聞いてみてください。」"""
 
         # Create OpenAI client with short timeout
         timeout_client = OpenAI(
