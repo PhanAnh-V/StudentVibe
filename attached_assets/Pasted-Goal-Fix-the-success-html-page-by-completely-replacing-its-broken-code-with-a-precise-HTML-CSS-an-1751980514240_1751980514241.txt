@@ -1,3 +1,15 @@
+Goal: Fix the success.html page by completely replacing its broken code with a precise HTML, CSS, and JavaScript blueprint that correctly styles the layout, sizes the images, and implements the language-selection tabs.
+
+Core Instructions:
+
+Open the success.html template file.
+
+Delete all existing code in that file.
+
+Paste the following complete code blueprint into the now-empty file. This is a complete replacement.
+
+HTML
+
 {% extends "base.html" %}
 
 {% block title %}送信完了！{% endblock %}
@@ -109,7 +121,7 @@
   <div class="id-card">
     <h4>あなたの個人ID</h4>
     <div class="d-flex align-items-center justify-content-center">
-      <h2 id="submission-id-text">{{ submission_id }}</h2>
+      <h2 id="submission-id-text">{{ student.submission_id }}</h2>
       <button id="copy-btn" class="btn btn-light" onclick="copyIdToClipboard()">
         <i class="far fa-copy"></i>
       </button>
@@ -135,10 +147,10 @@
       <span class="lang-tab" onclick="showLanguage('vi', event)">Tiếng Việt</span>
       <span class="lang-tab" onclick="showLanguage('zh', event)">中文</span>
     </div>
-    <div id="ja" class="lang-text active"><p>{{ app_explanation.ja | safe }}</p></div>
-    <div id="en" class="lang-text"><p>{{ app_explanation.en | safe }}</p></div>
-    <div id="vi" class="lang-text"><p>{{ app_explanation.vi | safe }}</p></div>
-    <div id="zh" class="lang-text"><p>{{ app_explanation.zh | safe }}</p></div>
+    <div id="ja" class="lang-text active"><p>{{ site_content.success_page.app_explanation.ja | safe }}</p></div>
+    <div id="en" class="lang-text"><p>{{ site_content.success_page.app_explanation.en | safe }}</p></div>
+    <div id="vi" class="lang-text"><p>{{ site_content.success_page.app_explanation.vi | safe }}</p></div>
+    <div id="zh" class="lang-text"><p>{{ site_content.success_page.app_explanation.zh | safe }}</p></div>
   </div>
 
   <a href="{{ url_for('session_password') }}" class="new-session-link">新しいセッションを開始</a>
