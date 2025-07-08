@@ -21,45 +21,36 @@ def group_students_into_squads(students_data):
     Use AI to intelligently group students into squads of 3-4 based on their interests
     """
     try:
-        # Prepare the prompt with full questionnaire answers for deep analysis
+        # Prepare the prompt with pre-analyzed personality signatures for faster processing
         students_text = ""
         for idx, student in enumerate(students_data):
             students_text += f"\nStudent {idx + 1} (ID: {student['id']}, Name: {student['name']}):\n"
-            students_text += f"- Question 1 (Go-to activity): {student['question1']}\n"
-            students_text += f"- Question 2 (Skill to master): {student['question2']}\n"
-            students_text += f"- Question 3 (Talk about for hours): {student['question3']}\n"
-            students_text += f"- Question 4 (Ideal Friday night): {student['question4']}\n"
-            students_text += f"- Question 5 (Weirdest obsession): {student['question5']}\n"
-            students_text += f"- Question 6 (Energy soundtrack): {student['question6']}\n"
+            students_text += f"- Archetype: {student.get('archetype', '個性豊かな学生')}\n"
+            students_text += f"- Core Strength: {student.get('core_strength', '')}\n"
+            students_text += f"- Hidden Potential: {student.get('hidden_potential', '')}\n"
+            students_text += f"- Conversation Catalyst: {student.get('conversation_catalyst', '')}\n"
         
-        prompt = f"""You are a master strategist and social architect. Your mission is to form squads based on a deep, contextual analysis of students' full questionnaire answers to find the best synergies.
-
-Below are the raw answers from the students:
+        prompt = f"""You are a master strategist forming elite teams. You will receive concise intelligence briefings on student personality signatures.
 
 {students_text}
 
-Your strategic mission:
-1.  Analyze the full answers for each student to understand their personality, humor, and values.
-2.  Form squads of 3-5 members by identifying complementary strengths and shared underlying interests. Look for potential for genuine friendship.
-3.  For each squad, generate a creative, engaging **squad name in Japanese**.
-4.  For each squad, write a concise summary in **Japanese** explaining the **"shared interest"** or a powerful synergy you discovered that makes them a great match.
+Your mission:
+1. Form elite squads of 3-5 members by analyzing these Personality Signatures for strategic synergies.
+2. Create a creative, engaging Japanese squad name that reflects their collective identity.
+3. Write a short, insightful Japanese summary of their "shared_interests" or why their combination of signatures makes them a powerful team.
 
 Respond with a JSON object in this exact format:
 {{
     "squads": [
         {{
-            "squad_name": "クリエイティブな日本語のチーム名",
+            "squad_name": "感動的な日本語のチーム名",
             "member_ids": [list of student IDs],
-            "shared_interests": "このチームの相性や共通点を説明する短い日本語の文章"
+            "shared_interests": "このチームの相乗効果に関する洞察に満ちた日本語の要約"
         }}
     ]
 }}
 
-Strategic Requirements:
-- HIGHEST PRIORITY: Every single student MUST be assigned to a squad.
-- Squad names and shared interests MUST be in Japanese. No English or Romaji.
-- The "shared_interests" summary should be an insightful observation about why the group will connect well.
-- Focus on the quality of the human connection, not just superficial similarities."""
+CRITICAL: Every student must be assigned to a squad. All text output must be in Japanese."""
 
         # Create OpenAI client with timeout
         timeout_client = OpenAI(
