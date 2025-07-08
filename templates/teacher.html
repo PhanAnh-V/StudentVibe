@@ -199,11 +199,11 @@
           </form>
         </div>
         <div class="main-actions">
-           <form action="{{ url_for('create_squads') }}" method="POST" style="display: inline;">
+           <form id="create-squads-form" action="{{ url_for('create_squads') }}" method="POST" style="display: inline;">
              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
              <button type="submit" class="btn btn-primary">バイブスクワッド作成</button>
            </form>
-           <form action="{{ url_for('analyze_batch') }}" method="POST" style="display: inline;">
+           <form id="analyze-batch-form" action="{{ url_for('analyze_batch') }}" method="POST" style="display: inline;">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="btn btn-info">バッチ分析</button>
            </form>
@@ -828,43 +828,51 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.head.appendChild(style);
     
-    // Add click handlers for Create Vibe Squads and Generate Icebreaker buttons
-    function addButtonClickHandlers() {
-        // Handle Create Vibe Squads button using ID
-        const createSquadsBtn = document.getElementById('create-squads-btn');
-        if (createSquadsBtn) {
-            createSquadsBtn.addEventListener('click', function(e) {
-                // Don't disable immediately - let the form submit first
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 作成中...';
-                
-                // Disable after a short delay to allow form submission
-                setTimeout(() => {
-                    this.disabled = true;
-                }, 100);
-            });
-        }
+    // Reusable function to handle form submissions with processing feedback
+    function handleFormSubmit(form) {
+        // Find the submit button within the form
+        const submitButton = form.querySelector('button[type="submit"]');
+        if (!submitButton) return;
         
-        // Handle all Generate Icebreaker buttons using class
-        const icebreakerBtns = document.querySelectorAll('.generate-icebreaker-btn');
-        icebreakerBtns.forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault(); // Prevent default navigation
-                
-                // Show processing state
-                this.style.pointerEvents = 'none';
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 処理中...';
-                
-                // Navigate to the URL after showing feedback
-                const url = this.href;
-                setTimeout(() => {
-                    window.location.href = url;
-                }, 100);
-            });
+        // Disable the button immediately to prevent double-clicks
+        submitButton.disabled = true;
+        
+        // Change button text to show processing state
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 処理中...';
+    }
+    
+    // Attach event listeners to forms
+    const createSquadsForm = document.getElementById('create-squads-form');
+    if (createSquadsForm) {
+        createSquadsForm.addEventListener('submit', function(e) {
+            handleFormSubmit(this);
         });
     }
     
-    // Call the function after DOM is loaded
-    addButtonClickHandlers();
+    const analyzeBatchForm = document.getElementById('analyze-batch-form');
+    if (analyzeBatchForm) {
+        analyzeBatchForm.addEventListener('submit', function(e) {
+            handleFormSubmit(this);
+        });
+    }
+    
+    // Handle Generate Icebreaker buttons using class
+    const icebreakerBtns = document.querySelectorAll('.generate-icebreaker-btn');
+    icebreakerBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent default navigation
+            
+            // Show processing state
+            this.style.pointerEvents = 'none';
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 処理中...';
+            
+            // Navigate to the URL after showing feedback
+            const url = this.href;
+            setTimeout(() => {
+                window.location.href = url;
+            }, 100);
+        });
+    });
 });
 </script>
 {% endblock %}
