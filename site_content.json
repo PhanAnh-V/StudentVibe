@@ -1,5 +1,23 @@
 {
   "success_page": {
+    "thank_you": {
+      "en": "Thank you, {name}!",
+      "ja": "ありがとうございました、{name}さん！",
+      "vi": "Cảm ơn bạn, {name}!",
+      "zh": "谢谢你，{name}！"
+    },
+    "id_reminder": {
+      "en": "Please save this ID. You'll need it later to find your squad.",
+      "ja": "このIDを保存してください。後でスクワッドを見つけるために必要になります。",
+      "vi": "Vui lòng lưu lại ID này. Bạn sẽ cần nó sau này để tìm đội của mình.",
+      "zh": "请保存此ID。稍后您将需要它来找到您的小队。"
+    },
+    "scroll_prompt": {
+      "en": "Psst... while you wait, scroll down for a little surprise!",
+      "ja": "ねぇ…待っている間、下にスクロールしてみて！ちょっとしたサプライズがあるよ！",
+      "vi": "Này... trong lúc chờ đợi, hãy cuộn xuống để xem một bất ngờ nhỏ nhé!",
+      "zh": "嘿…在等待的时候，向下滚动看看，有个小惊喜哦！"
+    },
     "app_explanation": {
       "en": "This is Vibe Check! A tool to help you connect with new friends through shared interests. Use your ID to find your squad and start a new mission.",
       "ja": "これは「バイブ・チェック」です！共通の興味を通じて新しい友達とつながるためのツールです。あなたのIDを使ってスクワッドを見つけ、新しいミッションを始めましょう。",
