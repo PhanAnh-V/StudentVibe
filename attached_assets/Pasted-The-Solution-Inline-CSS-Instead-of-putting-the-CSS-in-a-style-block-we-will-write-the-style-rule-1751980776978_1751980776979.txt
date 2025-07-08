@@ -1,3 +1,20 @@
+The Solution: Inline CSS
+Instead of putting the CSS in a <style> block, we will write the style rules directly inside the HTML tags. This method has the highest possible priority and cannot be overridden by other stylesheets. It is the most reliable way to fix a stubborn UI bug like this.
+
+This is our final blueprint for the success page. It uses this more forceful technique to guarantee the result.
+
+Goal: Force the success.html page to render correctly by applying styles directly inside the HTML tags, overriding any and all conflicting stylesheets.
+
+Core Instructions:
+
+Open the success.html file.
+
+Delete all existing code in the file.
+
+Paste the following complete code blueprint into the empty file.
+
+HTML
+
 {% extends "base.html" %}
 
 {% block title %}送信完了！{% endblock %}
@@ -26,7 +43,7 @@
   <div style="background-color: #ffffff; border-radius: 12px; padding: 20px 24px; margin-top: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #e9ecef;">
     <h4>あなたの個人ID</h4>
     <div style="display: flex; align-items: center; justify-content: center;">
-      <h2 id="submission-id-text" style="font-size: 2.2rem; font-weight: 700; letter-spacing: 2px; color: #4A90E2; margin: 10px 0;">{{ submission_id }}</h2>
+      <h2 id="submission-id-text" style="font-size: 2.2rem; font-weight: 700; letter-spacing: 2px; color: #4A90E2; margin: 10px 0;">{{ student.submission_id }}</h2>
       <button id="copy-btn" class="btn btn-light" onclick="copyIdToClipboard()" style="margin-left: 10px; width: 40px;">
         <i class="far fa-copy"></i>
       </button>
@@ -52,10 +69,10 @@
       <span class="lang-tab" onclick="showLanguage('vi', event)" style="cursor: pointer; padding: 8px 16px; border: 1px solid #dee2e6; border-radius: 20px; background-color: #f8f9fa; transition: all 0.2s;">Tiếng Việt</span>
       <span class="lang-tab" onclick="showLanguage('zh', event)" style="cursor: pointer; padding: 8px 16px; border: 1px solid #dee2e6; border-radius: 20px; background-color: #f8f9fa; transition: all 0.2s;">中文</span>
     </div>
-    <div id="ja" class="lang-text active" style="text-align: left; line-height: 1.6;"><p>{{ app_explanation.ja | safe }}</p></div>
-    <div id="en" class="lang-text" style="text-align: left; line-height: 1.6;"><p>{{ app_explanation.en | safe }}</p></div>
-    <div id="vi" class="lang-text" style="text-align: left; line-height: 1.6;"><p>{{ app_explanation.vi | safe }}</p></div>
-    <div id="zh" class="lang-text" style="text-align: left; line-height: 1.6;"><p>{{ app_explanation.zh | safe }}</p></div>
+    <div id="ja" class="lang-text active" style="text-align: left; line-height: 1.6;"><p>{{ site_content.success_page.app_explanation.ja | safe }}</p></div>
+    <div id="en" class="lang-text" style="text-align: left; line-height: 1.6;"><p>{{ site_content.success_page.app_explanation.en | safe }}</p></div>
+    <div id="vi" class="lang-text" style="text-align: left; line-height: 1.6;"><p>{{ site_content.success_page.app_explanation.vi | safe }}</p></div>
+    <div id="zh" class="lang-text" style="text-align: left; line-height: 1.6;"><p>{{ site_content.success_page.app_explanation.zh | safe }}</p></div>
   </div>
 
   <a href="{{ url_for('session_password') }}" style="display: block; margin-top: 1rem; color: #6c757d; font-size: 0.9rem;">新しいセッションを開始</a>
