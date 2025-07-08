@@ -425,12 +425,24 @@ def teacher():
     squads = Squad.query.all()
     solo_students_db = Student.query.filter_by(squad_id=None).all()
     
+    # Check completion status for Squad Creation and Batch Analysis
+    # Squad Creation: Check if any Squad records exist
+    squads_exist = Squad.query.count() > 0
+    
+    # Batch Analysis: Check if there are students that still need analysis (archetype field is empty/null)
+    unanalyzed_students_count = Student.query.filter(
+        db.or_(Student.archetype.is_(None), Student.archetype == "")
+    ).count()
+    analysis_complete = unanalyzed_students_count == 0
+    
     return render_template('teacher.html', 
                          students=students_with_interests,
                          squads=squads,
                          solo_students_db=solo_students_db,
                          ai_advice=ai_advice,
-                         session_password=current_session_password)
+                         session_password=current_session_password,
+                         squads_exist=squads_exist,
+                         analysis_complete=analysis_complete)
 
 @app.route('/teacher/new-session-password', methods=['POST'])
 def new_session_password():
