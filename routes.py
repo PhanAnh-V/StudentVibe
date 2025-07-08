@@ -260,11 +260,27 @@ def success():
         success_text['scroll_prompt'] = success_page.get('scroll_prompt', {}).get(lang,
             success_page.get('scroll_prompt', {}).get('en', 'Scroll down for a surprise!'))
         
-        # Format the thank_you message with student name
+        # Format the thank_you message with student name, or default
         if student_name:
             success_text['thank_you'] = success_text['thank_you'].format(name=student_name)
+        else:
+            # Remove {name} placeholder if no name available
+            success_text['thank_you'] = success_text['thank_you'].replace(', {name}', '').replace('{name}', '')
+    
+    # Default fallback values if no site_content
+    if not success_text:
+        success_text = {
+            'thank_you': 'ありがとうございました！',
+            'id_reminder': 'このIDを保存してください。',
+            'scroll_prompt': 'スクロールしてみてください！'
+        }
+    
+    # Default submission_id if missing
+    if not submission_id:
+        submission_id = 'TEST-123'
     
     print(f"--- DEBUG: Prepared success_text object: {success_text} ---")
+    print(f"--- DEBUG: submission_id: {submission_id}, student_name: {student_name} ---")
     
     # Get app explanation for all languages (for template flexibility)
     app_explanation = site_content.get('success_page', {}).get('app_explanation', {})
