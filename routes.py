@@ -242,6 +242,29 @@ def success():
         logging.error(f"Error loading site_content.json: {e}")
         site_content = {}
     
+    # Get user's selected language, default to English
+    lang = session.get('selected_language', 'en')
+    
+    # Create dictionary with language-specific text
+    success_text = {}
+    if site_content and 'success_page' in site_content:
+        success_page = site_content['success_page']
+        
+        # Get text for user's language, fallback to English
+        success_text['thank_you'] = success_page.get('thank_you', {}).get(lang, 
+            success_page.get('thank_you', {}).get('en', 'Thank you, {name}!'))
+        success_text['id_reminder'] = success_page.get('id_reminder', {}).get(lang,
+            success_page.get('id_reminder', {}).get('en', 'Please save this ID.'))
+        success_text['scroll_prompt'] = success_page.get('scroll_prompt', {}).get(lang,
+            success_page.get('scroll_prompt', {}).get('en', 'Scroll down for a surprise!'))
+        
+        # Format the thank_you message with student name
+        if student_name:
+            success_text['thank_you'] = success_text['thank_you'].format(name=student_name)
+    
+    # Get app explanation for all languages (for template flexibility)
+    app_explanation = site_content.get('success_page', {}).get('app_explanation', {})
+    
     # Clear the session data after displaying
     session.pop('submission_id', None)
     session.pop('student_name', None)
@@ -249,7 +272,8 @@ def success():
     return render_template('success.html', 
                          submission_id=submission_id,
                          student_name=student_name,
-                         site_content=site_content)
+                         success_text=success_text,
+                         app_explanation=app_explanation)
 
 @app.route('/find-squad', methods=['GET', 'POST'])
 def find_squad():
