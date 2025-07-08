@@ -11,160 +11,326 @@
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
 }
-.success-container {
+
+.success-content {
     max-width: 600px;
-    margin: 40px auto;
+    margin: 0 auto;
     padding: 2rem 1rem;
     text-align: center;
 }
+
 .success-header h1 {
     font-size: 2.5rem;
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     color: white;
 }
+
 .id-card {
-    background-color: rgba(255, 255, 255, 0.95);
+    background: white;
     border-radius: 12px;
-    padding: 20px 24px;
-    margin-top: 2rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    color: #333; /* Dark text for the white card */
+    padding: 1.5rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    color: #333;
 }
-.id-card h2 {
+
+.id-card h4 {
+    margin-bottom: 1rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.id-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 1rem 0;
+}
+
+.id-value {
     font-size: 2.2rem;
     font-weight: 700;
     letter-spacing: 2px;
     color: #4A90E2;
-    margin: 10px 0;
 }
-.id-card p {
-    color: #6c757d;
-    margin-bottom: 0;
-}
-#copy-btn {
-    margin-left: 10px;
-    width: 40px;
+
+.copy-btn {
     background: transparent;
     border: 1px solid #ccc;
     color: #6c757d;
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
-.success-actions {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+
+.copy-btn:hover {
+    background: #f8f9fa;
+    border-color: #4A90E2;
+    color: #4A90E2;
 }
+
+.id-reminder {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.find-squad-btn {
+    background: #4A90E2;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: inline-block;
+    margin: 1.5rem 0;
+    transition: all 0.3s;
+}
+
+.find-squad-btn:hover {
+    background: #357abd;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
 .scroll-prompt {
-    margin: 3rem 0;
+    margin: 3rem 0 2rem 0;
     font-style: italic;
     color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
 }
-.surprise-section {
+
+.cat-stickers {
     display: flex;
     justify-content: center;
     gap: 2rem;
-    margin-bottom: 2rem;
+    margin: 2rem 0;
 }
-.surprise-section img {
+
+.cat-stickers img {
     width: 150px;
     height: 150px;
+    object-fit: contain;
 }
+
+.language-section {
+    margin: 3rem 0;
+}
+
 .lang-tabs {
-    margin: 1.5rem 0;
     display: flex;
     justify-content: center;
     gap: 10px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
 }
+
 .lang-tab {
     cursor: pointer;
     padding: 8px 16px;
     border: 1px solid rgba(255,255,255,0.5);
     border-radius: 20px;
-    background-color: transparent;
+    background: transparent;
     color: rgba(255,255,255,0.8);
     transition: all 0.2s;
+    font-size: 0.9rem;
 }
+
 .lang-tab.active {
-    background-color: #ffffff;
+    background: white;
     color: #4A90E2;
-    border-color: #ffffff;
+    border-color: white;
 }
-/* This is the critical fix for the language display */
-.lang-text { display: none; }
-.lang-text.active { display: block; }
+
+.lang-tab:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.lang-text {
+    display: none;
+    text-align: left;
+    line-height: 1.6;
+    background: rgba(255,255,255,0.1);
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.lang-text.active {
+    display: block;
+}
 
 .new-session-link {
     display: block;
     margin-top: 2rem;
     color: rgba(255,255,255,0.7);
     font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.new-session-link:hover {
+    color: white;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .success-content {
+        padding: 1rem;
+    }
+    
+    .success-header h1 {
+        font-size: 2rem;
+    }
+    
+    .id-value {
+        font-size: 1.8rem;
+    }
+    
+    .cat-stickers {
+        gap: 1rem;
+    }
+    
+    .cat-stickers img {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .lang-tabs {
+        gap: 8px;
+    }
+    
+    .lang-tab {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="success-container">
-
-  <div class="success-header">
-    <h1>{{ success_text.thank_you }}</h1>
-  </div>
-
-  <div class="id-card">
-    <h4>あなたの個人ID</h4>
-    <div style="display: flex; align-items: center; justify-content: center;">
-      <h2 id="submission-id-text">{{ submission_id }}</h2>
-      <button id="copy-btn" class="btn btn-light" onclick="copyIdToClipboard()">
-        <i class="far fa-copy"></i>
-      </button>
+<div class="success-content">
+    <!-- Header: Thank You Message -->
+    <div class="success-header">
+        <h1>{{ success_text.thank_you }}</h1>
     </div>
-    <p>{{ success_text.id_reminder }}</p>
-  </div>
 
-  <div class="success-actions">
-    <a href="{{ url_for('find_squad') }}" class="btn btn-primary" style="padding: 12px 24px; font-size: 1.1rem; font-weight: 600;">スクワッドを見つける</a>
-  </div>
-
-  <p class="scroll-prompt">{{ success_text.scroll_prompt }}</p>
-
-  <div class="surprise-section">
-    <img src="{{ url_for('static', filename='images/scratch.png') }}" alt="Cat Sticker">
-    <img src="{{ url_for('static', filename='images/lick.png') }}" alt="Cat Sticker">
-  </div>
-
-  <div>
-    <div class="lang-tabs">
-      <span class="lang-tab active" onclick="showLanguage('ja', event)">日本語</span>
-      <span class="lang-tab" onclick="showLanguage('en', event)">English</span>
-      <span class="lang-tab" onclick="showLanguage('vi', event)">Tiếng Việt</span>
-      <span class="lang-tab" onclick="showLanguage('zh', event)">中文</span>
+    <!-- Personal ID Card -->
+    <div class="id-card">
+        <h4>あなたの個人ID</h4>
+        <div class="id-display">
+            <span class="id-value" id="submission-id-text">{{ submission_id }}</span>
+            <button class="copy-btn" id="copy-btn" onclick="copyIdToClipboard()">
+                <i class="far fa-copy"></i>
+            </button>
+        </div>
+        <p class="id-reminder">{{ success_text.id_reminder }}</p>
     </div>
-    <div id="ja" class="lang-text active" style="text-align: left; line-height: 1.6;"><p>{{ app_explanation.ja | safe }}</p></div>
-    <div id="en" class="lang-text" style="text-align: left; line-height: 1.6;"><p>{{ app_explanation.en | safe }}</p></div>
-    <div id="vi" class="lang-text" style="text-align: left; line-height: 1.6;"><p>{{ app_explanation.vi | safe }}</p></div>
-    <div id="zh" class="lang-text" style="text-align: left; line-height: 1.6;"><p>{{ app_explanation.zh | safe }}</p></div>
-  </div>
 
-  <a href="{{ url_for('session_password') }}" style="display: block; margin-top: 1rem; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">新しいセッションを開始</a>
+    <!-- Primary Action Button -->
+    <a href="{{ url_for('find_squad') }}" class="find-squad-btn">スクワッドを見つける</a>
 
+    <!-- Surprise Section -->
+    <p class="scroll-prompt">{{ success_text.scroll_prompt }}</p>
+    
+    <div class="cat-stickers">
+        <img src="{{ url_for('static', filename='images/scratch.png') }}" alt="Cat Sticker">
+        <img src="{{ url_for('static', filename='images/lick.png') }}" alt="Cat Sticker">
+    </div>
+
+    <!-- App Explanation -->
+    <div class="language-section">
+        <div class="lang-tabs">
+            <span class="lang-tab active" onclick="showLanguage('ja', event)">日本語</span>
+            <span class="lang-tab" onclick="showLanguage('en', event)">English</span>
+            <span class="lang-tab" onclick="showLanguage('vi', event)">Tiếng Việt</span>
+            <span class="lang-tab" onclick="showLanguage('zh', event)">中文</span>
+        </div>
+        
+        <div id="ja" class="lang-text active">
+            <p>{{ app_explanation.ja | safe }}</p>
+        </div>
+        <div id="en" class="lang-text">
+            <p>{{ app_explanation.en | safe }}</p>
+        </div>
+        <div id="vi" class="lang-text">
+            <p>{{ app_explanation.vi | safe }}</p>
+        </div>
+        <div id="zh" class="lang-text">
+            <p>{{ app_explanation.zh | safe }}</p>
+        </div>
+    </div>
+
+    <!-- Footer Link -->
+    <a href="{{ url_for('session_password') }}" class="new-session-link">新しいセッションを開始</a>
 </div>
 
 <script>
-  function copyIdToClipboard() {
+function copyIdToClipboard() {
     const idText = document.getElementById('submission-id-text').innerText;
-    navigator.clipboard.writeText(idText).then(() => {
-      const copyBtn = document.getElementById('copy-btn');
-      copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-      setTimeout(() => {
-        copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-      }, 2000);
-    });
-  }
+    
+    // Try modern clipboard API first
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(idText).then(() => {
+            showCopySuccess();
+        }).catch(() => {
+            fallbackCopy(idText);
+        });
+    } else {
+        fallbackCopy(idText);
+    }
+}
 
-  function showLanguage(selectedLang, event) {
-    document.querySelectorAll('.lang-text').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.lang-tab').forEach(el => el.classList.remove('active'));
+function fallbackCopy(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        showCopySuccess();
+    } catch (err) {
+        console.error('Failed to copy');
+    }
+    document.body.removeChild(textArea);
+}
+
+function showCopySuccess() {
+    const copyBtn = document.getElementById('copy-btn');
+    const originalHTML = copyBtn.innerHTML;
+    copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+    copyBtn.style.color = '#28a745';
+    copyBtn.style.borderColor = '#28a745';
+    
+    setTimeout(() => {
+        copyBtn.innerHTML = originalHTML;
+        copyBtn.style.color = '';
+        copyBtn.style.borderColor = '';
+    }, 2000);
+}
+
+function showLanguage(selectedLang, event) {
+    // Hide all language texts
+    document.querySelectorAll('.lang-text').forEach(el => {
+        el.classList.remove('active');
+    });
+    
+    // Remove active class from all tabs
+    document.querySelectorAll('.lang-tab').forEach(el => {
+        el.classList.remove('active');
+    });
+    
+    // Show selected language text
     document.getElementById(selectedLang).classList.add('active');
+    
+    // Mark selected tab as active
     event.currentTarget.classList.add('active');
-  }
+}
 </script>
 {% endblock %}
