@@ -55,6 +55,7 @@ Respond with a JSON object in this exact format:
 }}
 
 Strategic Requirements:
+- HIGHEST PRIORITY: Every single student MUST be assigned to a squad. If the number of remaining students is less than 3, you are authorized to create a smaller squad of 1 or 2 members. No student can be left behind.
 - Every student must be assigned to exactly one squad
 - Squad names MUST be in Japanese kanji/kana only - NO romaji or English
 - Focus on complementary personality signatures, not just similarities
