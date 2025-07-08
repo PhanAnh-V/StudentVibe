@@ -1,3 +1,15 @@
+Goal: Completely redesign the success.html template using a precise HTML, CSS, and JavaScript blueprint to create an engaging, multilingual, and user-friendly page.
+
+Core Instructions:
+
+Open the success.html template file.
+
+Delete all existing code in the file.
+
+Paste the following complete code blueprint into the empty file. This blueprint contains the new layout, styling, and all necessary functionality.
+
+HTML
+
 {% extends "base.html" %}
 
 {% block title %}送信完了！{% endblock %}
@@ -110,7 +122,7 @@
   <div class="id-card">
     <h4>あなたの個人ID</h4>
     <div class="d-flex align-items-center justify-content-center">
-      <h2 id="submission-id-text">{{ submission_id }}</h2>
+      <h2 id="submission-id-text">{{ student.submission_id }}</h2>
       <button id="copy-btn" class="btn btn-light" onclick="copyIdToClipboard()">
         <i class="far fa-copy"></i>
       </button>
@@ -125,8 +137,8 @@
   <p class="scroll-prompt">{{ success_text.scroll_prompt }}</p>
 
   <div class="surprise-section">
-    <img src="{{ url_for('static', filename='images/scratch.svg') }}" alt="Cat Sticker">
-    <img src="{{ url_for('static', filename='images/lick.svg') }}" alt="Cat Sticker">
+    <img src="{{ url_for('static', filename='images/scratch.png') }}" alt="Cat Sticker">
+    <img src="{{ url_for('static', filename='images/lick.png') }}" alt="Cat Sticker">
   </div>
 
   <div class="explanation-section">
@@ -171,3 +183,4 @@
   }
 </script>
 {% endblock %}
+Constraint/Warning: The AI must replace the entire content of success.html with this blueprint. It should not try to merge or modify the existing code. This is a complete replacement.
