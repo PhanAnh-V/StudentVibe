@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, session, jsonify,
 from app import app, db
 from models import Student, SessionSettings, Squad
 from forms import StudentForm, TeacherLoginForm, StudentLoginForm
-from tasks import q
+# Removed RQ queue import - using threading instead
 import logging
 import re
 import json
@@ -165,18 +165,27 @@ def submit_form():
                 print(f'DATABASE ERROR during commit: {db_error}')
                 raise db_error
                 
-            # Enqueue background job for AI translations and personality generation
+            # Process translations and personality generation
             student_language = session.get('selected_language', 'en')
-            try:
-                # Use the function name directly for RQ
-                q.enqueue('tasks.process_student_answers', student.id, student_language)
-                print(f'--- Background job enqueued for student {student.id} with language {student_language} ---')
-            except Exception as e:
-                # If Redis is not available, process synchronously as fallback
-                print(f'--- Background job failed, processing synchronously: {str(e)} ---')
-                logging.warning(f"Background job failed for student {student.id}, processing synchronously: {str(e)}")
-                from tasks import process_student_answers
-                process_student_answers(student.id, student_language)
+            print(f'--- Processing student {student.id} with language {student_language} ---')
+            
+            # Use direct function call with threading for non-blocking execution
+            import threading
+            from tasks import process_student_answers
+            
+            def background_process():
+                try:
+                    process_student_answers(student.id, student_language)
+                    print(f'--- Background processing completed for student {student.id} ---')
+                except Exception as e:
+                    print(f'--- Background processing failed for student {student.id}: {str(e)} ---')
+                    logging.error(f"Background processing failed for student {student.id}: {str(e)}")
+            
+            # Start background processing in a separate thread
+            thread = threading.Thread(target=background_process)
+            thread.daemon = True
+            thread.start()
+            print(f'--- Background processing started for student {student.id} ---')
             
             logging.info(f"New student registered: {student.name} (ID: {student.id}, Submission ID: {submission_id}) with Japanese translations")
             
