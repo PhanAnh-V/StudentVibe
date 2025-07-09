@@ -35,7 +35,7 @@ def translate_to_japanese(text):
         # Create OpenAI client with timeout
         timeout_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY"),
-            timeout=15.0  # Increased timeout for translations
+            timeout=10.0  # Optimized timeout for faster processing
         )
         
         response = timeout_client.chat.completions.create(
@@ -89,17 +89,20 @@ def process_student_answers(student_id, student_language):
             try:
                 logging.info(f"Translating answers for student {student_id} from {student_language} to Japanese")
                 
-                # Translate each answer individually with error handling
+                # Translate each answer individually with error handling and rate limiting
                 translations = []
+                import time
                 for i, answer in enumerate([student.question1, student.question2, student.question3, 
                                           student.question4, student.question5, student.question6], 1):
                     try:
                         translation = translate_to_japanese(answer)
                         translations.append(translation)
                         logging.info(f"Question {i} translated successfully for student {student_id}")
+                        # Add small delay to prevent rate limiting
+                        time.sleep(0.2)
                     except Exception as e:
                         logging.error(f"Translation failed for question {i} of student {student_id}: {str(e)}")
-                        translations.append("")  # Use empty string for failed translations
+                        translations.append("翻訳エラー")  # Use error message for failed translations
                 
                 # Assign translations to student
                 student.question1_jp = translations[0]
@@ -134,10 +137,12 @@ def process_student_answers(student_id, student_language):
                 'question6': student.question6
             }
             
-            # Generate personality signatures with fallback values
+            # Generate personality signatures with fallback values and rate limiting
+            import time
             try:
                 student.archetype = generate_archetype(student_answers)
                 logging.info(f"Generated archetype for student {student_id}")
+                time.sleep(0.2)  # Rate limiting
             except Exception as e:
                 logging.error(f"Archetype generation failed for student {student_id}: {str(e)}")
                 student.archetype = "個性豊かな学生"
@@ -145,6 +150,7 @@ def process_student_answers(student_id, student_language):
             try:
                 student.core_strength = generate_core_strength(student_answers)
                 logging.info(f"Generated core strength for student {student_id}")
+                time.sleep(0.2)  # Rate limiting
             except Exception as e:
                 logging.error(f"Core strength generation failed for student {student_id}: {str(e)}")
                 student.core_strength = "創造的な思考力と独自の視点を持っています。"
@@ -152,6 +158,7 @@ def process_student_answers(student_id, student_language):
             try:
                 student.hidden_potential = generate_hidden_potential(student_answers)
                 logging.info(f"Generated hidden potential for student {student_id}")
+                time.sleep(0.2)  # Rate limiting
             except Exception as e:
                 logging.error(f"Hidden potential generation failed for student {student_id}: {str(e)}")
                 student.hidden_potential = "リーダーシップの才能が眠っている可能性があります。"

@@ -298,6 +298,18 @@
                                     <i class="fas fa-star me-1"></i>{{ member.archetype }}
                                 </div>
                                 {% endif %}
+                                
+                                <!-- Translation Progress Indicator -->
+                                {% if member.question1_jp %}
+                                <div class="translation-status text-success small">
+                                    <i class="fas fa-check-circle me-1"></i>翻訳完了
+                                </div>
+                                {% else %}
+                                <div class="translation-status text-warning small">
+                                    <i class="fas fa-clock me-1"></i>翻訳処理中...
+                                </div>
+                                {% endif %}
+                                
                                 <div class="member-info-tags">
                                     <span class="info-tag country-tag">
                                         <i class="fas fa-globe me-1"></i>
@@ -369,6 +381,18 @@
                             <i class="fas fa-star me-1"></i>{{ student.archetype }}
                         </div>
                         {% endif %}
+                        
+                        <!-- Translation Progress Indicator -->
+                        {% if student.question1_jp %}
+                        <div class="translation-status text-success small">
+                            <i class="fas fa-check-circle me-1"></i>翻訳完了
+                        </div>
+                        {% else %}
+                        <div class="translation-status text-warning small">
+                            <i class="fas fa-clock me-1"></i>翻訳処理中...
+                        </div>
+                        {% endif %}
+                        
                         <div class="member-info-tags">
                             <span class="info-tag country-tag">
                                 <i class="fas fa-globe me-1"></i>
@@ -624,6 +648,31 @@ document.addEventListener('DOMContentLoaded', function() {
         
         countryFilter.addEventListener('change', filterStudents);
         genderFilter.addEventListener('change', filterStudents);
+    }
+    
+    // Auto-refresh functionality to show translation progress
+    const translationStatusElements = document.querySelectorAll('.translation-status');
+    const processingElements = document.querySelectorAll('.text-warning');
+    
+    if (processingElements.length > 0) {
+        // Auto-refresh every 30 seconds if there are pending translations
+        setInterval(function() {
+            const pendingCount = document.querySelectorAll('.text-warning').length;
+            if (pendingCount > 0) {
+                console.log(`Checking translation progress... ${pendingCount} students pending`);
+                // Only refresh if there are still pending translations
+                window.location.reload();
+            }
+        }, 30000); // Refresh every 30 seconds
+        
+        // Show a notification about auto-refresh
+        const refreshNotification = document.createElement('div');
+        refreshNotification.className = 'alert alert-info mt-3';
+        refreshNotification.innerHTML = `
+            <i class="fas fa-sync-alt me-2"></i>
+            翻訳処理中の学生がいます。ページは30秒ごとに自動更新されます。
+        `;
+        document.querySelector('.dashboard-content').prepend(refreshNotification);
     }
 });
 

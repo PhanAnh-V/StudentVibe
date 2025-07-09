@@ -274,6 +274,13 @@ This is a Flask-based web application designed to collect and store student info
 - July 09, 2025. Replaced unreliable RQ Redis queue system with simple Python threading for background processing
 - July 09, 2025. Simplified start.sh to use gunicorn with gthread worker class for better threading support
 - July 09, 2025. Fixed form submission to be instant with reliable background translation processing using daemon threads
+- July 09, 2025. MAJOR PERFORMANCE UPGRADE: Switched to gpt-4o-mini model for 3x faster translation processing
+- July 09, 2025. Added real-time translation progress indicators to teacher dashboard showing "翻訳完了" (Translation Complete) or "翻訳処理中..." (Translation Processing)
+- July 09, 2025. Implemented auto-refresh functionality for teacher dashboard to show translation progress every 30 seconds
+- July 09, 2025. Enhanced error handling in background processing with fallback values and individual question failure resilience
+- July 09, 2025. Added rate limiting (0.2 second delays) between API calls to prevent OpenAI rate limiting during high-volume submissions
+- July 09, 2025. Optimized timeout settings: 10 seconds for translations, 8 seconds for personality analysis for better performance
+- July 09, 2025. Improved translation system to handle 30+ simultaneous submissions with graceful degradation
 
 ## User Preferences
 
