@@ -135,7 +135,7 @@ class Squad(db.Model):
     icebreaker_text = db.Column(db.Text, nullable=True)
     squad_icon = db.Column(db.String(50), nullable=True)
     squad_number = db.Column(db.Integer, nullable=True)
-    rank = db.Column(db.Integer, nullable=True)
+    squad_rank = db.Column(db.Integer, nullable=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     
     # Relationship to students

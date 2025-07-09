@@ -984,7 +984,7 @@ def create_squads():
             
             # Create new squad record with creative name and shared interests
             new_squad = Squad()
-            new_squad.rank = i
+            new_squad.squad_rank = i
             new_squad.name = squad_data['squad_name']
             new_squad.shared_interests = squad_data['shared_interests']
             new_squad.squad_icon = assign_squad_icon(squad_data['squad_name'])
