@@ -2,6 +2,7 @@ from flask import render_template, request, redirect, url_for, session, jsonify,
 from app import app, db
 from models import Student, SessionSettings, Squad
 from forms import StudentForm, TeacherLoginForm, StudentLoginForm
+from tasks import q
 import logging
 import re
 import json
@@ -138,34 +139,8 @@ def submit_form():
             logging.info(f"Session data: {dict(session)}")
             logging.info(f"Processing answers for language: {student_language}")
             
-            # Handle Japanese translations based on student's language choice
-            japanese_translations = []
-            print('--- Starting translation process ---')
-            
-            for i, answer in enumerate(original_answers, 1):
-                if student_language == 'ja':
-                    # Student chose Japanese - no translation needed, use original answer
-                    japanese_translations.append(answer)
-                    print(f"Question {i}: Japanese detected, using original answer")
-                    logging.info(f"Question {i}: Japanese detected, using original answer")
-                else:
-                    # Student chose other language - translate to Japanese
-                    try:
-                        print(f"Question {i}: Attempting translation from {student_language} to Japanese")
-                        from openai_integration import translate_to_japanese
-                        translation = translate_to_japanese(answer)
-                        japanese_translations.append(translation)
-                        print(f"Question {i}: Translation successful")
-                        print(f"Original: {answer[:50]}...")
-                        print(f"Translated: {translation[:50]}...")
-                        logging.info(f"Question {i} translated successfully from {student_language} to Japanese")
-                    except Exception as e:
-                        print(f"Translation failed for question {i}: {str(e)}")
-                        logging.error(f"Translation failed for question {i}: {str(e)}")
-                        japanese_translations.append("")  # Save empty translation if it fails
-            
             print('--- Creating student record ---')
-            # Create new student record with both original and translated answers
+            # Create new student record with original answers only
             student = Student()
             student.name = form.name.data
             student.vibes = combined_vibes
@@ -175,18 +150,11 @@ def submit_form():
             student.question4 = form.question4.data
             student.question5 = form.question5.data
             student.question6 = form.question6.data
-            student.question1_jp = japanese_translations[0]
-            student.question2_jp = japanese_translations[1]
-            student.question3_jp = japanese_translations[2]
-            student.question4_jp = japanese_translations[3]
-            student.question5_jp = japanese_translations[4]
-            student.question6_jp = japanese_translations[5]
             student.country = form.country.data
             student.gender = form.gender.data
             student.submission_id = submission_id
             print('Student record created with basic info')
             
-
             print('--- Data prepared, attempting to save to database ---')
             try:
                 db.session.add(student)
@@ -196,6 +164,17 @@ def submit_form():
             except Exception as db_error:
                 print(f'DATABASE ERROR during commit: {db_error}')
                 raise db_error
+                
+            # Enqueue background job for AI translations and personality generation
+            student_language = session.get('selected_language', 'en')
+            try:
+                q.enqueue('tasks.process_student_answers', student.id, student_language)
+                print(f'--- Background job enqueued for student {student.id} ---')
+            except Exception as e:
+                # If Redis is not available, process synchronously as fallback
+                print(f'--- Background job failed, processing synchronously: {str(e)} ---')
+                from tasks import process_student_answers
+                process_student_answers(student.id, student_language)
             
             logging.info(f"New student registered: {student.name} (ID: {student.id}, Submission ID: {submission_id}) with Japanese translations")
             
