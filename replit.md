@@ -299,6 +299,7 @@ This is a Flask-based web application designed to collect and store student info
 - July 09, 2025. CLEANUP: Removed obsolete background processing files (batch_processor.py, start_batch_processor.py, tasks.py) to finalize codebase
 - July 09, 2025. Simplified start.sh to use only gunicorn command, removing all old RQ worker and batch processor startup scripts
 - July 09, 2025. Finalized clean architecture with instant form submission and reliable background translation using threading
+- July 09, 2025. Added squad ID number before squad name in squad_hub.html for consistency with teacher dashboard display format
 
 ## User Preferences
 
