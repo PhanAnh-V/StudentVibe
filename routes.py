@@ -175,17 +175,20 @@ def submit_form():
             
             def background_process():
                 try:
+                    print(f'--- Background thread started for student {student.id} ---')
                     process_student_answers(student.id, student_language)
-                    print(f'--- Background processing completed for student {student.id} ---')
+                    print(f'--- Background processing completed successfully for student {student.id} ---')
                 except Exception as e:
                     print(f'--- Background processing failed for student {student.id}: {str(e)} ---')
                     logging.error(f"Background processing failed for student {student.id}: {str(e)}")
+                    import traceback
+                    traceback.print_exc()
             
             # Start background processing in a separate thread
             thread = threading.Thread(target=background_process)
             thread.daemon = True
             thread.start()
-            print(f'--- Background processing started for student {student.id} ---')
+            print(f'--- Background thread launched for student {student.id} ---')
             
             logging.info(f"New student registered: {student.name} (ID: {student.id}, Submission ID: {submission_id}) with Japanese translations")
             

@@ -35,17 +35,17 @@ def translate_to_japanese(text):
         # Create OpenAI client with timeout
         timeout_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY"),
-            timeout=8.0  # Reduced timeout for translations
+            timeout=15.0  # Increased timeout for translations
         )
         
         response = timeout_client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",  # Use faster model
             messages=[
                 {"role": "system", "content": "You are a professional translator. Translate the given text to natural, conversational Japanese that would be appropriate for students."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.3,
-            max_tokens=200,
+            max_tokens=100,  # Reduced token limit
         )
         
         if response.choices[0].message.content:
