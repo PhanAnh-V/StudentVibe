@@ -213,7 +213,7 @@
            {% if not analysis_complete %}
            <form id="analyze-batch-form" action="{{ url_for('analyze_batch') }}" method="POST" style="display: inline;">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" class="btn btn-info">AI処理開始</button>
+            <button type="submit" class="btn btn-info">バッチ分析</button>
            </form>
            {% else %}
            <button type="button" class="btn btn-success" disabled>
