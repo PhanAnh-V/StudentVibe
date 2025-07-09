@@ -662,6 +662,14 @@
                         </div>
                     </div>
                     
+                    <!-- First Speaker Announcement -->
+                    {% if first_speaker %}
+                    <div class="alert alert-info text-center" role="alert">
+                        <strong>{{ first_speaker.name }}さん、あなたが最初のスピーカーです！</strong><br>
+                        Act 1の質問をチームに読み上げて、会話を始めてください。
+                    </div>
+                    {% endif %}
+
                     <!-- Connection Blueprint Icebreakers -->
                     <div class="hub-card">
                         <div class="icebreaker-header">

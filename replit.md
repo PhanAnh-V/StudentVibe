@@ -309,6 +309,9 @@ This is a Flask-based web application designed to collect and store student info
 - July 09, 2025. CRITICAL FIX: Renamed rank column to squad_rank in Squad model to avoid PostgreSQL reserved keyword conflict
 - July 09, 2025. Updated all references from squad.rank to squad.squad_rank in templates and routes to match new column name
 - July 09, 2025. Added squad_rank column to existing database table using ALTER TABLE command to complete migration
+- July 09, 2025. Implemented automated "First Speaker" feature for Squad Hub with random member selection to encourage conversation initiation
+- July 09, 2025. Added first_speaker variable to squad_hub route using random.choice() with safety check for empty squads
+- July 09, 2025. Enhanced squad_hub.html template with Japanese announcement displaying selected first speaker and Act 1 instruction
 
 ## User Preferences
 

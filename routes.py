@@ -372,6 +372,9 @@ def squad_hub(squad_id):
         # Fetch the squad with all its members
         squad = Squad.query.get_or_404(squad_id)
         
+        # Randomly select a first speaker from squad members
+        first_speaker = random.choice(squad.members) if squad.members else None
+        
         # Parse the JSON icebreaker_text into a Python object
         icebreaker_data = None
         if squad.icebreaker_text:
@@ -383,7 +386,7 @@ def squad_hub(squad_id):
                 # If JSON parsing fails, create a fallback structure
                 icebreaker_data = None
         
-        return render_template('squad_hub.html', squad=squad, icebreaker_data=icebreaker_data)
+        return render_template('squad_hub.html', squad=squad, icebreaker_data=icebreaker_data, first_speaker=first_speaker)
         
     except Exception as e:
         logging.error(f"Error accessing squad hub {squad_id}: {str(e)}")
