@@ -268,6 +268,9 @@ This is a Flask-based web application designed to collect and store student info
 - July 09, 2025. Moved translate_to_japanese function to tasks.py for background processing
 - July 09, 2025. Updated form submission route to be instant by offloading AI translation and personality generation to background worker queue
 - July 09, 2025. Implemented process_student_answers background job that handles both translation and personality signature generation
+- July 09, 2025. Fixed start.sh script by removing outdated Connection import from RQ (which was causing worker crashes)
+- July 09, 2025. Enhanced translation error handling in background job with individual question processing and detailed logging
+- July 09, 2025. Added graceful fallback to synchronous processing when Redis/RQ background jobs fail
 
 ## User Preferences
 

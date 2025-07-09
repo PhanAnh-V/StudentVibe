@@ -168,11 +168,13 @@ def submit_form():
             # Enqueue background job for AI translations and personality generation
             student_language = session.get('selected_language', 'en')
             try:
+                # Use the function name directly for RQ
                 q.enqueue('tasks.process_student_answers', student.id, student_language)
-                print(f'--- Background job enqueued for student {student.id} ---')
+                print(f'--- Background job enqueued for student {student.id} with language {student_language} ---')
             except Exception as e:
                 # If Redis is not available, process synchronously as fallback
                 print(f'--- Background job failed, processing synchronously: {str(e)} ---')
+                logging.warning(f"Background job failed for student {student.id}, processing synchronously: {str(e)}")
                 from tasks import process_student_answers
                 process_student_answers(student.id, student_language)
             

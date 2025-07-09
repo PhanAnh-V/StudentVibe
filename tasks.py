@@ -87,15 +87,31 @@ def process_student_answers(student_id, student_language):
         else:
             # Student chose other language - translate to Japanese
             try:
-                student.question1_jp = translate_to_japanese(student.question1)
-                student.question2_jp = translate_to_japanese(student.question2)
-                student.question3_jp = translate_to_japanese(student.question3)
-                student.question4_jp = translate_to_japanese(student.question4)
-                student.question5_jp = translate_to_japanese(student.question5)
-                student.question6_jp = translate_to_japanese(student.question6)
-                logging.info(f"Successfully translated answers for student {student_id}")
+                logging.info(f"Translating answers for student {student_id} from {student_language} to Japanese")
+                
+                # Translate each answer individually with error handling
+                translations = []
+                for i, answer in enumerate([student.question1, student.question2, student.question3, 
+                                          student.question4, student.question5, student.question6], 1):
+                    try:
+                        translation = translate_to_japanese(answer)
+                        translations.append(translation)
+                        logging.info(f"Question {i} translated successfully for student {student_id}")
+                    except Exception as e:
+                        logging.error(f"Translation failed for question {i} of student {student_id}: {str(e)}")
+                        translations.append("")  # Use empty string for failed translations
+                
+                # Assign translations to student
+                student.question1_jp = translations[0]
+                student.question2_jp = translations[1]
+                student.question3_jp = translations[2]
+                student.question4_jp = translations[3]
+                student.question5_jp = translations[4]
+                student.question6_jp = translations[5]
+                
+                logging.info(f"Successfully processed translations for student {student_id}")
             except Exception as e:
-                logging.error(f"Translation failed for student {student_id}: {str(e)}")
+                logging.error(f"Major translation error for student {student_id}: {str(e)}")
                 # Set empty translations if translation fails
                 student.question1_jp = ""
                 student.question2_jp = ""
