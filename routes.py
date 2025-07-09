@@ -975,7 +975,7 @@ def create_squads():
         squads_created = 0
         
         # Step 6: Process each AI-suggested squad and save to database
-        for squad_data in ai_response['squads']:
+        for i, squad_data in enumerate(ai_response['squads'], 1):
             # Validate squad structure
             required_keys = ['squad_name', 'shared_interests', 'member_ids']
             if not all(key in squad_data for key in required_keys):
@@ -984,6 +984,7 @@ def create_squads():
             
             # Create new squad record with creative name and shared interests
             new_squad = Squad()
+            new_squad.rank = i
             new_squad.name = squad_data['squad_name']
             new_squad.shared_interests = squad_data['shared_interests']
             new_squad.squad_icon = assign_squad_icon(squad_data['squad_name'])
