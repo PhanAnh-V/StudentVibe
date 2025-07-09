@@ -303,6 +303,8 @@ This is a Flask-based web application designed to collect and store student info
 - July 09, 2025. Implemented sequential squad ranking system (1, 2, 3...) in squad_hub route and template for better user experience
 - July 09, 2025. Added rank column to Squad database model to support permanent squad number storage with nullable=True for backward compatibility
 - July 09, 2025. Modified create_squads function to assign permanent sequential ranks (1, 2, 3...) to new squads using enumerate
+- July 09, 2025. Updated Teacher Dashboard and Squad Hub templates to display permanent squad.rank instead of temporary calculated ranks
+- July 09, 2025. Removed temporary rank calculation logic from squad_hub route since permanent ranks are now stored in database
 
 ## User Preferences
 
