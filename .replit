@@ -5,9 +5,8 @@ channel = "stable-24_05"
 packages = ["libxcrypt", "openssl", "postgresql"]
 
 [deployment]
-deploymentTarget = "gce"
-run = ["sh", "-c", "gunicorn --bind 0.0.0.0:5000 main:app"]
-ignorePorts = true
+deploymentTarget = "cloudrun"
+run = ["sh", "-c", "./start.sh"]
 
 [workflows]
 runButton = "Project"
