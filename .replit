@@ -6,7 +6,7 @@ packages = ["libxcrypt", "openssl", "postgresql"]
 
 [deployment]
 deploymentTarget = "gce"
-run = ["sh", "-c", "./start.sh"]
+run = ["sh", "-c", "gunicorn --bind 0.0.0.0:5000 main:app"]
 
 [workflows]
 runButton = "Project"
