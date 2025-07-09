@@ -22,4 +22,5 @@ dependencies = [
     "google-genai>=1.24.0",
     "pydantic>=2.11.7",
     "sift-stack-py>=0.7.0",
+    "redis>=6.2.0",
 ]
