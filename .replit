@@ -5,8 +5,9 @@ channel = "stable-24_05"
 packages = ["libxcrypt", "openssl", "postgresql"]
 
 [deployment]
-deploymentTarget = "autoscale"
-run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+deploymentTarget = "gce"
+run = ["sh", "-c", "gunicorn --bind 0.0.0.0:5000 main:app"]
+ignorePorts = true
 
 [workflows]
 runButton = "Project"
