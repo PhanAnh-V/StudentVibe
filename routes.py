@@ -165,15 +165,7 @@ def submit_form():
                 print(f'DATABASE ERROR during commit: {db_error}')
                 raise db_error
                 
-            # Process translations and personality generation
-            student_language = session.get('selected_language', 'en')
-            print(f'--- Processing student {student.id} with language {student_language} ---')
-            
-            # Background processing note: The batch processor will handle translations
-            # For now, just set placeholder values so the UI shows "Processing" status
-            logging.info(f"Student {student.id} registered, will be processed by batch processor")
-            
-            logging.info(f"New student registered: {student.name} (ID: {student.id}, Submission ID: {submission_id}) with Japanese translations")
+            logging.info(f"New student registered: {student.name} (ID: {student.id}, Submission ID: {submission_id})")
             
             # Store submission ID in session for success page
             session['submission_id'] = submission_id
