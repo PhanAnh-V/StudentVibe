@@ -6,7 +6,7 @@ packages = ["libxcrypt", "openssl", "postgresql"]
 
 [deployment]
 deploymentTarget = "gce"
-run = ["sh", "-c", "gunicorn --bind 0.0.0.0:5000 main:app"]
+run = ["sh", "-c", "rq worker"]
 ignorePorts = true
 
 [workflows]
