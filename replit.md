@@ -314,6 +314,7 @@ This is a Flask-based web application designed to collect and store student info
 - July 09, 2025. Enhanced squad_hub.html template with Japanese announcement displaying selected first speaker and Act 1 instruction
 - July 09, 2025. Enhanced First Speaker message with alert-warning class for better visibility and larger font size (1.1em)
 - July 09, 2025. Added JavaScript delay to First Speaker announcement - appears 1 second after page load for better user experience
+- July 09, 2025. Replaced "Back to Find Squad" button with universal "Go Back" button using JavaScript history.back() for better navigation
 
 ## User Preferences
 
