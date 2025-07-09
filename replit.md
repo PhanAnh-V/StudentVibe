@@ -292,6 +292,10 @@ This is a Flask-based web application designed to collect and store student info
 - July 09, 2025. Removed all background threading, AI calls, and translation processing from the main form submission route for instant, reliable submissions
 - July 09, 2025. Form submission route now focuses solely on: create Student object, populate with form data, save to database, redirect to success page
 - July 09, 2025. Verified simplified form submission works correctly - test student successfully saved with ID 229 and submission ID LFF-812
+- July 09, 2025. Created new translate_student_answers_in_background function dedicated only to translation with proper Flask app context management
+- July 09, 2025. Added special handling for Japanese students - copies original answers to _jp fields instead of translating when language is 'ja'
+- July 09, 2025. Connected translation function to submission route using daemon thread for reliable background processing
+- July 09, 2025. Fixed import issues and verified translation function works correctly with both English and Japanese students
 
 ## User Preferences
 
