@@ -382,7 +382,16 @@ def squad_hub(squad_id):
                 # If JSON parsing fails, create a fallback structure
                 icebreaker_data = None
         
-        return render_template('squad_hub.html', squad=squad, icebreaker_data=icebreaker_data)
+        # Fetch all squads, ordered by ID, to ensure a consistent rank
+        all_squads = Squad.query.order_by(Squad.id).all()
+        squad_rank = 0
+        # Find the rank of the current squad in the list
+        for i, s in enumerate(all_squads):
+            if s.id == squad_id:
+                squad_rank = i + 1
+                break
+        
+        return render_template('squad_hub.html', squad=squad, icebreaker_data=icebreaker_data, squad_rank=squad_rank)
         
     except Exception as e:
         logging.error(f"Error accessing squad hub {squad_id}: {str(e)}")
