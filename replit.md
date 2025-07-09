@@ -312,6 +312,8 @@ This is a Flask-based web application designed to collect and store student info
 - July 09, 2025. Implemented automated "First Speaker" feature for Squad Hub with random member selection to encourage conversation initiation
 - July 09, 2025. Added first_speaker variable to squad_hub route using random.choice() with safety check for empty squads
 - July 09, 2025. Enhanced squad_hub.html template with Japanese announcement displaying selected first speaker and Act 1 instruction
+- July 09, 2025. Enhanced First Speaker message with alert-warning class for better visibility and larger font size (1.1em)
+- July 09, 2025. Added JavaScript delay to First Speaker announcement - appears 1 second after page load for better user experience
 
 ## User Preferences
 
