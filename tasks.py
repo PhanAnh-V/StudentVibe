@@ -59,12 +59,14 @@ def translate_to_japanese(text):
         return ""  # Return empty string if translation fails
 
 
+# This function is now deprecated - processing moved to routes.py to avoid circular imports
 def process_student_answers(student_id, student_language):
     """
-    Process student answers in the background: translate to Japanese and generate personality signatures
+    DEPRECATED: Process student answers in the background
+    This function has been moved to routes.py to avoid circular import issues
     """
-    from app import app
-    from models import Student, db
+    logging.warning("process_student_answers is deprecated - processing moved to routes.py")
+    return
     
     with app.app_context():
         student = Student.query.get(student_id)

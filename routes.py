@@ -171,13 +171,120 @@ def submit_form():
             
             # Use direct function call with threading for non-blocking execution
             import threading
-            from tasks import process_student_answers
             
             def background_process():
                 try:
                     print(f'--- Background thread started for student {student.id} ---')
-                    process_student_answers(student.id, student_language)
-                    print(f'--- Background processing completed successfully for student {student.id} ---')
+                    
+                    # Process within the same app context to avoid circular imports
+                    with app.app_context():
+                        # Only translate if the student's language is not Japanese
+                        if student_language != 'ja':
+                            logging.info(f"Translating answers for student {student.id} from {student_language} to Japanese")
+                            
+                            # Import translation function locally to avoid circular imports
+                            from tasks import translate_to_japanese
+                            
+                            # Translate each answer individually with error handling and rate limiting
+                            translations = []
+                            import time
+                            for i, answer in enumerate([student.question1, student.question2, student.question3, 
+                                                      student.question4, student.question5, student.question6], 1):
+                                try:
+                                    translation = translate_to_japanese(answer)
+                                    translations.append(translation)
+                                    logging.info(f"Question {i} translated successfully for student {student.id}")
+                                    # Add small delay to prevent rate limiting
+                                    time.sleep(0.2)
+                                except Exception as e:
+                                    logging.error(f"Translation failed for question {i} of student {student.id}: {str(e)}")
+                                    translations.append("翻訳エラー")  # Use error message for failed translations
+                            
+                            # Assign translations to student
+                            student.question1_jp = translations[0]
+                            student.question2_jp = translations[1]
+                            student.question3_jp = translations[2]
+                            student.question4_jp = translations[3]
+                            student.question5_jp = translations[4]
+                            student.question6_jp = translations[5]
+                            
+                            logging.info(f"Successfully processed translations for student {student.id}")
+                        else:
+                            # Student chose Japanese - no translation needed, use original answers
+                            student.question1_jp = student.question1
+                            student.question2_jp = student.question2
+                            student.question3_jp = student.question3
+                            student.question4_jp = student.question4
+                            student.question5_jp = student.question5
+                            student.question6_jp = student.question6
+                            logging.info(f"Japanese detected for student {student.id}, using original answers")
+                        
+                        # Generate personality signatures using AI
+                        try:
+                            from openai_integration import generate_archetype, generate_core_strength, generate_hidden_potential, generate_conversation_catalyst
+                            
+                            # Prepare student answers for AI analysis
+                            student_answers = {
+                                'question1': student.question1,
+                                'question2': student.question2,
+                                'question3': student.question3,
+                                'question4': student.question4,
+                                'question5': student.question5,
+                                'question6': student.question6
+                            }
+                            
+                            # Generate personality signatures with fallback values and rate limiting
+                            import time
+                            try:
+                                student.archetype = generate_archetype(student_answers)
+                                logging.info(f"Generated archetype for student {student.id}")
+                                time.sleep(0.2)  # Rate limiting
+                            except Exception as e:
+                                logging.error(f"Archetype generation failed for student {student.id}: {str(e)}")
+                                student.archetype = "個性豊かな学生"
+                                
+                            try:
+                                student.core_strength = generate_core_strength(student_answers)
+                                logging.info(f"Generated core strength for student {student.id}")
+                                time.sleep(0.2)  # Rate limiting
+                            except Exception as e:
+                                logging.error(f"Core strength generation failed for student {student.id}: {str(e)}")
+                                student.core_strength = "創造的な思考力と独自の視点を持っています。"
+                                
+                            try:
+                                student.hidden_potential = generate_hidden_potential(student_answers)
+                                logging.info(f"Generated hidden potential for student {student.id}")
+                                time.sleep(0.2)  # Rate limiting
+                            except Exception as e:
+                                logging.error(f"Hidden potential generation failed for student {student.id}: {str(e)}")
+                                student.hidden_potential = "リーダーシップの才能が眠っている可能性があります。"
+                                
+                            try:
+                                student.conversation_catalyst = generate_conversation_catalyst(student_answers)
+                                logging.info(f"Generated conversation catalyst for student {student.id}")
+                            except Exception as e:
+                                logging.error(f"Conversation catalyst generation failed for student {student.id}: {str(e)}")
+                                student.conversation_catalyst = "趣味や興味のあることについて話すと、とても輝いて見えます。"
+                                
+                        except Exception as e:
+                            logging.error(f"Error importing AI functions for student {student.id}: {str(e)}")
+                            # Set fallback values if AI functions can't be imported
+                            student.archetype = "個性豊かな学生"
+                            student.core_strength = "創造的な思考力と独自の視点を持っています。"
+                            student.hidden_potential = "リーダーシップの才能が眠っている可能性があります。"
+                            student.conversation_catalyst = "趣味や興味のあることについて話すと、とても輝いて見えます。"
+                        
+                        # Save all changes to database
+                        try:
+                            db.session.commit()
+                            logging.info(f"Successfully processed and saved all data for student {student.id} ({student.name})")
+                            print(f'--- Background processing completed successfully for student {student.id} ---')
+                        except Exception as e:
+                            logging.error(f"Database error saving processed data for student {student.id}: {str(e)}")
+                            db.session.rollback()
+                            print(f'--- Database save failed for student {student.id}: {str(e)} ---')
+                            raise
+                        
                 except Exception as e:
                     print(f'--- Background processing failed for student {student.id}: {str(e)} ---')
                     logging.error(f"Background processing failed for student {student.id}: {str(e)}")
