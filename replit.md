@@ -301,6 +301,7 @@ This is a Flask-based web application designed to collect and store student info
 - July 09, 2025. Finalized clean architecture with instant form submission and reliable background translation using threading
 - July 09, 2025. Added squad ID number before squad name in squad_hub.html for consistency with teacher dashboard display format
 - July 09, 2025. Implemented sequential squad ranking system (1, 2, 3...) in squad_hub route and template for better user experience
+- July 09, 2025. Added rank column to Squad database model to support permanent squad number storage with nullable=True for backward compatibility
 
 ## User Preferences
 
