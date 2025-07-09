@@ -7,7 +7,6 @@ packages = ["libxcrypt", "openssl", "postgresql"]
 [deployment]
 deploymentTarget = "gce"
 run = ["sh", "-c", "rq worker"]
-ignorePorts = true
 
 [workflows]
 runButton = "Project"
