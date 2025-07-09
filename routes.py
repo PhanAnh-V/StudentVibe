@@ -7,6 +7,7 @@ import logging
 import re
 import json
 import random
+import traceback
 from collections import Counter, defaultdict
 # AI recommendations functions will be imported where needed
 
@@ -489,57 +490,65 @@ def teacher():
     if not session.get('teacher_authenticated'):
         return redirect(url_for('teacher_login'))
     
-    # Fetch all students from database
-    students = Student.query.order_by(Student.created_at.desc()).all()
-    logging.info(f"Teacher accessed dashboard. Found {len(students)} students.")
+    try:
+        # Fetch all students from database
+        students = Student.query.order_by(Student.created_at.desc()).all()
+        logging.info(f"Teacher accessed dashboard. Found {len(students)} students.")
+        
+        # Get solo students and AI advice from session
+        solo_students = session.get('solo_students', [])
+        ai_advice = {}
+        for student in solo_students:
+            advice_key = f'ai_advice_{student["id"]}'
+            if advice_key in session:
+                ai_advice[student['id']] = session[advice_key]
+        
+        # Add interest visualization data to students
+        students_with_interests = []
+        for student in students:
+            student_dict = {
+                'id': student.id,
+                'name': student.name,
+                'vibes': student.vibes or student.get_combined_answers(),
+                'country': student.country,
+                'gender': student.gender,
+                'created_at': student.created_at,
+                'interests': get_interest_categories_with_colors(student.vibes or student.get_combined_answers())
+            }
+            students_with_interests.append(student_dict)
+        
+        # Get current session password
+        current_session_password = SessionSettings.get_current_password()
+        
+        # Fetch all squads from database with their members
+        squads = Squad.query.all()
+        solo_students_db = Student.query.filter_by(squad_id=None).all()
+        
+        # Check completion status for Squad Creation and Batch Analysis
+        # Squad Creation: Check if any Squad records exist
+        squads_exist = Squad.query.count() > 0
+        
+        # Batch Analysis: Check if there are students that still need analysis (archetype field is empty/null)
+        unanalyzed_students_count = Student.query.filter(
+            db.or_(Student.archetype.is_(None), Student.archetype == "")
+        ).count()
+        analysis_complete = unanalyzed_students_count == 0
+        
+        return render_template('teacher.html', 
+                             students=students_with_interests,
+                             squads=squads,
+                             solo_students_db=solo_students_db,
+                             ai_advice=ai_advice,
+                             session_password=current_session_password,
+                             squads_exist=squads_exist,
+                             analysis_complete=analysis_complete)
     
-    # Get solo students and AI advice from session
-    solo_students = session.get('solo_students', [])
-    ai_advice = {}
-    for student in solo_students:
-        advice_key = f'ai_advice_{student["id"]}'
-        if advice_key in session:
-            ai_advice[student['id']] = session[advice_key]
-    
-    # Add interest visualization data to students
-    students_with_interests = []
-    for student in students:
-        student_dict = {
-            'id': student.id,
-            'name': student.name,
-            'vibes': student.vibes or student.get_combined_answers(),
-            'country': student.country,
-            'gender': student.gender,
-            'created_at': student.created_at,
-            'interests': get_interest_categories_with_colors(student.vibes or student.get_combined_answers())
-        }
-        students_with_interests.append(student_dict)
-    
-    # Get current session password
-    current_session_password = SessionSettings.get_current_password()
-    
-    # Fetch all squads from database with their members
-    squads = Squad.query.all()
-    solo_students_db = Student.query.filter_by(squad_id=None).all()
-    
-    # Check completion status for Squad Creation and Batch Analysis
-    # Squad Creation: Check if any Squad records exist
-    squads_exist = Squad.query.count() > 0
-    
-    # Batch Analysis: Check if there are students that still need analysis (archetype field is empty/null)
-    unanalyzed_students_count = Student.query.filter(
-        db.or_(Student.archetype.is_(None), Student.archetype == "")
-    ).count()
-    analysis_complete = unanalyzed_students_count == 0
-    
-    return render_template('teacher.html', 
-                         students=students_with_interests,
-                         squads=squads,
-                         solo_students_db=solo_students_db,
-                         ai_advice=ai_advice,
-                         session_password=current_session_password,
-                         squads_exist=squads_exist,
-                         analysis_complete=analysis_complete)
+    except Exception as e:
+        print("!!! TEACHER DASHBOARD CRASHED !!!")
+        print(f"ERROR: {e}")
+        traceback.print_exc()
+        # Return a simple error message instead of crashing
+        return "The teacher dashboard encountered an error. Check the console for details.", 500
 
 @app.route('/teacher/new-session-password', methods=['POST'])
 def new_session_password():
