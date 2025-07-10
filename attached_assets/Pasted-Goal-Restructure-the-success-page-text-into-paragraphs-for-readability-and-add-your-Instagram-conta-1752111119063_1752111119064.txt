@@ -1,0 +1,27 @@
+Goal: Restructure the success page text into paragraphs for readability and add your Instagram contact information.
+
+Core Instructions:
+
+Step 1: Update the JSON data.
+Replace the entire "app_explanation": { ... } object in your site_content.json file with the following new version. I have added your Instagram handle and the translations.
+
+JSON
+
+{
+  "app_explanation": {
+    "en": "Hi there.\n\nSo, you're probably thinking, \"Is the surprise just two pictures of a cat?\" Well, yes. And no, that's not everything. But thank you, truly, for submitting your answers. It means the world.\n\nThis app was created from a simple observation: it's a little hard to connect with new people these days, isn't it? The world moves so fast. Everything about this moment is a bit strange—sitting in this room, holding these powerful little rectangles that connect us to everything but each other.\n\nMillennia ago—and honestly, even 30 years ago—this wasn't us. Humans are built to live in a tribe, to connect, to create, and to explore together. We are not built for this quiet, digital isolation.\n\nBut here is the secret: we are also creatures of infinite imagination. We are the only beings on Earth that can build entire worlds in our minds. When you are truly curious, when you are in a state of creating something new, everything else fades away—anxiety, stress, and self-doubt. We were all born with this creative genius, but somewhere along the way, we're taught to be afraid of it.\n\nThis app can't solve everything. But it's a start. It's a tool designed to spark the most powerful thing we have: our shared curiosity.\n\nNow, let's go find your new tribe.\n\nIf you have any questions or just want to connect, you can find me on Instagram: @vibecheck2120",
+    "ja": "こんにちは。\n\n「サプライズって、猫の写真が2枚だけ？」そう思っているかもしれませんね。はい、その通りです。でも、それだけではありません。まずは、ご回答いただき本当にありがとうございます。心から感謝しています。\n\nこのアプリは、最近、新しい人と繋がるのが少し難しくなった、という素朴な気づきから生まれました。世界はあまりにも速く進んでいます。この部屋に座り、私たちをお互い以外のすべてに繋げるこの小さな四角いデバイスを手にしているこの瞬間、すべてが少し奇妙に感じられます。\n\n何千年も前、正直に言えば30年前でさえ、私たちはこうではありませんでした。人間は部族で暮らし、繋がり、創造し、共に探検するように作られています。この静かでデジタルな孤立のために作られたのではありません。\n\nしかし、ここには秘密があります。私たちは無限の想像力を持つ生き物でもあるのです。心の中に全世界を築くことができる地球上で唯一の存在です。本当に好奇心旺盛なとき、何か新しいものを創造している状態にあるとき、不安、ストレス、自己不信といった他のすべては消え去ります。私たちは皆、この創造的な天才として生まれましたが、成長する過程でそれを恐れるように教えられてきました。\n\nこのアプリがすべてを解決できるわけではありません。しかし、これは始まりの一歩です。私たちが持つ最も強力なもの、つまり共有された好奇心に火をつけるために設計されたツールです。\n\nさあ、あなたの新しい部族を見つけに行きましょう。\n\n何か質問があったり、ただ繋がりたいだけでも、Instagramで私を見つけてください：@vibecheck2120",
+    "vi": "Chào bạn.\n\nCó lẽ bạn đang nghĩ, \"Bất ngờ chỉ là hai bức ảnh mèo thôi sao?\" Vâng, đúng vậy. Và không, đó chưa phải là tất cả. Nhưng thực sự, cảm ơn bạn rất nhiều vì đã gửi câu trả lời. Điều đó có ý nghĩa rất lớn.\n\nỨng dụng này được tạo ra từ một quan sát đơn giản: ngày nay, việc kết nối với những người mới thật khó, phải không? Thế giới vận động quá nhanh. Mọi thứ trong khoảnh khắc này đều có chút kỳ lạ—ngồi trong căn phòng này, cầm trên tay những hình chữ nhật nhỏ bé mạnh mẽ kết nối chúng ta với mọi thứ trừ lẫn nhau.\n\nNhiều thiên niên kỷ trước—và thực sự, ngay cả 30 năm trước—chúng ta không như thế này. Con người được sinh ra để sống trong một bộ lạc, để kết nối, sáng tạo và cùng nhau khám phá. Chúng ta không được tạo ra cho sự cô lập kỹ thuật số, yên tĩnh này.\n\nNhưng đây là bí mật: chúng ta cũng là những sinh vật có trí tưởng tượng vô hạn. Chúng ta là sinh vật duy nhất trên Trái Đất có thể xây dựng toàn bộ thế giới trong tâm trí mình. Khi bạn thực sự tò mò, khi bạn đang trong trạng thái sáng tạo một điều gì đó mới, mọi thứ khác đều tan biến—lo lắng, căng thẳng và sự nghi ngờ bản thân. Tất cả chúng ta đều được sinh ra với tài năng sáng tạo này, nhưng đâu đó trên con đường trưởng thành, chúng ta lại được dạy phải sợ hãi nó.\n\nỨng dụng này không thể giải quyết mọi thứ. Nhưng nó là một sự khởi đầu. Nó là một công cụ được thiết kế để khơi dậy điều mạnh mẽ nhất mà chúng ta có: sự tò mò chung.\n\nBây giờ, hãy cùng đi tìm bộ lạc mới của bạn.\n\nNếu bạn có bất kỳ câu hỏi nào hoặc chỉ muốn kết nối, bạn có thể tìm thấy tôi trên Instagram: @vibecheck2120",
+    "zh": "你好。\n\n所以，你可能在想，“惊喜就只是两张猫的照片吗？”嗯，是的。但不，这还不是全部。但真的，非常感谢你提交你的答案。这对我意义重大。\n\n这个应用程序源于一个简单的观察：如今，与新朋友建立联系有点困难，不是吗？世界变化太快了。此时此刻的一切都有点奇怪——坐在这个房间里，握着这些能将我们与除彼此之外的一切联系起来的强大小方块。\n\n几千年前——说实话，即使是30年前——我们也不是这样的。人类天生就是要生活在部落里，去联系、去创造、去一同探索。我们不是为这种安静的、数字化的孤立而生的。\n\n但这里有一个秘密：我们也是拥有无限想象力的生物。我们是地球上唯一可以在自己脑海中建立整个世界的生物。当你真正好奇，当你处于创造新事物的状态时，其他一切都会烟消云散——焦虑、压力和自我怀疑。我们生来就拥有这种创造天赋，但在成长的某个阶段，我们被教导要害怕它。\n\n这个应用程序无法解决所有问题。但这是一个开始。它是一个旨在点燃我们所拥有的最强大的东西的工具：我们共同的好奇心。\n\n现在，让我们去寻找你的新部落吧。\n\n如果你有任何问题或只是想联系，你可以在Instagram上找到我：@vibecheck2120"
+  }
+}
+Step 2: Update the HTML Template.
+Open templates/success.html. Find the line where the explanation text is being displayed. It probably looks something like <p>{{ app_explanation[lang] }}</p>. Replace that simple line with the following for loop. This code will split the text into paragraphs and display each one correctly.
+
+HTML
+
+{% set paragraphs = app_explanation[lang].split('\n\n') %}
+{% for p in paragraphs %}
+    <p>{{ p }}</p>
+{% endfor %}
+Constraint/Warning: This change only affects site_content.json and templates/success.html. No Python files need to be changed for this step.

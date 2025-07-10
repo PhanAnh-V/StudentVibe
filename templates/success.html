@@ -275,16 +275,28 @@
         </div>
         
         <div id="ja" class="lang-text active">
-            <p>{{ app_explanation.ja | safe }}</p>
+            {% set paragraphs = app_explanation.ja.split('\n\n') %}
+            {% for p in paragraphs %}
+                <p>{{ p }}</p>
+            {% endfor %}
         </div>
         <div id="en" class="lang-text">
-            <p>{{ app_explanation.en | safe }}</p>
+            {% set paragraphs = app_explanation.en.split('\n\n') %}
+            {% for p in paragraphs %}
+                <p>{{ p }}</p>
+            {% endfor %}
         </div>
         <div id="vi" class="lang-text">
-            <p>{{ app_explanation.vi | safe }}</p>
+            {% set paragraphs = app_explanation.vi.split('\n\n') %}
+            {% for p in paragraphs %}
+                <p>{{ p }}</p>
+            {% endfor %}
         </div>
         <div id="zh" class="lang-text">
-            <p>{{ app_explanation.zh | safe }}</p>
+            {% set paragraphs = app_explanation.zh.split('\n\n') %}
+            {% for p in paragraphs %}
+                <p>{{ p }}</p>
+            {% endfor %}
         </div>
     </div>
 

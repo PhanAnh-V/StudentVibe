@@ -317,6 +317,9 @@ This is a Flask-based web application designed to collect and store student info
 - July 09, 2025. Replaced "Back to Find Squad" button with universal "Go Back" button using JavaScript history.back() for better navigation
 - July 09, 2025. Enhanced First Speaker logic to only appear when icebreaker questions are generated and visible
 - July 09, 2025. Removed JavaScript delay script and wrapped First Speaker message in icebreaker_data conditional check
+- July 10, 2025. Restructured success page text into readable paragraphs by splitting text on double newlines and adding Instagram contact information
+- July 10, 2025. Updated site_content.json with P.S. Instagram contact sections in all four languages (English, Japanese, Vietnamese, Chinese)
+- July 10, 2025. Modified success.html template to use paragraph loops for better text formatting and readability
 
 ## User Preferences
 
