@@ -275,25 +275,25 @@
         </div>
         
         <div id="ja" class="lang-text active">
-            {% set paragraphs = app_explanation.ja.split('\n\n') %}
+            {% set paragraphs = app_explanation['ja'].split('\\n\\n') %}
             {% for p in paragraphs %}
                 <p>{{ p }}</p>
             {% endfor %}
         </div>
         <div id="en" class="lang-text">
-            {% set paragraphs = app_explanation.en.split('\n\n') %}
+            {% set paragraphs = app_explanation['en'].split('\\n\\n') %}
             {% for p in paragraphs %}
                 <p>{{ p }}</p>
             {% endfor %}
         </div>
         <div id="vi" class="lang-text">
-            {% set paragraphs = app_explanation.vi.split('\n\n') %}
+            {% set paragraphs = app_explanation['vi'].split('\\n\\n') %}
             {% for p in paragraphs %}
                 <p>{{ p }}</p>
             {% endfor %}
         </div>
         <div id="zh" class="lang-text">
-            {% set paragraphs = app_explanation.zh.split('\n\n') %}
+            {% set paragraphs = app_explanation['zh'].split('\\n\\n') %}
             {% for p in paragraphs %}
                 <p>{{ p }}</p>
             {% endfor %}
