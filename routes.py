@@ -2,6 +2,14 @@ from flask import render_template, request, redirect, url_for, session, jsonify,
 from app import app, db
 from models import Student, SessionSettings, Squad
 from forms import StudentForm, TeacherLoginForm, StudentLoginForm
+import firebase_admin
+from firebase_admin import credentials, auth
+# Initialize Firebase Admin SDK
+try:
+    cred = credentials.Certificate('firebase-service-account.json')
+    firebase_admin.initialize_app(cred)
+except Exception as e:
+    logging.error(f"Failed to initialize Firebase Admin SDK: {e}")
 # Removed RQ queue import - using threading instead
 import logging
 import re
@@ -485,7 +493,38 @@ def logout_student():
     return '', 200
 
 
+@app.route('/organizer-dashboard')
+def organizer_dashboard():
+    # This is a protected route.
+    # If the user's Firebase UID is not in the session, they are not logged in.
+    if 'firebase_uid' not in session:
+        return redirect(url_for('login'))
 
+    # The rest of this code is the same as your old /teacher route.
+    try:
+        students = Student.query.order_by(Student.created_at.desc()).all()
+        current_session_password = SessionSettings.get_current_password()
+        squads = Squad.query.all()
+        solo_students_db = Student.query.filter_by(squad_id=None).all()
+
+        squads_exist = Squad.query.count() > 0
+        unanalyzed_students_count = Student.query.filter(
+            db.or_(Student.archetype.is_(None), Student.archetype == "")
+        ).count()
+        analysis_complete = unanalyzed_students_count == 0
+
+        return render_template('teacher.html', 
+                             students=students,
+                             squads=squads,
+                             solo_students_db=solo_students_db,
+                             session_password=current_session_password,
+                             squads_exist=squads_exist,
+                             analysis_complete=analysis_complete)
+    except Exception as e:
+        logging.error(f"Error in organizer_dashboard: {e}")
+        traceback.print_exc()
+        return "The dashboard encountered an error. Check the console for details.", 500
+        
 @app.route('/teacher')
 def teacher():
     """Teacher dashboard with authentication required"""
@@ -2109,3 +2148,26 @@ def internal_error(error):
     """Handle 500 errors"""
     db.session.rollback()
     return render_template('session_password.html'), 500
+
+@app.route('/verify-token', methods=['POST'])
+def verify_token():
+    try:
+        # Get the ID token from the POST request
+        token = request.json.get('token')
+        if not token:
+            return jsonify({'status': 'error', 'message': 'ID token is missing.'}), 400
+
+        # Verify the ID token with Firebase
+        decoded_token = auth.verify_id_token(token)
+
+        # The user is now authenticated on the backend.
+        # We will store their Firebase UID in the session.
+        session['firebase_uid'] = decoded_token['uid']
+
+        return jsonify({'status': 'success', 'uid': decoded_token['uid']})
+
+    except Exception as e:
+        # Handle errors, such as an invalid or expired token
+        logging.error(f"Error verifying Firebase token: {e}")
+        session.pop('firebase_uid', None) # Clear invalid session
+        return jsonify({'status': 'error', 'message': str(e)}), 401

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Organizer Login{% endblock %}
+{% block scripts %}
+<script>
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const errorMessageDiv = document.getElementById('error-message');
+        errorMessageDiv.textContent = '';
+
+        // Step 1: Sign in with Firebase on the client
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                // Step 2: Get the user's ID token from Firebase
+                return userCredential.user.getIdToken();
+            })
+            .then((idToken) => {
+                // Step 3: Send the token to our Flask backend for verification
+                return fetch('/verify-token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token: idToken })
+                });
+            })
+            .then(response => response.json())  
+            .then(data => {
+                if (data.status === 'success') {
+                    // Step 4: Backend verification is successful. Redirect to the dashboard.
+                    console.log('Backend verification successful.');
+                    window.location.href = "{{ url_for('organizer_dashboard') }}"; // We will change this to a new dashboard soon
+                } else {
+                    // Backend verification failed.
+                    throw new Error(data.message || 'Backend verification failed.');
+                }
+            })
+            .catch((error) => {
+                // Handle any error from the entire chain
+                console.error('An error occurred:', error);
+                errorMessageDiv.textContent = error.message;
+            });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="card-title text-center mb-4">Organizer Login</h2>
+        <form id="login-form">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+        </form>
+        <div id="error-message" class="text-danger mt-3 text-center"></div>
+    </div>
+</div>
+{% endblock %}

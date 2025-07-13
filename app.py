@@ -2,7 +2,7 @@ import os
 import json
 import logging
 
-from flask import Flask
+from flask import Flask, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.orm import DeclarativeBase
@@ -16,17 +16,10 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 
-# Create the app
+# Create and configure the app
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
-app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
-
-# Configure the database
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///students.db")
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_recycle": 300,
-    "pool_pre_ping": True,
-}
+from config import Config
+app.config.from_object(Config)
 
 # Initialize the app with the extension
 db.init_app(app)
@@ -53,5 +46,22 @@ with app.app_context():
     # Import and register routes
     import routes  # noqa: F401
 
+    @app.route('/login')
+def login():
+    return render_template('login.html')
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
+@app.route('/firebase-config')
+def firebase_config():
+    # This route provides the NON-SECRET keys to the frontend JavaScript
+    return jsonify({
+        'apiKey': app.config['FIREBASE_API_KEY'],
+        'authDomain': "vibecheckapp-52d16.firebaseapp.com",
+        'projectId': "vibecheckapp-52d16",
+        'storageBucket': "vibecheckapp-52d16.appspot.com",
+        'messagingSenderId': "107974419632",
+        'appId': "1:107974419632:web:c17312e16ef5ae7f8c4775",
+        'measurementId': "G-HQ23WYKND8"
+    })
