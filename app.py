@@ -46,9 +46,13 @@ with app.app_context():
     # Import and register routes
     import routes  # noqa: F401
 
-    @app.route('/login')
+# Define the login route at the top level
+@app.route('/login')
 def login():
     return render_template('login.html')
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
