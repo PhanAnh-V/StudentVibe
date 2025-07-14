@@ -3,14 +3,8 @@ from flask import render_template, request, redirect, url_for, session, jsonify,
 from app import app, db, csrf
 from models import Student, SessionSettings, Squad
 from forms import StudentForm, TeacherLoginForm, StudentLoginForm
-import firebase_admin
-from firebase_admin import credentials, auth
-# Initialize Firebase Admin SDK
-try:
-    cred = credentials.Certificate('firebase-service-account.json')
-    firebase_admin.initialize_app(cred)
-except Exception as e:
-    logging.error(f"Failed to initialize Firebase Admin SDK: {e}")
+from firebase_admin import auth
+# Firebase Admin SDK is initialized in firebase_setup.py
 # Removed RQ queue import - using threading instead
 import logging
 import re
