@@ -8,6 +8,17 @@ from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+from flask import Flask
+from firebase_setup import db
+
+app = Flask(__name__)
+
+@app.route("/test-firestore")
+def test_firestore():
+    doc_ref = db.collection('test').document('hello')
+    doc_ref.set({'message': 'Hello from Flask!'})
+    return "Wrote to Firestore!"
+    
 # Set up logging for debugging
 logging.basicConfig(level=logging.DEBUG)
 

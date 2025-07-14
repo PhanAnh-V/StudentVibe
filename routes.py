@@ -1,3 +1,4 @@
+import logging
 from flask import render_template, request, redirect, url_for, session, jsonify, flash
 from app import app, db, csrf
 from models import Student, SessionSettings, Squad
