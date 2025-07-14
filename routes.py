@@ -2150,24 +2150,22 @@ def internal_error(error):
     return render_template('session_password.html'), 500
 
 @app.route('/verify-token', methods=['POST'])
+@csrf.exempt # Exempt this API route from CSRF checks
 def verify_token():
     try:
-        # Get the ID token from the POST request
         token = request.json.get('token')
         if not token:
             return jsonify({'status': 'error', 'message': 'ID token is missing.'}), 400
 
-        # Verify the ID token with Firebase
         decoded_token = auth.verify_id_token(token)
-
-        # The user is now authenticated on the backend.
-        # We will store their Firebase UID in the session.
         session['firebase_uid'] = decoded_token['uid']
 
         return jsonify({'status': 'success', 'uid': decoded_token['uid']})
 
     except Exception as e:
-        # Handle errors, such as an invalid or expired token
+        # This will print the exact crash details to our terminal
+        print(f"--- VERIFY TOKEN CRASHED: {e} ---")
         logging.error(f"Error verifying Firebase token: {e}")
-        session.pop('firebase_uid', None) # Clear invalid session
-        return jsonify({'status': 'error', 'message': str(e)}), 401
+        session.pop('firebase_uid', None)
+        # Return a JSON error message, not an HTML page
+        return jsonify({'status': 'error', 'message': f'Server error: {e}'}), 500

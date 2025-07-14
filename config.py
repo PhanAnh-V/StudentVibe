@@ -10,3 +10,4 @@ class Config:
         'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     FIREBASE_API_KEY = os.environ.get('FIREBASE_API_KEY')
+    print(f"--- Loaded API Key: {FIREBASE_API_KEY} ---") # DEBUG LINE

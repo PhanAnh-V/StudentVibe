@@ -42,20 +42,11 @@ with app.app_context():
     
     # Create all tables
     db.create_all()
-    
-    # Import and register routes
-    import routes  # noqa: F401
 
 # Define the login route at the top level
 @app.route('/login')
 def login():
     return render_template('login.html')
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
 
 @app.route('/firebase-config')
 def firebase_config():
@@ -69,3 +60,6 @@ def firebase_config():
         'appId': "1:107974419632:web:c17312e16ef5ae7f8c4775",
         'measurementId': "G-HQ23WYKND8"
     })
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
