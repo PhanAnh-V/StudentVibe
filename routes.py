@@ -525,6 +525,12 @@ def organizer_dashboard():
         traceback.print_exc()
         return "The dashboard encountered an error. Check the console for details.", 500
         
+@app.route('/logout')
+def logout():
+    """Organizer logout: clear firebase_uid from session and redirect to home."""
+    session.pop('firebase_uid', None)
+    return redirect(url_for('index'))
+
 @app.route('/teacher')
 def teacher():
     """Teacher dashboard with authentication required"""
@@ -2169,3 +2175,4 @@ def verify_token():
         session.pop('firebase_uid', None)
         # Return a JSON error message, not an HTML page
         return jsonify({'status': 'error', 'message': f'Server error: {e}'}), 500
+
