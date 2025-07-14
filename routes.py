@@ -1,3 +1,4 @@
+import logging
 from flask import render_template, request, redirect, url_for, session, jsonify, flash
 from app import app, db, csrf
 from models import Student, SessionSettings, Squad
@@ -6,12 +7,18 @@ import firebase_admin
 from firebase_admin import credentials, auth
 # Initialize Firebase Admin SDK
 try:
-    cred = credentials.Certificate('firebase-service-account.json')
-    firebase_admin.initialize_app(cred)
-except Exception as e:
-    logging.error(f"Failed to initialize Firebase Admin SDK: {e}")
+    # Check if Firebase app is already initialized
+    firebase_admin.get_app()
+    logging.info("Firebase Admin SDK already initialized")
+except ValueError:
+    # App doesn't exist, so initialize it
+    try:
+        cred = credentials.Certificate('firebase-service-account.json')
+        firebase_admin.initialize_app(cred)
+        logging.info("Firebase Admin SDK initialized successfully")
+    except Exception as e:
+        logging.error(f"Failed to initialize Firebase Admin SDK: {e}")
 # Removed RQ queue import - using threading instead
-import logging
 import re
 import json
 import random
