@@ -31,7 +31,12 @@ app.use('/static', express.static('static'));
 
 // Basic route for health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    service: 'VibeCheck App',
+    version: '1.0.0'
+  });
 });
 
 // Serve the main page
