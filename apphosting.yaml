@@ -2,10 +2,6 @@ runConfig:
   cpu: 1
   memory: 512Mi
   maxConcurrency: 100
-
-runConfig:
-  cpu: 1
-  memory: 512Mi
   env:
     - variable: NODE_ENV
       value: production
