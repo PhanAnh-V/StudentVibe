@@ -13,14 +13,11 @@ env:
   - variable: FLASK_ENV
     value: production
   - variable: SECRET_KEY
-    # This will be set in Firebase console for security
-    secret: flask_secret_key
+    value: "prod-secret-key-change-me-in-firebase-console"
   - variable: OPENAI_API_KEY
-    # This will be set in Firebase console for security  
-    secret: openai_api_key
+    value: "set-your-openai-key-in-firebase-console"
   - variable: FIREBASE_API_KEY
-    # This will be set in Firebase console for security
-    secret: firebase_api_key
+    value: "set-your-firebase-key-in-firebase-console"
 
 # Build configuration - tells Firebase how to install dependencies
 build:
