@@ -1,13 +1,6 @@
 runConfig:
   cpu: 1
   memory: 512Mi
-  maxConcurrency: 100
   env:
     - variable: NODE_ENV
       value: production
-  - variable: SECRET_KEY
-    value: "prod-secret-key-change-me-in-firebase-console"
-  - variable: OPENAI_API_KEY
-    value: "set-your-openai-key-in-firebase-console"
-  - variable: FIREBASE_API_KEY
-    value: "set-your-firebase-key-in-firebase-console"
