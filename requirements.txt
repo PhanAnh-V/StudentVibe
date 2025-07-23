@@ -1,6 +1,27 @@
-Flask
-Flask-SQLAlchemy
-Flask-WTF
-python-dotenv
-firebase-admin
-gunicorn
+# Flask and web framework
+Flask==3.1.1
+Flask-SQLAlchemy==3.1.1
+Flask-WTF==1.2.2
+gunicorn==23.0.0
+
+# Environment and configuration
+python-dotenv==1.1.1
+
+# Firebase and Google Cloud
+firebase-admin==6.9.0
+google-auth==2.40.3
+google-auth-oauthlib==1.2.2
+google-auth-httplib2==0.2.0
+google-cloud-firestore==2.21.0
+
+# AI and external APIs
+openai==1.95.1
+requests==2.32.4
+
+# Testing (development only)
+pytest==8.4.1
+playwright==1.54.0
+pytest-playwright==0.7.0
+
+# Google Cloud Functions (for deployment)
+functions-framework==3.8.3

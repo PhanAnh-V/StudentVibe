@@ -1,0 +1,32 @@
+# Firebase App Hosting configuration for VibeCheck Flask app
+# This tells Firebase how to build and run your Python Flask application
+
+runConfig:
+  # The CPU and memory allocated to each instance of your app
+  cpu: 1
+  memory: 512Mi
+  # Maximum number of concurrent requests per instance
+  maxConcurrency: 100
+
+env:
+  # Environment variables for your Flask app
+  - variable: FLASK_ENV
+    value: production
+  - variable: SECRET_KEY
+    # This will be set in Firebase console for security
+    secret: flask_secret_key
+  - variable: OPENAI_API_KEY
+    # This will be set in Firebase console for security  
+    secret: openai_api_key
+  - variable: FIREBASE_API_KEY
+    # This will be set in Firebase console for security
+    secret: firebase_api_key
+
+# Build configuration - tells Firebase how to install dependencies
+build:
+  commands:
+    - pip install --no-cache-dir -r requirements.txt
+
+# Start command - tells Firebase how to run your app
+start:
+  command: gunicorn --bind :$PORT main:app
