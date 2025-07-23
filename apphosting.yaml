@@ -3,9 +3,12 @@ runConfig:
   memory: 512Mi
   maxConcurrency: 100
 
-env:
-  - variable: FLASK_ENV
-    value: production
+runConfig:
+  cpu: 1
+  memory: 512Mi
+  env:
+    - variable: NODE_ENV
+      value: production
   - variable: SECRET_KEY
     value: "prod-secret-key-change-me-in-firebase-console"
   - variable: OPENAI_API_KEY
