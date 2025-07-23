@@ -1,6 +1,4 @@
 # Firebase App Hosting configuration for VibeCheck Flask app
-# This tells Firebase how to build and run your Python Flask application
-
 runConfig:
   # The CPU and memory allocated to each instance of your app
   cpu: 1
@@ -12,6 +10,8 @@ env:
   # Environment variables for your Flask app
   - variable: FLASK_ENV
     value: production
+  - variable: PYTHONPATH
+    value: /workspace
   - variable: SECRET_KEY
     value: "prod-secret-key-change-me-in-firebase-console"
   - variable: OPENAI_API_KEY
@@ -26,4 +26,4 @@ build:
 
 # Start command - tells Firebase how to run your app
 start:
-  command: gunicorn --bind :$PORT main:app
+  command: gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
