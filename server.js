@@ -12,7 +12,7 @@ let flaskProcess;
 
 function startFlaskApp() {
   console.log('Starting Flask application...');
-  flaskProcess = spawn('python3', ['app.py'], {
+  flaskProcess = spawn(process.env.PYTHON_EXECUTABLE || 'python3', ['app.py'], {
     cwd: __dirname,
     env: { ...process.env, PORT: '5000' },
     stdio: ['inherit', 'pipe', 'pipe']
