@@ -1,3 +1,29 @@
 # Ignore sensitive files
 firebase-service-account.json
 .env
+
+# Test files with potential secrets (use clean alternatives)
+test_app_import.py
+test_server.py
+tests/test_e2e_backup.py
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+*.db
+instance/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+
+# Service Account Keys
+serviceAccountKey.json
+
+# IDE and OS
+.vscode/
+.DS_Store
