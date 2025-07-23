@@ -7,7 +7,7 @@ import firebase_admin
 from firebase_admin import credentials, auth
 # Initialize Firebase Admin SDK
 try:
-    cred = credentials.Certificate('firebase-service-account.json')
+    cred = credentials.Certificate('serviceAccountKey.json')
     firebase_admin.initialize_app(cred)
 except Exception as e:
     logging.error(f"Failed to initialize Firebase Admin SDK: {e}")

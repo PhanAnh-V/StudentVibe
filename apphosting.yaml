@@ -4,3 +4,7 @@ runConfig:
   env:
     - variable: NODE_ENV
       value: production
+    - variable: PYTHONPATH
+      value: /workspace
+    - variable: FLASK_ENV
+      value: production
