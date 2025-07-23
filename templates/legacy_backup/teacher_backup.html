@@ -1,0 +1,833 @@
+{% extends "base.html" %}
+
+{% block title %}Teacher Dashboard - Student Submissions{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Squad Card Styling */
+    .squad-link {
+        text-decoration: none !important;
+        color: inherit;
+        display: block;
+        transition: all 0.3s ease;
+    }
+    
+    .squad-link:hover {
+        text-decoration: none !important;
+        color: inherit;
+    }
+    
+    .clickable-header {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 2px solid transparent;
+    }
+    
+    .clickable-header:hover {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-color: #2196f3;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(33, 150, 243, 0.15);
+    }
+    
+    .external-link-icon {
+        font-size: 0.8em;
+        opacity: 0.6;
+        transition: opacity 0.3s ease;
+    }
+    
+    .clickable-header:hover .external-link-icon {
+        opacity: 1;
+    }
+    
+    .squad-actions-bar {
+        display: flex;
+        justify-content: flex-end;
+        padding: 0.5rem 1rem;
+        border-top: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+        border-radius: 0 0 12px 12px;
+    }
+    
+    .generate-icebreaker-btn {
+        color: #28a745;
+        text-decoration: none;
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        margin-right: 0.5rem;
+        border: 1px solid #28a745;
+    }
+    
+    .generate-icebreaker-btn:hover {
+        background-color: #28a745;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    }
+    
+    .delete-squad-btn {
+        color: #dc3545;
+        text-decoration: none;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+    }
+    
+    .delete-squad-btn:hover {
+        background-color: #dc3545;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .squad-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+    }
+    
+    .squad-card:hover {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        transform: translateY(-4px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="teacher-container">
+    <!-- Header -->
+    <div class="teacher-header">
+        <h1 class="teacher-title">
+            <i class="fas fa-chalkboard-teacher me-3"></i>
+            Teacher Dashboard
+        </h1>
+        <p class="teacher-description">
+            View and manage all student submissions
+        </p>
+        <div class="teacher-actions">
+            <a href="{{ url_for('session_password') }}" class="btn btn-outline-primary me-2">
+                <i class="fas fa-key me-2"></i>
+                Student Login Page
+            </a>
+            <a href="{{ url_for('teacher_logout') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Statistics Card -->
+    <div class="stats-card">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <i class="fas fa-users"></i>
+                    <h3>{{ students|length }}</h3>
+                    <p>Total Students</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <i class="fas fa-calendar-day"></i>
+                    <h3>{{ students|selectattr('created_at')|selectattr('created_at', 'equalto', students|map(attribute='created_at')|max)|list|length if students else 0 }}</h3>
+                    <p>Today's Submissions</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <i class="fas fa-clock"></i>
+                    <h3>{% if students %}{{ students[0].created_at.strftime('%H:%M') }}{% else %}--{% endif %}</h3>
+                    <p>Latest Submission</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Dashboard Content -->
+    <div class="dashboard-content">
+        <!-- Session Control Section -->
+        <div class="dashboard-section">
+            <h2 class="section-title">
+                <i class="fas fa-shield-alt me-2"></i>
+                Session Control
+            </h2>
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="session-password-display">
+                        <label class="form-label fw-bold">Current Session Password:</label>
+                        <div class="password-container">
+                            <span class="session-password-code">{{ session_password }}</span>
+                            <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyPassword()" title="Copy to clipboard">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Share this password with students to access the questionnaire</small>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <form action="{{ url_for('new_session_password') }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-warning" onclick="return confirm('Generate a new session password? Students will need the new password to access the form.')">
+                            <i class="fas fa-sync-alt me-2"></i>
+                            Generate New Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Squad Actions Section -->
+        <div class="squad-actions-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title">
+                    <i class="fas fa-users me-2"></i>
+                    Student Management
+                </h2>
+                <div class="squad-actions">
+                    <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
+                        <button type="submit" class="btn btn-success me-2">
+                            <i class="fas fa-magic me-2"></i>
+                            Create AI Squads
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        
+        <!-- All Student Submissions Section -->
+        <div class="dashboard-section view-content">
+            <div class="students-section">
+        <h2 class="section-title">
+            <i class="fas fa-list me-2"></i>
+            All Student Submissions
+            </h2>
+            <div class="squad-actions">
+                <form method="POST" action="{{ url_for('create_squads') }}" style="display: inline;">
+                    <button type="submit" class="btn btn-success me-2">
+                        <i class="fas fa-magic me-2"></i>
+                        Create Vibe Squads
+                    </button>
+                </form>
+
+            </div>
+        </div>
+        
+        {% if squads %}
+            <div class="squads-grid">
+                {% for squad in squads %}
+                <div class="squad-card">
+                    <a href="{{ url_for('squad_hub', squad_id=squad.id) }}" class="squad-link">
+                        <div class="squad-header clickable-header">
+                            <div class="squad-title-section">
+                                <h3 class="squad-title">
+                                    <i class="fas fa-users me-2"></i>
+                                    {{ squad.name }}
+                                    <i class="fas fa-external-link-alt ms-2 external-link-icon"></i>
+                                </h3>
+                                <span class="squad-interests">
+                                    <i class="fas fa-heart me-1"></i>
+                                    {{ squad.shared_interests }}
+                                </span>
+                            </div>
+                            <div class="squad-member-count">
+                                <span class="badge bg-primary">
+                                    {{ squad.members|length }} members
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <div class="squad-actions-bar">
+                        <a href="{{ url_for('generate_icebreaker', squad_id=squad.id) }}" 
+                           class="generate-icebreaker-btn"
+                           title="Generate AI-powered icebreaker for this squad">
+                            <i class="fas fa-lightbulb"></i>
+                            Generate Icebreaker
+                        </a>
+                        <a href="{{ url_for('delete_squad', squad_id=squad.id) }}" 
+                           class="delete-squad-btn"
+                           onclick="return confirm('Are you sure you want to delete the entire {{ squad.name }} squad? This will move all members to ungrouped.')">
+                            <i class="fas fa-trash-alt"></i>
+                            Delete Squad
+                        </a>
+                    </div>
+                    
+                    <div class="squad-members-modern">
+                        {% for member in squad.members %}
+                        <div class="modern-member-card">
+                            <div class="member-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="member-details">
+                                <h5 class="member-name">
+                                    <a href="{{ url_for('student_profile', student_id=member.id) }}" class="text-decoration-none text-dark">
+                                        {{ member.name }}
+                                    </a>
+                                </h5>
+                                <div class="member-info-tags">
+                                    <span class="info-tag country-tag">
+                                        <i class="fas fa-globe me-1"></i>
+                                        {{ member.country }}
+                                    </span>
+                                    <span class="info-tag gender-tag">
+                                        <i class="fas fa-user me-1"></i>
+                                        {{ member.gender }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="member-actions">
+                                <a href="{{ url_for('delete_student', student_id=member.id) }}" 
+                                   class="delete-student-btn" 
+                                   onclick="return confirm('Are you sure you want to delete {{ member.name }}?')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="squad-footer">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>
+                            Created: {{ squad.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="squads-empty">
+                <p class="text-muted">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Click "Create Vibe Squads" to automatically group students based on shared interests.
+                </p>
+            </div>
+        {% endif %}
+        
+        <!-- Solo Students Section -->
+        {% if solo_students_db %}
+        <div class="ungrouped-section mt-4">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <i class="fas fa-user-friends me-2"></i>
+                    Solo Students
+                    <span class="badge bg-secondary ms-2">{{ solo_students_db|length }}</span>
+                </h3>
+                <p class="section-description">
+                    Students who haven't been assigned to any squad yet.
+                </p>
+            </div>
+            
+            <div class="solo-students-grid">
+                {% for student in solo_students_db %}
+                <div class="modern-member-card">
+                    <div class="member-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="member-details">
+                        <h5 class="member-name">
+                            <a href="{{ url_for('student_profile', student_id=student.id) }}" class="text-decoration-none text-dark">
+                                {{ student.name }}
+                            </a>
+                        </h5>
+                        <div class="member-info-tags">
+                            <span class="info-tag country-tag">
+                                <i class="fas fa-globe me-1"></i>
+                                {{ student.country }}
+                            </span>
+                            <span class="info-tag gender-tag">
+                                <i class="fas fa-user me-1"></i>
+                                {{ student.gender }}
+                            </span>
+                        </div>
+                        <small class="text-muted mt-2 d-block">
+                            ID: {{ student.submission_id or student.id }}
+                        </small>
+                    </div>
+                    <div class="member-actions">
+                        <a href="{{ url_for('delete_student', student_id=student.id) }}" 
+                           class="delete-student-btn" 
+                           onclick="return confirm('Are you sure you want to delete {{ student.name }}?')">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+            </div>
+        </div>
+        </div>
+
+
+                <div class="student-card" data-country="{{ student.country }}" data-gender="{{ student.gender }}">
+                    <div class="student-header">
+                        <div class="student-title">
+                            <h3 class="student-name">
+                                <i class="fas fa-user-graduate me-2"></i>
+                                <a href="{{ url_for('student_profile', student_id=student.id) }}" class="text-decoration-none text-dark">
+                                    {{ student.name }}
+                                </a>
+                                <span class="student-id-badge">ID: {{ student.id }}</span>
+                            </h3>
+                            <a href="{{ url_for('delete_student', student_id=student.id) }}" 
+                               class="delete-student-btn" 
+                               onclick="return confirm('Are you sure you want to delete {{ student.name }}?')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </div>
+                        <div class="student-meta">
+                            <div class="student-details">
+                                <span class="student-tag">
+                                    <i class="fas fa-globe me-1"></i>{{ student.country }}
+                                </span>
+                                <span class="student-tag">
+                                    <i class="fas fa-user me-1"></i>{{ student.gender }}
+                                </span>
+                            </div>
+                            <small class="student-date">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ student.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="student-content">
+                        <h4 class="vibes-label">
+                            <i class="fas fa-heart me-2"></i>
+                            Interests & Vibes
+                        </h4>
+                        <div class="vibes-text">
+                            {{ student.vibes }}
+                        </div>
+                        
+                        {% if student.interests %}
+                        <div class="interest-visualization mt-3">
+                            <h5 class="interest-label">
+                                <i class="fas fa-tags me-2"></i>
+                                Interest Categories
+                            </h5>
+                            <div class="interest-bubbles">
+                                {% for interest in student.interests %}
+                                <div class="interest-bubble" 
+                                     style="background-color: {{ interest.color }}; opacity: {{ 0.7 + (interest.intensity * 0.3) }}">
+                                    <i class="{{ interest.icon }} me-1"></i>
+                                    {{ interest.name }}
+                                    <span class="interest-intensity" 
+                                          style="width: {{ interest.intensity * 100 }}%"></span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="student-footer">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>
+                            Submitted {{ student.created_at.strftime('%m/%d at %H:%M') }}
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <h3 class="empty-title">No Submissions Yet</h3>
+                <p class="empty-message">
+                    Student submissions will appear here once they start filling out the form.
+                </p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>
+                    View Student Form
+                </a>
+            </div>
+        {% endif %}
+    
+    <!-- Solo Students Section -->
+    {% if solo_students %}
+    <div class="solo-students-section mt-5">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-user me-2"></i>
+                Solo Students
+                <span class="badge bg-warning ms-2">{{ solo_students|length }}</span>
+            </h2>
+            <p class="section-description">
+                Students who couldn't be grouped into vibe squads and may need special attention or integration support.
+            </p>
+        </div>
+        
+        <div class="solo-students-grid">
+            {% for student in solo_students %}
+            <div class="solo-student-card">
+                <div class="student-header">
+                    <div class="student-title">
+                        <h3 class="student-name">
+                            <i class="fas fa-user me-2"></i>
+                            {{ student.name }}
+                        </h3>
+                        <div class="student-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-globe me-1"></i>
+                                {{ student.country }}
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-user me-1"></i>
+                                {{ student.gender }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="student-content">
+                    <h4 class="vibes-label">
+                        <i class="fas fa-heart me-2"></i>
+                        Interests & Vibes
+                    </h4>
+                    <div class="vibes-text">
+                        {{ student.vibes }}
+                    </div>
+                </div>
+                
+                <div class="ai-advice-section">
+                    {% if ai_advice.get(student.id) %}
+                    <div class="ai-advice-content">
+                        <h5 class="advice-title">
+                            <i class="fas fa-robot me-2"></i>
+                            AI Integration Advice
+                        </h5>
+                        
+                        <div class="advice-item">
+                            <strong>Integration Strategies:</strong>
+                            <ul class="advice-list">
+                                {% for strategy in ai_advice[student.id].integration_strategies %}
+                                <li>{{ strategy }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <div class="advice-item">
+                            <strong>Collaboration Opportunities:</strong>
+                            <p>{{ ai_advice[student.id].collaboration_opportunities }}</p>
+                        </div>
+                        
+                        <div class="advice-item">
+                            <strong>Suggested Role:</strong>
+                            <p>{{ ai_advice[student.id].group_role_suggestion }}</p>
+                        </div>
+                        
+                        <div class="advice-item">
+                            <strong>Development Areas:</strong>
+                            <ul class="advice-list">
+                                {% for area in ai_advice[student.id].development_areas %}
+                                <li>{{ area }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% else %}
+                    <form method="POST" action="{{ url_for('get_ai_advice', student_id=student.id) }}" class="ai-advice-form">
+                        <button type="submit" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-robot me-2"></i>
+                            Generate AI Advice
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+                
+                <div class="student-footer">
+                    <small class="text-muted">
+                        <i class="fas fa-user-clock me-1"></i>
+                        Solo Status - Needs Integration
+                    </small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- Close dashboard content -->
+    </div>
+    
+    <!-- Footer -->
+    <div class="teacher-footer">
+        <div class="row text-center">
+            <div class="col-md-6">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Back to Student Form
+                </a>
+            </div>
+            <div class="col-md-6">
+                <button onclick="window.print()" class="btn btn-outline-secondary">
+                    <i class="fas fa-print me-2"></i>
+                    Print Submissions
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4>Confirm Delete</h4>
+            <span class="modal-close" onclick="closeDeleteModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete <strong id="deleteStudentName"></strong>?</p>
+            <p class="text-danger">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn btn-danger" onclick="deleteStudent()">Delete Student</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let deleteStudentId = null;
+
+// Dashboard functionality
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Filter functionality
+    const countryFilter = document.getElementById('countryFilter');
+    const genderFilter = document.getElementById('genderFilter');
+    const studentCount = document.getElementById('studentCount');
+    
+    function filterStudents() {
+        const selectedCountry = countryFilter.value;
+        const selectedGender = genderFilter.value;
+        const studentCards = document.querySelectorAll('.student-card');
+        let visibleCount = 0;
+        
+        studentCards.forEach(card => {
+            const cardCountry = card.dataset.country;
+            const cardGender = card.dataset.gender;
+            
+            const countryMatch = !selectedCountry || cardCountry === selectedCountry;
+            const genderMatch = !selectedGender || cardGender === selectedGender;
+            
+            if (countryMatch && genderMatch) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        studentCount.textContent = visibleCount;
+    }
+    
+    countryFilter.addEventListener('change', filterStudents);
+    genderFilter.addEventListener('change', filterStudents);
+});
+
+// Delete functionality
+function confirmDelete(studentId, studentName) {
+    deleteStudentId = studentId;
+    document.getElementById('deleteStudentName').textContent = studentName;
+    document.getElementById('deleteModal').style.display = 'block';
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+    deleteStudentId = null;
+}
+
+function deleteStudent() {
+    if (deleteStudentId) {
+        // Create form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/teacher/delete-student/' + deleteStudentId;
+        
+        // Add CSRF token
+        const csrfToken = document.querySelector('meta[name=csrf-token]');
+        if (csrfToken) {
+            const tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = 'csrf_token';
+            tokenInput.value = csrfToken.getAttribute('content');
+            form.appendChild(tokenInput);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Copy password functionality
+function copyPassword() {
+    const passwordElement = document.querySelector('.session-password-code');
+    const password = passwordElement.textContent;
+    
+    navigator.clipboard.writeText(password).then(function() {
+        // Show success feedback
+        const button = event.target.closest('button');
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        button.classList.add('btn-success');
+        button.classList.remove('btn-outline-secondary');
+        
+        setTimeout(function() {
+            button.innerHTML = originalHTML;
+            button.classList.remove('btn-success');
+            button.classList.add('btn-outline-secondary');
+        }, 2000);
+    }).catch(function(err) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = password;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        // Show success feedback
+        const button = event.target.closest('button');
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        button.classList.add('btn-success');
+        button.classList.remove('btn-outline-secondary');
+        
+        setTimeout(function() {
+            button.innerHTML = originalHTML;
+            button.classList.remove('btn-success');
+            button.classList.add('btn-outline-secondary');
+        }, 2000);
+    });
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('deleteModal');
+    if (event.target === modal) {
+        closeDeleteModal();
+    }
+}
+
+// Drag and Drop Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize SortableJS for all squad members lists
+    const sortableLists = document.querySelectorAll('.sortable-list');
+    
+    sortableLists.forEach(list => {
+        new Sortable(list, {
+            group: 'shared', // Enable moving between lists
+            animation: 150,
+            handle: '.drag-handle',
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            dragClass: 'sortable-drag',
+            onEnd: function(evt) {
+                handleStudentMove(evt);
+            }
+        });
+    });
+});
+
+function handleStudentMove(evt) {
+    const studentId = evt.item.dataset.studentId;
+    const fromSquad = evt.from.dataset.squadIndex;
+    const toSquad = evt.to.dataset.squadIndex;
+    const newIndex = evt.newIndex;
+    
+    // Send update to server
+    fetch('/teacher/move-student', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            student_id: studentId,
+            from_squad: fromSquad,
+            to_squad: toSquad,
+            new_index: newIndex
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            // Revert the move if it failed
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error moving student:', error);
+        location.reload();
+    });
+}
+
+function deleteSquad(squadIndex) {
+    if (confirm('Are you sure you want to delete this squad? All members will be moved to the ungrouped list.')) {
+        fetch('/teacher/delete-squad', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                squad_index: squadIndex
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error deleting squad. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting squad:', error);
+            alert('Error deleting squad. Please try again.');
+        });
+    }
+}
+</script>
+
+<!-- SortableJS Library -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-refresh every 30 seconds to show new submissions
+    setInterval(function() {
+        window.location.reload();
+    }, 30000);
+    
+    // Print styles
+    const style = document.createElement('style');
+    style.textContent = `
+        @media print {
+            .teacher-actions, .teacher-footer, .btn { display: none !important; }
+            .student-card { break-inside: avoid; margin-bottom: 1rem; }
+            body { font-size: 12px; }
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+{% endblock %}

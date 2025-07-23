@@ -1,6 +1,13 @@
-from app import db
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
 import random
 import string
+
+class Base(DeclarativeBase):
+    pass
+
+# Create database instance
+db = SQLAlchemy(model_class=Base)
 
 class SessionSettings(db.Model):
     """Model for storing session-wide settings like password"""
