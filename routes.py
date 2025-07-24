@@ -20,6 +20,12 @@ import traceback
 from collections import Counter, defaultdict
 # AI recommendations functions will be imported where needed
 
+# Health check endpoint for Firebase App Hosting
+@app.route('/health')
+def health_check():
+    """Health check endpoint for Firebase App Hosting"""
+    return jsonify({"status": "healthy", "message": "VibeCheck is running"}), 200
+
 def load_questionnaire_data():
     """Load questionnaire data from questions.json file"""
     try:

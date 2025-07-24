@@ -842,25 +842,31 @@ def register_all_routes():
         return render_template('find_squad.html')
 
 # Initialize the app and configure it immediately at module level
-# Load environment variables from .env file if it exists
 try:
-    with open('.env', 'r') as f:
-        for line in f:
-            if line.strip() and not line.startswith('#'):
-                key, value = line.strip().split('=', 1)
-                os.environ[key] = value
-    print("✅ Environment variables loaded from .env file")
-except FileNotFoundError:
-    print("⚠️ No .env file found, using system environment variables")
+    # Load environment variables from .env file if it exists
+    try:
+        with open('.env', 'r') as f:
+            for line in f:
+                if line.strip() and not line.startswith('#'):
+                    key, value = line.strip().split('=', 1)
+                    os.environ[key] = value
+        print("✅ Environment variables loaded from .env file")
+    except FileNotFoundError:
+        print("⚠️ No .env file found, using system environment variables")
 
-# Create database tables
-with app.app_context():
-    db.create_all()
-    print("✅ Database tables created")
+    # Create database tables
+    with app.app_context():
+        db.create_all()
+        print("✅ Database tables created")
 
-# Register all routes
-register_all_routes()
-print("✅ All routes registered")
+    # Register all routes
+    register_all_routes()
+    print("✅ All routes registered")
+
+except Exception as e:
+    print(f"❌ Error during app initialization: {e}")
+    # Still create app_instance even if there are errors
+    pass
 
 # This is the WSGI application that Firebase App Hosting will use
 app_instance = app

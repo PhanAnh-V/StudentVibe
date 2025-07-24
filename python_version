@@ -1,0 +1,3 @@
+# This file ensures Python buildpack detection
+# Firebase App Hosting uses this to identify Python applications
+python-3.11
