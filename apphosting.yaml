@@ -2,9 +2,7 @@ runConfig:
   cpu: 1
   memory: 512Mi
   env:
-    - variable: NODE_ENV
+    - variable: FLASK_ENV
       value: production
     - variable: PYTHONPATH
       value: /workspace
-    - variable: FLASK_ENV
-      value: production
