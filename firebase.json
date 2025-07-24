@@ -1,20 +1,5 @@
 {
-  "hosting": {
-    "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "function": "app_handler"
-      }
-    ]
-  },
-  "functions": {
-    "source": ".",
-    "runtime": "python311"
+  "apphosting": {
+    "source": "."
   }
 }

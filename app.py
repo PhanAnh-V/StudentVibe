@@ -841,33 +841,30 @@ def register_all_routes():
         """Find squad page for students"""
         return render_template('find_squad.html')
 
-# Initialize the app
-def create_app():
-    """Create and configure the Flask application"""
-    
-    # Load environment variables from .env file if it exists
-    try:
-        with open('.env', 'r') as f:
-            for line in f:
-                if line.strip() and not line.startswith('#'):
-                    key, value = line.strip().split('=', 1)
-                    os.environ[key] = value
-        print("✅ Environment variables loaded from .env file")
-    except FileNotFoundError:
-        print("⚠️ No .env file found, using system environment variables")
-    
-    # Create database tables
-    with app.app_context():
-        db.create_all()
-        print("✅ Database tables created")
-    
-    # Register all routes
-    register_all_routes()
-    print("✅ All routes registered")
-    
-    return app
+# Initialize the app and configure it immediately at module level
+# Load environment variables from .env file if it exists
+try:
+    with open('.env', 'r') as f:
+        for line in f:
+            if line.strip() and not line.startswith('#'):
+                key, value = line.strip().split('=', 1)
+                os.environ[key] = value
+    print("✅ Environment variables loaded from .env file")
+except FileNotFoundError:
+    print("⚠️ No .env file found, using system environment variables")
+
+# Create database tables
+with app.app_context():
+    db.create_all()
+    print("✅ Database tables created")
+
+# Register all routes
+register_all_routes()
+print("✅ All routes registered")
+
+# This is the WSGI application that Firebase App Hosting will use
+app_instance = app
 
 if __name__ == '__main__':
-    app = create_app()
     debug_mode = os.getenv('FLASK_ENV', 'production') == 'development'
-    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=debug_mode)
