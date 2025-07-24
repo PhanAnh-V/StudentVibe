@@ -873,4 +873,6 @@ app_instance = app
 
 if __name__ == '__main__':
     debug_mode = os.getenv('FLASK_ENV', 'production') == 'development'
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=debug_mode)
+    port = int(os.environ.get('PORT', 8080))
+    print(f"🚀 Starting app on port {port}")
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)

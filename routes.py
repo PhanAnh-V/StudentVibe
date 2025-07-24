@@ -3,6 +3,12 @@ from flask import render_template, request, redirect, url_for, session, jsonify,
 from app import app, db, csrf
 from models import Student, SessionSettings, Squad
 from forms import StudentForm, TeacherLoginForm, StudentLoginForm
+
+# Health check route for Firebase App Hosting
+@app.route('/health')
+def health_check():
+    return {'status': 'healthy', 'message': 'VibeCheck is running'}, 200
+
 import firebase_admin
 from firebase_admin import credentials, auth
 # Initialize Firebase Admin SDK
