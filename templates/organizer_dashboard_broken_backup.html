@@ -1,0 +1,673 @@
+{% extends "base.html" %}
+
+{% block title %}先生ダッシュボード - 学生提出{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Squad Card Styling */
+    .squad-link {
+        text-decoration: none !important;
+        color: inherit;
+        display: block;
+        transition: all 0.3s ease;
+    }
+    
+    .squad-link:hover {
+        text-decoration: none !important;
+        color: inherit;
+    }
+    
+    .clickable-header {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 2px solid transparent;
+    }
+    
+    .clickable-header:hover {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-color: #2196f3;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(33, 150, 243, 0.15);
+    }
+    
+    .external-link-icon {
+        font-size: 0.8em;
+        opacity: 0.6;
+        transition: opacity 0.3s ease;
+    }
+    
+    .clickable-header:hover .external-link-icon {
+        opacity: 1;
+    }
+    
+    .squad-actions-bar {
+        display: flex;
+        justify-content: flex-end;
+        padding: 0.5rem 1rem;
+        border-top: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+        border-radius: 0 0 12px 12px;
+    }
+    
+    .generate-icebreaker-btn {
+        color: #28a745;
+        text-decoration: none;
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        margin-right: 0.5rem;
+        border: 1px solid #28a745;
+    }
+    
+    .generate-icebreaker-btn:hover {
+        background-color: #28a745;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    }
+    
+    .icebreaker-generated-status {
+        color: #28a745;
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        margin-right: 0.5rem;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+        cursor: default;
+    }
+    
+    .icebreaker-generated-status i {
+        color: #155724;
+    }
+    
+    .delete-squad-btn {
+        color: #dc3545;
+        text-decoration: none;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+    }
+    
+    .delete-squad-btn:hover {
+        background-color: #dc3545;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .squad-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+    }
+    
+    .squad-card:hover {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        transform: translateY(-4px);
+    }
+    
+    /* Dashboard Header Styling */
+    .dashboard-header {
+        background-color: #F8F9FA;
+        padding: 24px;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        border: 1px solid #DEE2E6;
+    }
+    
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+    
+    .header-row:first-child {
+        margin-bottom: 20px;
+    }
+    
+    .header-title h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    .header-title p {
+        font-size: 16px;
+        color: #6C757D;
+        margin: 4px 0 0 0;
+    }
+    
+    .session-control, .main-actions, .danger-zone {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .danger-zone {
+        border: 1px solid #F5C2C7;
+        background-color: #F8D7DA;
+        padding: 10px 15px;
+        border-radius: 8px;
+    }
+    
+    .main-actions .btn-info {
+        background-color: #0DCAF0;
+        border-color: #0DCAF0;
+        color: white;
+    }
+    
+    .session-control .btn-secondary {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Modern Member Card Styling */
+    .modern-member-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        border: 1px solid #dee2e6;
+    }
+    
+    .modern-member-card:hover {
+        background: #e9ecef;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .member-avatar {
+        font-size: 2rem;
+        color: #6c757d;
+        margin-right: 1rem;
+    }
+    
+    .member-details {
+        flex: 1;
+    }
+    
+    .member-name {
+        margin: 0 0 0.25rem 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    
+    .member-archetype {
+        margin-bottom: 0.5rem;
+    }
+    
+    .translation-status {
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .member-info-tags {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .info-tag {
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.125rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .country-tag {
+        background: #cce5ff;
+        color: #0056b3;
+    }
+    
+    .gender-tag {
+        background: #ffe6cc;
+        color: #bf6600;
+    }
+    
+    .member-actions {
+        margin-left: 1rem;
+    }
+    
+    .delete-student-btn {
+        color: #dc3545;
+        text-decoration: none;
+        padding: 0.5rem;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+    
+    .delete-student-btn:hover {
+        background-color: #dc3545;
+        color: white;
+        text-decoration: none;
+    }
+    
+    /* Squad Footer Styling */
+    .squad-footer {
+        padding: 0.75rem 1rem;
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+        font-size: 0.875rem;
+    }
+    
+    /* Solo Students Section */
+    .ungrouped-section, .solo-students-section {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+    
+    .section-header {
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-title {
+        color: #495057;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .section-description {
+        color: #6c757d;
+        margin: 0;
+    }
+    
+    .solo-students-grid {
+        display: grid;
+        gap: 1rem;
+    }
+    
+    .squads-empty {
+        text-align: center;
+        padding: 3rem;
+        color: #6c757d;
+    }
+    
+    /* Squad Member Section Styling */
+    .squad-members-modern {
+        padding: 1rem;
+    }
+    
+    .squad-title-section {
+        flex: 1;
+    }
+    
+    .squad-title {
+        margin: 0 0 0.5rem 0;
+        color: #495057;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+    
+    .squad-interests {
+        color: #6c757d;
+        font-size: 0.9rem;
+        font-style: italic;
+    }
+    
+    .squad-member-count {
+        margin-left: 1rem;
+    }
+    
+    .squad-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    /* Continue the rest of the CSS from the original template */
+    .additional-class {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="teacher-container">
+    <div class="dashboard-header">
+      <div class="header-row">
+        <div class="header-title">
+          <h1>先生ダッシュボード</h1>
+          <p>学生総数: {{ students|length }}</p>
+        </div>
+        <a href="{{ url_for('teacher_logout') }}" class="btn btn-outline-secondary">ログアウト</a>
+      </div>
+      <div class="header-row">
+        <div class="session-control">
+          <span>現在のセッションパスワード: <strong>{{ session_password }}</strong></span>
+          <form action="{{ url_for('new_session_password') }}" method="POST" style="display: inline;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-secondary" title="新しいパスワードを生成" onclick="return confirm('新しいパスワードを生成しますか？')">
+              <i class="fas fa-sync-alt"></i>
+            </button>
+          </form>
+        </div>
+        <div class="main-actions">
+           {% if not squads_exist %}
+           <form id="create-squads-form" action="{{ url_for('create_squads') }}" method="POST" style="display: inline;">
+             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+             <button type="submit" class="btn btn-primary">バイブスクワッド作成</button>
+           </form>
+           {% else %}
+           <form id="create-squads-form" action="{{ url_for('create_squads') }}" method="POST" style="display: inline;">
+             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+             <button type="submit" class="btn btn-secondary" onclick="return confirm('本当にスクワッドを再作成しますか？現在のスクワッドはすべて削除されます。');">スクワッド再作成</button>
+           </form>
+           {% endif %}
+           {% if not analysis_complete %}
+           <form id="analyze-batch-form" action="{{ url_for('analyze_batch') }}" method="POST" style="display: inline;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-info">バッチ分析</button>
+           </form>
+           {% else %}
+           <button type="button" class="btn btn-success" disabled>
+            <i class="fas fa-check me-2"></i>分析完了
+           </button>
+           {% endif %}
+        </div>
+        <div class="danger-zone">
+          <form action="{{ url_for('clear_squads') }}" method="POST" onsubmit="return confirm('本当にすべての学生とスクワッドのデータを削除しますか？この操作は元に戻せません。');" style="display: inline;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-danger">すべて削除</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Dashboard Content -->
+    <div class="dashboard-content" style="padding: 20px;">
+        
+        {% if squads %}
+            <div class="squads-grid">
+                {% for squad in squads %}
+                <div class="squad-card">
+                    <a href="{{ url_for('squad_hub', squad_id=squad.id) }}" class="squad-link">
+                        <div class="squad-header clickable-header">
+                            <div class="squad-title-section">
+                                <h3 class="squad-title">
+                                    {{ squad.squad_rank }}: <i class="fas fa-users me-2"></i>
+                                    {{ squad.name }}
+                                    <i class="fas fa-external-link-alt ms-2 external-link-icon"></i>
+                                </h3>
+                                <span class="squad-interests">
+                                    <i class="fas fa-heart me-1"></i>
+                                    {{ squad.shared_interests }}
+                                </span>
+                            </div>
+                            <div class="squad-member-count">
+                                <span class="badge bg-primary">
+                                    {{ squad.members|length }} members
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <div class="squad-actions-bar">
+                        {% if squad.icebreaker_text %}
+                        <span class="icebreaker-generated-status"
+                              title="このスクワッドのアイスブレーカーは既に作成済みです">
+                            <i class="fas fa-check-circle"></i>
+                            作成済み
+                        </span>
+                        {% else %}
+                        <a href="{{ url_for('generate_icebreaker', squad_id=squad.id) }}" 
+                           class="generate-icebreaker-btn"
+                           title="このスクワッドのためのAIアイスブレーカーを生成">
+                            <i class="fas fa-lightbulb"></i>
+                            アイスブレーカー生成
+                        </a>
+                        {% endif %}
+                        <a href="{{ url_for('delete_squad', squad_id=squad.id) }}" 
+                           class="delete-squad-btn"
+                           onclick="return confirm('{{ squad.name }} スクワッド全体を削除してもよろしいですか？すべてのメンバーがグループ化されていない状態に移動します。')">
+                            <i class="fas fa-trash-alt"></i>
+                            スクワッド削除
+                        </a>
+                    </div>
+                    
+                    <div class="squad-members-modern">
+                        {% for member in squad.members %}
+                        <div class="modern-member-card">
+                            <div class="member-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="member-details">
+                                <h5 class="member-name">
+                                    <a href="{{ url_for('student_profile', student_id=member.id) }}" class="text-decoration-none text-dark">
+                                        {{ member.name }}
+                                    </a>
+                                </h5>
+                                {% if member.archetype %}
+                                <div class="member-archetype text-muted small">
+                                    <i class="fas fa-star me-1"></i>{{ member.archetype }}
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Translation Progress Indicator -->
+                                {% if member.question1_jp %}
+                                <div class="translation-status text-success small">
+                                    <i class="fas fa-check-circle me-1"></i>翻訳完了
+                                </div>
+                                {% else %}
+                                <div class="translation-status text-warning small">
+                                    <i class="fas fa-clock me-1"></i>翻訳処理中...
+                                </div>
+                                {% endif %}
+                                
+                                <div class="member-info-tags">
+                                    <span class="info-tag country-tag">
+                                        <i class="fas fa-globe me-1"></i>
+                                        {{ member.country }}
+                                    </span>
+                                    <span class="info-tag gender-tag">
+                                        <i class="fas fa-user me-1"></i>
+                                        {{ member.gender }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="member-actions">
+                                <a href="{{ url_for('delete_student', student_id=member.id) }}" 
+                                   class="delete-student-btn" 
+                                   onclick="return confirm('{{ member.name }}を削除してもよろしいですか？')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="squad-footer">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>
+                            作成日: {{ squad.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="squads-empty">
+                <p class="text-muted">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Click "Create Vibe Squads" to automatically group students based on shared interests.
+                </p>
+            </div>
+        {% endif %}
+        
+        <!-- Solo Students Section -->
+        {% if solo_students_db %}
+        <div class="ungrouped-section mt-4">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <i class="fas fa-user-friends me-2"></i>
+                    Solo Students
+                    <span class="badge bg-secondary ms-2">{{ solo_students_db|length }}</span>
+                </h3>
+                <p class="section-description">
+                    Students who haven't been assigned to any squad yet.
+                </p>
+            </div>
+            
+            <div class="solo-students-grid">
+                {% for student in solo_students_db %}
+                <div class="modern-member-card">
+                    <div class="member-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="member-details">
+                        <h5 class="member-name">
+                            <a href="{{ url_for('student_profile', student_id=student.id) }}" class="text-decoration-none text-dark">
+                                {{ student.name }}
+                            </a>
+                        </h5>
+                        {% if student.archetype %}
+                        <div class="member-archetype text-muted small">
+                            <i class="fas fa-star me-1"></i>{{ student.archetype }}
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Translation Progress Indicator -->
+                        {% if student.question1_jp %}
+                        <div class="translation-status text-success small">
+                            <i class="fas fa-check-circle me-1"></i>翻訳完了
+                        </div>
+                        {% else %}
+                        <div class="translation-status text-warning small">
+                            <i class="fas fa-clock me-1"></i>翻訳処理中...
+                        </div>
+                        {% endif %}
+                        
+                        <div class="member-info-tags">
+                            <span class="info-tag country-tag">
+                                <i class="fas fa-globe me-1"></i>
+                                {{ student.country }}
+                            </span>
+                            <span class="info-tag gender-tag">
+                                <i class="fas fa-user me-1"></i>
+                                {{ student.gender }}
+                            </span>
+                        </div>
+                        <small class="text-muted mt-2 d-block">
+                            ID: {{ student.submission_id or student.id }}
+                        </small>
+                    </div>
+                    <div class="member-actions">
+                        <a href="{{ url_for('delete_student', student_id=student.id) }}" 
+                           class="delete-student-btn" 
+                           onclick="return confirm('Are you sure you want to delete {{ student.name }}?')">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Footer -->
+    <div class="teacher-footer">
+        <div class="row text-center">
+            <div class="col-md-6">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Back to Student Form
+                </a>
+            </div>
+            <div class="col-md-6">
+                <button onclick="window.print()" class="btn btn-outline-secondary">
+                    <i class="fas fa-print me-2"></i>
+                    Print Submissions
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to handle form submission with visual feedback
+    function handleFormSubmit(form) {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            const originalText = submitBtn.innerHTML;
+            
+            // Show processing state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 処理中...';
+            
+            // Reset after a delay if form doesn't submit immediately
+            setTimeout(() => {
+                if (submitBtn.disabled) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            }, 5000);
+        }
+    }
+    
+    // Handle Create Squads form
+    const createSquadsForm = document.getElementById('create-squads-form');
+    if (createSquadsForm) {
+        createSquadsForm.addEventListener('submit', function(e) {
+            handleFormSubmit(this);
+        });
+    }
+    
+    const analyzeBatchForm = document.getElementById('analyze-batch-form');
+    if (analyzeBatchForm) {
+        analyzeBatchForm.addEventListener('submit', function(e) {
+            handleFormSubmit(this);
+        });
+    }
+    
+    // Handle Generate Icebreaker buttons using class
+    const icebreakerBtns = document.querySelectorAll('.generate-icebreaker-btn');
+    icebreakerBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent default navigation
+            
+            // Show processing state
+            this.style.pointerEvents = 'none';
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 処理中...';
+            
+            // Navigate to the URL after showing feedback
+            const url = this.href;
+            setTimeout(() => {
+                window.location.href = url;
+            }, 100);
+        });
+    });
+});
+</script>
+{% endblock %}

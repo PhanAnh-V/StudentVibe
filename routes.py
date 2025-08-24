@@ -3,11 +3,17 @@ from flask import render_template, request, redirect, url_for, session, jsonify,
 from app import app, db, csrf
 from models import Student, SessionSettings, Squad
 from forms import StudentForm, TeacherLoginForm, StudentLoginForm
+
+# Health check route for Firebase App Hosting
+@app.route('/health')
+def health_check():
+    return {'status': 'healthy', 'message': 'VibeCheck is running'}, 200
+
 import firebase_admin
 from firebase_admin import credentials, auth
 # Initialize Firebase Admin SDK
 try:
-    cred = credentials.Certificate('firebase-service-account.json')
+    cred = credentials.Certificate('serviceAccountKey.json')
     firebase_admin.initialize_app(cred)
 except Exception as e:
     logging.error(f"Failed to initialize Firebase Admin SDK: {e}")
@@ -19,6 +25,12 @@ import random
 import traceback
 from collections import Counter, defaultdict
 # AI recommendations functions will be imported where needed
+
+# Health check endpoint for Firebase App Hosting
+@app.route('/health')
+def health_check():
+    """Health check endpoint for Firebase App Hosting"""
+    return jsonify({"status": "healthy", "message": "VibeCheck is running"}), 200
 
 def load_questionnaire_data():
     """Load questionnaire data from questions.json file"""

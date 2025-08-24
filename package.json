@@ -1,0 +1,16 @@
+{
+  "name": "vibecheck-flask",
+  "version": "1.0.0",
+  "description": "VibeCheck - AI-powered group formation Flask app",
+  "main": "main.py",
+  "scripts": {
+    "start": "python3 main.py",
+    "dev": "python3 main.py"
+  },
+  "engines": {
+    "python": ">=3.9.0"
+  },
+  "keywords": ["flask", "ai", "education", "group-formation"],
+  "author": "VibeCheck Team",
+  "license": "MIT"
+}
